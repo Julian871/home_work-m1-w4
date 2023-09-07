@@ -30,7 +30,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     });
 
     const blogList = {
-        pagesCount: Math.ceil(foundBlogs.length / 10),
+        pagesCount: Math.ceil(foundBlogs.length / pageSize),
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,

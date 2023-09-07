@@ -35,7 +35,7 @@ exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return 0;
     });
     const blogList = {
-        pagesCount: Math.ceil(foundBlogs.length / 10),
+        pagesCount: Math.ceil(foundBlogs.length / pageSize),
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
