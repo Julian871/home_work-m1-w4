@@ -31,11 +31,11 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
 
     const blogList = {
 
-        pagesCount: Math.ceil(foundBlogs.length /pageSize),
+        pagesCount: Math.ceil(foundBlogs.length / pageSize),
         page: +pageNumber,
         pageSize: +pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.slice(0, pageSize)
+        items: foundBlogs.slice((pageNumber-1) * pageSize, pageNumber * pageSize )
     }
     res.send(blogList)
 })
