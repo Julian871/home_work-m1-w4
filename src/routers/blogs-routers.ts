@@ -3,7 +3,7 @@ import {blogsReposetories} from "../repositories/blogs-db-reposetories";
 import {blogsValidation} from "../middlewares/blogs/blogs-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
-import {blogTypeGet, blogTypeOutput} from "../db/types/blog-types";
+import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
 import {RequestQueryParams} from "./query-types";
 
@@ -23,7 +23,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.slice(0, 10)
+        items: foundBlogs.sort().slice(0, 10)
     }
     res.send(bloglist)
 })

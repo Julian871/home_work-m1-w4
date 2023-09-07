@@ -29,7 +29,7 @@ exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.slice(0, 10)
+        items: foundBlogs.sort().slice(0, 10)
     };
     res.send(bloglist);
 }));
