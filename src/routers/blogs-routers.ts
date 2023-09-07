@@ -13,8 +13,8 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const searchNameTerm = req.query.searchNameTerm || null
     const sortBy = req.query.sortBy || 'createdAt'
     const sortDirection = req.query.sortDirection || 'desc'
-    const pageNumber = req.query.pageNumber || 1
-    const pageSize = req.query.pageSize || 10
+    const pageNumber = +req.query.pageNumber || 1
+    const pageSize = +req.query.pageSize || 10
 
     const foundBlogs: blogTypeOutput[] = await blogsReposetories.getAllBlogs()
 
