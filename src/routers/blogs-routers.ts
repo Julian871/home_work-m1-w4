@@ -34,7 +34,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.slice(0, req.query.pageSize)
+        items: foundBlogs.slice(0, pageSize)
     }
     res.send(blogList)
 })
