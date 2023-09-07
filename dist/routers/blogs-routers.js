@@ -21,8 +21,8 @@ exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const searchNameTerm = req.query.searchNameTerm || null;
     const sortBy = req.query.sortBy || 'createdAt';
     const sortDirection = req.query.sortDirection || 'desc';
-    const pageNumber = +req.query.pageNumber || 1;
-    const pageSize = +req.query.pageSize || 10;
+    const pageNumber = req.query.pageNumber || 1;
+    const pageSize = req.query.pageSize || 10;
     const foundBlogs = yield blogs_db_reposetories_1.blogsReposetories.getAllBlogs();
     foundBlogs.sort(function (a, b) {
         if (a.createdAt < b.createdAt) {
@@ -36,8 +36,8 @@ exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
     });
     const blogList = {
         pagesCount: Math.ceil(foundBlogs.length / pageSize),
-        page: pageNumber,
-        pageSize,
+        page: +pageNumber,
+        pageSize: +pageSize,
         totalCount: foundBlogs.length,
         items: foundBlogs.slice(0, pageSize)
     };
