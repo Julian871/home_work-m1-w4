@@ -18,14 +18,25 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
 
     const foundBlogs: blogTypeOutput[] = await blogsReposetories.getAllBlogs()
 
-    const bloglist = {
+    foundBlogs.sort(function (a, b) {
+        if (a.createdAt < b.createdAt) {
+            return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        }
+        // a должно быть равным b
+        return 0;
+    });
+
+    const blogList = {
         pagesCount: Math.ceil(foundBlogs.length / 10),
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.sort().slice(foundBlogs.length-10, foundBlogs.length)
+        items: foundBlogs.slice(0, 9)
     }
-    res.send(bloglist)
+    res.send(blogList)
 })
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
     const isValid = ObjectId.isValid(req.params.id)

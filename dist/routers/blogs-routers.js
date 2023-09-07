@@ -24,14 +24,24 @@ exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const pageNumber = req.query.pageNumber || 1;
     const pageSize = req.query.pageSize || 10;
     const foundBlogs = yield blogs_db_reposetories_1.blogsReposetories.getAllBlogs();
-    const bloglist = {
+    foundBlogs.sort(function (a, b) {
+        if (a.createdAt < b.createdAt) {
+            return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        }
+        // a должно быть равным b
+        return 0;
+    });
+    const blogList = {
         pagesCount: Math.ceil(foundBlogs.length / 10),
         page: pageNumber,
         pageSize,
         totalCount: foundBlogs.length,
-        items: foundBlogs.sort().slice(foundBlogs.length - 10, foundBlogs.length)
+        items: foundBlogs.slice(0, 9)
     };
-    res.send(bloglist);
+    res.send(blogList);
 }));
 exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const isValid = mongodb_1.ObjectId.isValid(req.params.id);
