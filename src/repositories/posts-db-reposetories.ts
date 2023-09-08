@@ -46,7 +46,7 @@ export const postsReposetories = {
         const newPost: postTypeInput = {
             _id: new ObjectId(),
             ...data,
-            blogName: "string",
+            blogName: (Math.random()*100).toString(),
             createdAt: new Date().toISOString()
         }
         await postsCollection.insertOne(newPost)

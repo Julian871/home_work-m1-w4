@@ -51,7 +51,7 @@ exports.postsReposetories = {
     },
     createNewPost(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newPost = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { blogName: "string", createdAt: new Date().toISOString() });
+            const newPost = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { blogName: (Math.random() * 100).toString(), createdAt: new Date().toISOString() });
             yield db_1.postsCollection.insertOne(newPost);
             return {
                 id: newPost._id.toString(),
