@@ -8,6 +8,7 @@ import {ObjectId} from "mongodb";
 import {RequestQueryParams} from "./query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
+import {blogsCollection} from "../db/db";
 
 export const blogsRouter = Router({})
 
@@ -18,6 +19,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
+    const blogsCount = await blogsCollection.countDocuments({})
     const {pageNumber, pageSize} = pagination;
 
 
@@ -28,10 +30,10 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
 
     const blogList = {
 
-        pagesCount: Math.ceil(foundBlogs.length / pageSize),
+        pagesCount: Math.ceil(blogsCount / pageSize),
         page: +pageNumber,
         pageSize: +pageSize,
-        totalCount: foundBlogs.length,
+        totalCount: blogsCount,
         items: foundBlogs.slice((pageNumber-1) * pageSize, pageNumber * pageSize )
     }
     res.send(blogList)

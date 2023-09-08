@@ -18,17 +18,19 @@ const authorization_1 = require("../middlewares/authorization");
 const mongodb_1 = require("mongodb");
 const pagination_utility_1 = require("../utils/pagination.utility");
 const blogs_query_utility_1 = require("../utils/blogs-query.utility");
+const db_1 = require("../db/db");
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogsQuery = (0, blogs_query_utility_1.getSortBlogsQuery)(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection);
     const pagination = (0, pagination_utility_1.getPaginationData)(req.query.pageNumber, req.query.pageSize);
+    const blogsCount = yield db_1.blogsCollection.countDocuments({});
     const { pageNumber, pageSize } = pagination;
     const foundBlogs = yield blogs_db_reposetories_1.blogsRepositories.getAllBlogs(Object.assign(Object.assign({}, blogsQuery), pagination));
     const blogList = {
-        pagesCount: Math.ceil(foundBlogs.length / pageSize),
+        pagesCount: Math.ceil(blogsCount / pageSize),
         page: +pageNumber,
         pageSize: +pageSize,
-        totalCount: foundBlogs.length,
+        totalCount: blogsCount,
         items: foundBlogs.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
     };
     res.send(blogList);

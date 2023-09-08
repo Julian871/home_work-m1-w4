@@ -6,9 +6,11 @@ import {getBlogsQueryType} from "../db/types/blog-types";
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
 
+
+
+        const blogCount = await blogsCollection.find({}).count()
         const blogs = await blogsCollection.find({
         name: {$regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i'}
-
 
         }).sort({[query.sortBy]: query.sortDirection }, )
 
