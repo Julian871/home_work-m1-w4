@@ -1,33 +1,35 @@
 import {Request, Response, Router} from "express";
-import {blogsReposetories} from "../repositories/blogs-db-reposetories";
+import {blogsRepositories} from "../repositories/blogs-db-reposetories";
 import {blogsValidation} from "../middlewares/blogs/blogs-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
 import {RequestQueryParams} from "./query-types";
+import {getPaginationData} from "../utils/pagination.utility";
+import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 
 export const blogsRouter = Router({})
 
+export type getBlogsQueryType = {
+    searchNameTerm: string | null;
+    sortBy: string;
+    sortDirection: string;
+    pageNumber: number;
+    pageSize: number;
+}
+
 blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | null, sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
-    const searchNameTerm = req.query.searchNameTerm || null
-    const sortBy = req.query.sortBy || 'createdAt'
-    const sortDirection = req.query.sortDirection || 'desc'
-    const pageNumber = req.query.pageNumber || 1
-    const pageSize = req.query.pageSize || 10
+    const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
+    const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const foundBlogs: blogTypeOutput[] = await blogsReposetories.getAllBlogs()
+    const {pageNumber, pageSize} = pagination;
 
-    foundBlogs.sort(function (a, b) {
-        if (a.createdAt < b.createdAt) {
-            return 1;
-        }
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        }
-        // a должно быть равным b
-        return 0;
-    });
+
+    const foundBlogs: blogTypeOutput[] = await blogsRepositories.getAllBlogs({
+        ...blogsQuery,
+        ...pagination
+    })
 
     const blogList = {
 
@@ -47,7 +49,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
         return
     }
 
-    let blog = await blogsReposetories.getBlogById(req.params.id)
+    let blog = await blogsRepositories.getBlogById(req.params.id)
     if (blog) {
         res.status(200).send(blog)
     } else {
@@ -60,7 +62,7 @@ blogsRouter.post('/',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newBlogs = await blogsReposetories.createNewBlog(req.body)
+        const newBlogs = await blogsRepositories.createNewBlog(req.body)
         res.status(201).send(newBlogs)
     })
 
@@ -69,9 +71,9 @@ blogsRouter.put('/:id',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const isUpdate = await blogsReposetories.updateBlogById(req.params.id, req.body)
+        const isUpdate = await blogsRepositories.updateBlogById(req.params.id, req.body)
         if (isUpdate) {
-            const blog = await blogsReposetories.getBlogById(req.params.id)
+            const blog = await blogsRepositories.getBlogById(req.params.id)
             res.status(204).send(blog)
         } else {
             res.sendStatus(404)
@@ -79,7 +81,7 @@ blogsRouter.put('/:id',
     })
 
 blogsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
-    const isDelete = await blogsReposetories.deleteBlogById(req.params.id)
+    const isDelete = await blogsRepositories.deleteBlogById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)
     } else {

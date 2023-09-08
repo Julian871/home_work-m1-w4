@@ -24,21 +24,3 @@ export type blogTypePostPut = {
     description: string,
     websiteUrl: string
 }
-
-export type blogTypeGet = {
-
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-    items: [
-    {
-        name: string,
-        description: string,
-        websiteUrl: string,
-        createdAt: string,
-        isMembership: boolean,
-        id: string
-    }
-]
-}

@@ -22,7 +22,7 @@ exports.postsValidation = [
     (0, express_validator_1.body)('blogId').isString().withMessage('blogId is not string'),
     (0, express_validator_1.body)('blogId')
         .custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const blog = yield blogs_db_reposetories_1.blogsReposetories.getBlogById(value);
+        const blog = yield blogs_db_reposetories_1.blogsRepositories.getBlogById(value);
         if (!blog) {
             throw new Error('incorrect blogID');
         }

@@ -9,13 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogsReposetories = void 0;
+exports.blogsRepositories = void 0;
 const db_1 = require("../db/db");
 const mongodb_1 = require("mongodb");
-exports.blogsReposetories = {
-    getAllBlogs() {
+exports.blogsRepositories = {
+    getAllBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = yield db_1.blogsCollection.find({}).toArray();
+            const blogs = yield db_1.blogsCollection.find({
+                blogsCollection: query.searchNameTerm
+            }).sort({ [query.sortBy]: query.sortDirection === 'desc' ? 1 : -1 })
+                .skip((query.pageNumber - 1) * query.pageSize)
+                .limit(+query.pageSize)
+                .toArray();
             return blogs.map((p) => ({
                 id: p._id.toString(),
                 name: p.name,

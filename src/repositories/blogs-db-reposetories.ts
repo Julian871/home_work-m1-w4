@@ -1,10 +1,18 @@
-import {blogTypeGet, blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
+import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
 import {blogsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
+import {getBlogsQueryType} from "../routers/blogs-routers";
 
-export const blogsReposetories = {
-    async getAllBlogs(): Promise<blogTypeOutput[]>{
-        const blogs = await blogsCollection.find({}).toArray()
+export const blogsRepositories = {
+    async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
+        const blogs = await blogsCollection.find({
+        blogsCollection: query.searchNameTerm
+
+        }).sort({[query.sortBy]: query.sortDirection === 'desc' ? 1: -1})
+
+            .skip((query.pageNumber - 1) * query.pageSize)
+            .limit(+query.pageSize)
+            .toArray()
 
         return blogs.map((p) => ({
                     id: p._id.toString(),

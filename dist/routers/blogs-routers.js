@@ -16,24 +16,14 @@ const blogs_validation_1 = require("../middlewares/blogs/blogs-validation");
 const input_validation_middleware_1 = require("../middlewares/input-validation-middleware");
 const authorization_1 = require("../middlewares/authorization");
 const mongodb_1 = require("mongodb");
+const pagination_utility_1 = require("../utils/pagination.utility");
+const blogs_query_utility_1 = require("../utils/blogs-query.utility");
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const searchNameTerm = req.query.searchNameTerm || null;
-    const sortBy = req.query.sortBy || 'createdAt';
-    const sortDirection = req.query.sortDirection || 'desc';
-    const pageNumber = req.query.pageNumber || 1;
-    const pageSize = req.query.pageSize || 10;
-    const foundBlogs = yield blogs_db_reposetories_1.blogsReposetories.getAllBlogs();
-    foundBlogs.sort(function (a, b) {
-        if (a.createdAt < b.createdAt) {
-            return 1;
-        }
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        }
-        // a должно быть равным b
-        return 0;
-    });
+    const blogsQuery = (0, blogs_query_utility_1.getSortBlogsQuery)(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection);
+    const pagination = (0, pagination_utility_1.getPaginationData)(req.query.pageNumber, req.query.pageSize);
+    const { pageNumber, pageSize } = pagination;
+    const foundBlogs = yield blogs_db_reposetories_1.blogsRepositories.getAllBlogs(Object.assign(Object.assign({}, blogsQuery), pagination));
     const blogList = {
         pagesCount: Math.ceil(foundBlogs.length / pageSize),
         page: +pageNumber,
@@ -49,7 +39,7 @@ exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
         res.sendStatus(404);
         return;
     }
-    let blog = yield blogs_db_reposetories_1.blogsReposetories.getBlogById(req.params.id);
+    let blog = yield blogs_db_reposetories_1.blogsRepositories.getBlogById(req.params.id);
     if (blog) {
         res.status(200).send(blog);
     }
@@ -58,13 +48,13 @@ exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 }));
 exports.blogsRouter.post('/', authorization_1.authorizationMiddleware, blogs_validation_1.blogsValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newBlogs = yield blogs_db_reposetories_1.blogsReposetories.createNewBlog(req.body);
+    const newBlogs = yield blogs_db_reposetories_1.blogsRepositories.createNewBlog(req.body);
     res.status(201).send(newBlogs);
 }));
 exports.blogsRouter.put('/:id', authorization_1.authorizationMiddleware, blogs_validation_1.blogsValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isUpdate = yield blogs_db_reposetories_1.blogsReposetories.updateBlogById(req.params.id, req.body);
+    const isUpdate = yield blogs_db_reposetories_1.blogsRepositories.updateBlogById(req.params.id, req.body);
     if (isUpdate) {
-        const blog = yield blogs_db_reposetories_1.blogsReposetories.getBlogById(req.params.id);
+        const blog = yield blogs_db_reposetories_1.blogsRepositories.getBlogById(req.params.id);
         res.status(204).send(blog);
     }
     else {
@@ -72,7 +62,7 @@ exports.blogsRouter.put('/:id', authorization_1.authorizationMiddleware, blogs_v
     }
 }));
 exports.blogsRouter.delete('/:id', authorization_1.authorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isDelete = yield blogs_db_reposetories_1.blogsReposetories.deleteBlogById(req.params.id);
+    const isDelete = yield blogs_db_reposetories_1.blogsRepositories.deleteBlogById(req.params.id);
     if (isDelete) {
         res.sendStatus(204);
     }
