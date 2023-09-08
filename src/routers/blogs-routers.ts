@@ -19,7 +19,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const blogsCount = await blogsCollection.countDocuments({})
+    const blogsCount = await blogsCollection.estimatedDocumentCount({})
     const {pageNumber, pageSize} = pagination;
 
 
