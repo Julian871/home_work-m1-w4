@@ -4,6 +4,6 @@ export const getSortBlogsQuery = (searchNameTerm: string | null, sortBy: string 
     return {
         searchNameTerm: searchNameTerm || DEFAULT_SEARCH_NAME_TERM,
         sortBy: sortBy || DEFAULT_SORT_BY,
-        sortDirection: sortDirection === 'asc' ? 1 : DEFAULT_SORT_DIRECTION
+        sortDirection: sortDirection === 'asc' ? -1 : DEFAULT_SORT_DIRECTION
     }
 }
