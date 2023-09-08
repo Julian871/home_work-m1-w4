@@ -13,9 +13,13 @@ exports.postsReposetories = void 0;
 const db_1 = require("../db/db");
 const mongodb_1 = require("mongodb");
 exports.postsReposetories = {
-    getAllPosts() {
+    getAllPosts(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            const posts = yield db_1.postsCollection.find({}).toArray();
+            const posts = yield db_1.postsCollection.find({})
+                .sort({ [query.sortBy]: query.sortDirection })
+                .skip((query.pageNumber - 1) * query.pageSize)
+                .limit(+query.pageSize)
+                .toArray();
             return posts.map((p) => ({
                 id: p._id.toString(),
                 title: p.title,

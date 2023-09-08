@@ -1,11 +1,15 @@
-import {postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
+import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
 import {postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 
 
 export const postsReposetories = {
-    async getAllPosts(): Promise<postTypeOutput[]>{
-        const posts = await postsCollection.find({}).toArray()
+    async getAllPosts(query: getPostsQueryType): Promise<postTypeOutput[]>{
+        const posts = await postsCollection.find({})
+            .sort({[query.sortBy]: query.sortDirection })
+            .skip((query.pageNumber - 1) * query.pageSize)
+            .limit(+query.pageSize)
+            .toArray()
 
         return posts.map((p) => ({
             id: p._id.toString(),

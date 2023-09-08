@@ -15,7 +15,6 @@ const mongodb_1 = require("mongodb");
 exports.blogsRepositories = {
     getAllBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogCount = yield db_1.blogsCollection.find({}).count();
             const blogs = yield db_1.blogsCollection.find({
                 name: { $regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i' }
             }).sort({ [query.sortBy]: query.sortDirection })

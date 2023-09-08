@@ -15,10 +15,24 @@ const posts_db_reposetories_1 = require("../repositories/posts-db-reposetories")
 const posts_validation_1 = require("../middlewares/posts/posts-validation");
 const input_validation_middleware_1 = require("../middlewares/input-validation-middleware");
 const authorization_1 = require("../middlewares/authorization");
+const pagination_utility_1 = require("../utils/pagination.utility");
+const posts_query_utility_1 = require("../utils/posts-query.utility");
+const db_1 = require("../db/db");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const foundPosts = yield posts_db_reposetories_1.postsReposetories.getAllPosts();
-    res.send(foundPosts);
+    const postsQuery = (0, posts_query_utility_1.getSortPostsQuery)(req.query.sortBy, req.query.sortDirection);
+    const pagination = (0, pagination_utility_1.getPaginationData)(req.query.pageNumber, req.query.pageSize);
+    const postsCount = yield db_1.postsCollection.estimatedDocumentCount({});
+    const { pageNumber, pageSize } = pagination;
+    const foundPosts = yield posts_db_reposetories_1.postsReposetories.getAllPosts(Object.assign(Object.assign({}, postsQuery), pagination));
+    const postsList = {
+        pagesCount: Math.ceil(postsCount / pageSize),
+        page: +pageNumber,
+        pageSize: +pageSize,
+        totalCount: postsCount,
+        items: foundPosts
+    };
+    res.send(postsList);
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let post = yield posts_db_reposetories_1.postsReposetories.getPostById(req.params.id);

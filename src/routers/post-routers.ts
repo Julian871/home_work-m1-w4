@@ -4,12 +4,37 @@ import {postsValidation} from "../middlewares/posts/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {postTypeOutput} from "../db/types/post-types";
+import {RequestQueryParams} from "./query-types";
+import {getPaginationData} from "../utils/pagination.utility";
+import {getSortPostsQuery} from "../utils/posts-query.utility";
+import {postsCollection} from "../db/db";
+
+
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', async (req: Request, res: Response) => {
-    const foundPosts: postTypeOutput[] = await postsReposetories.getAllPosts()
-    res.send(foundPosts)
+postsRouter.get('/', async (req: RequestQueryParams<{sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
+
+    const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
+    const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
+
+    const postsCount = await postsCollection.estimatedDocumentCount({})
+    const {pageNumber, pageSize} = pagination;
+
+    const foundPosts: postTypeOutput[] = await postsReposetories.getAllPosts({
+        ...postsQuery,
+        ...pagination
+    })
+
+    const postsList = {
+
+        pagesCount: Math.ceil(postsCount / pageSize),
+        page: +pageNumber,
+        pageSize: +pageSize,
+        totalCount: postsCount,
+        items: foundPosts
+    }
+    res.send(postsList)
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {

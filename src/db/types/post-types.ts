@@ -26,3 +26,10 @@ export type postTypePostPut = {
     content: string,
     blogId: string
 }
+
+export type getPostsQueryType = {
+    sortBy: string;
+    sortDirection: 1 | -1;
+    pageNumber: number;
+    pageSize: number;
+}
