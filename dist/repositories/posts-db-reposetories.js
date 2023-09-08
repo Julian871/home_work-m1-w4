@@ -16,9 +16,9 @@ exports.postsReposetories = {
     getAllPosts(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const posts = yield db_1.postsCollection.find({})
-                .sort({ [query.sortBy]: query.sortDirection })
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(+query.pageSize)
+                .sort({ [query.sortBy]: query.sortDirection })
                 .toArray();
             return posts.map((p) => ({
                 id: p._id.toString(),
