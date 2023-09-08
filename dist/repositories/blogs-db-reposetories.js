@@ -16,8 +16,8 @@ exports.blogsRepositories = {
     getAllBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const blogs = yield db_1.blogsCollection.find({
-                blogsCollection: query.searchNameTerm
-            }).sort({ [query.sortBy]: query.sortDirection === 'desc' ? 1 : -1 })
+                name: query.searchNameTerm ? query.searchNameTerm : '',
+            }).sort({ [query.sortBy]: query.sortDirection })
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(+query.pageSize)
                 .toArray();

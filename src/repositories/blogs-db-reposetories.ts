@@ -6,9 +6,10 @@ import {getBlogsQueryType} from "../db/types/blog-types";
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
         const blogs = await blogsCollection.find({
-        blogsCollection: query.searchNameTerm
+        name: query.searchNameTerm ? query.searchNameTerm : '',
 
-        }).sort({[query.sortBy]: query.sortDirection === 'desc' ? 1: -1})
+
+        }).sort({[query.sortBy]: query.sortDirection }, )
 
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)

@@ -28,7 +28,7 @@ export type blogTypePostPut = {
 export type getBlogsQueryType = {
     searchNameTerm: string | null;
     sortBy: string;
-    sortDirection: string;
+    sortDirection: 1 | -1;
     pageNumber: number;
     pageSize: number;
 }
