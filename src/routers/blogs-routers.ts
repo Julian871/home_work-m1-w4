@@ -11,15 +11,10 @@ import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 
 export const blogsRouter = Router({})
 
-export type getBlogsQueryType = {
-    searchNameTerm: string | null;
-    sortBy: string;
-    sortDirection: string;
-    pageNumber: number;
-    pageSize: number;
-}
+
 
 blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | null, sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
+
     const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
@@ -41,6 +36,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     }
     res.send(blogList)
 })
+
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
     const isValid = ObjectId.isValid(req.params.id)
 

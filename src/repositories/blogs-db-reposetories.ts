@@ -1,7 +1,7 @@
 import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
 import {blogsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
-import {getBlogsQueryType} from "../routers/blogs-routers";
+import {getBlogsQueryType} from "../db/types/blog-types";
 
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
