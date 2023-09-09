@@ -10,6 +10,7 @@ import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {blogsCollection} from "../db/db";
 import {postsValidation} from "../middlewares/posts/posts-validation";
+import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
 
 export const blogsRouter = Router({})
 
@@ -59,7 +60,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 blogsRouter.post('/:blogId/posts',
     authorizationMiddleware,
-    postsValidation,
+    postsBlogIdValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
     const createPost = await blogsRepositories.createNewPostByBlogId(req.params.blogId, req.body)
