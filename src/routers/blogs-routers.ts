@@ -5,12 +5,15 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
-import {RequestQueryParams} from "../db/types/query-types";
+import {RequestParams, RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
-import {blogsCollection} from "../db/db";
-import {postsValidation} from "../middlewares/posts/posts-validation";
+import {blogsCollection, postsCollection} from "../db/db";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
+import request from "supertest";
+import {getSortPostsQuery} from "../utils/posts-query.utility";
+import {postTypeOutput} from "../db/types/post-types";
+import {postsReposetories} from "../repositories/posts-db-reposetories";
 
 export const blogsRouter = Router({})
 
@@ -70,6 +73,29 @@ blogsRouter.post('/:blogId/posts',
             res.status(201).send(createPost)
         }
 
+})
+
+blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
+    const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
+    const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
+
+    const postsCount = await postsCollection.estimatedDocumentCount({})
+    const {pageNumber, pageSize} = pagination;
+
+    const foundPosts = await blogsRepositories.getPostByBlogId({
+        ...postsQuery,
+        ...pagination
+    }, req.params.blogId)
+
+    const postsList = {
+
+        pagesCount: Math.ceil(postsCount / pageSize),
+        page: +pageNumber,
+        pageSize: +pageSize,
+        totalCount: postsCount,
+        items: foundPosts
+    }
+    res.send(postsList)
 })
 
 blogsRouter.post('/',

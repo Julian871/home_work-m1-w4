@@ -1,4 +1,4 @@
-import {DEFAULT_SEARCH_NAME_TERM, DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "./default-param";
+import {DEFAULT_SORT_BY, DEFAULT_SORT_DIRECTION} from "./default-param";
 
 export const getSortPostsQuery = (sortBy: string | undefined, sortDirection: string | undefined): {sortBy: string, sortDirection: 1 | -1} =>{
     return {

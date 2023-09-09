@@ -48,6 +48,26 @@ exports.blogsRepositories = {
             };
         });
     },
+    getPostByBlogId(query, blogId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const _blogId = new mongodb_1.ObjectId(blogId);
+            const posts = yield db_1.postsCollection.find({
+                blogId: { $regex: _blogId.toString(), $options: 'i' }
+            }).sort({ [query.sortBy]: query.sortDirection })
+                .skip((query.pageNumber - 1) * query.pageSize)
+                .limit(+query.pageSize)
+                .toArray();
+            return posts.map((p) => ({
+                id: p._id.toString(),
+                title: p.title,
+                shortDescription: p.shortDescription,
+                content: p.content,
+                blogId: p.blogId,
+                blogName: p.blogName,
+                createdAt: p.createdAt
+            }));
+        });
+    },
     createNewBlog(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const newBlog = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { createdAt: new Date().toISOString(), isMembership: false });
