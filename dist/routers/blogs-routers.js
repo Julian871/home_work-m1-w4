@@ -19,6 +19,7 @@ const mongodb_1 = require("mongodb");
 const pagination_utility_1 = require("../utils/pagination.utility");
 const blogs_query_utility_1 = require("../utils/blogs-query.utility");
 const db_1 = require("../db/db");
+const posts_validation_1 = require("../middlewares/posts/posts-validation");
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogsQuery = (0, blogs_query_utility_1.getSortBlogsQuery)(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection);
@@ -47,6 +48,15 @@ exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
     else {
         res.sendStatus(404);
+    }
+}));
+exports.blogsRouter.post('/:blogId/posts', authorization_1.authorizationMiddleware, posts_validation_1.postsValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const createPost = yield blogs_db_reposetories_1.blogsRepositories.createNewPostByBlogId(req.params.blogId, req.body);
+    if (createPost === false) {
+        res.sendStatus(404);
+    }
+    else {
+        res.status(201).send(createPost);
     }
 }));
 exports.blogsRouter.post('/', authorization_1.authorizationMiddleware, blogs_validation_1.blogsValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -5,10 +5,11 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
-import {RequestQueryParams} from "./query-types";
+import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {blogsCollection} from "../db/db";
+import {postsValidation} from "../middlewares/posts/posts-validation";
 
 export const blogsRouter = Router({})
 
@@ -55,6 +56,21 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
+
+blogsRouter.post('/:blogId/posts',
+    authorizationMiddleware,
+    postsValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+    const createPost = await blogsRepositories.createNewPostByBlogId(req.params.blogId, req.body)
+        if (createPost === false) {
+            res.sendStatus(404)
+        } else {
+            res.status(201).send(createPost)
+        }
+
+})
+
 blogsRouter.post('/',
     authorizationMiddleware,
     blogsValidation,
@@ -62,7 +78,7 @@ blogsRouter.post('/',
     async (req: Request, res: Response) => {
         const newBlogs = await blogsRepositories.createNewBlog(req.body)
         res.status(201).send(newBlogs)
-    })
+})
 
 blogsRouter.put('/:id',
     authorizationMiddleware,
@@ -76,7 +92,7 @@ blogsRouter.put('/:id',
         } else {
             res.sendStatus(404)
         }
-    })
+})
 
 blogsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
     const isDelete = await blogsRepositories.deleteBlogById(req.params.id)

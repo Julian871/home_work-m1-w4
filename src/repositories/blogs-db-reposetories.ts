@@ -1,7 +1,8 @@
 import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
-import {blogsCollection} from "../db/db";
+import {blogsCollection, postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
+import {postTypeInput, postTypePostPut} from "../db/types/post-types";
 
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
@@ -57,6 +58,32 @@ export const blogsRepositories = {
             websiteUrl: newBlog.websiteUrl,
             createdAt: newBlog.createdAt,
             isMembership: newBlog.isMembership
+        }
+    },
+
+    async createNewPostByBlogId(blogId: string, data: postTypePostPut) {
+        const _blogId = new ObjectId(blogId)
+        const checkBlogId = await blogsCollection.findOne({_id: _blogId})
+
+        if (!checkBlogId) {
+            return false
+        } else {
+            const newPost: postTypeInput = {
+                _id: new ObjectId(),
+                ...data,
+                blogName: (Math.random()*100).toString(),
+                createdAt: new Date().toISOString()
+            }
+            await postsCollection.insertOne(newPost)
+            return  {
+                id: newPost._id.toString(),
+                title: newPost.title,
+                shortDescription: newPost.shortDescription,
+                content: newPost.content,
+                blogId: newPost.blogId,
+                blogName: newPost.blogName,
+                createdAt: newPost.createdAt
+            }
         }
     },
 
