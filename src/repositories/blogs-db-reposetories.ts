@@ -92,6 +92,7 @@ export const blogsRepositories = {
             const newPost: postTypeInput = {
                 _id: new ObjectId(),
                 ...data,
+                blogId: _blogId.toString(),
                 blogName: (Math.random()*100).toString(),
                 createdAt: new Date().toISOString()
             }

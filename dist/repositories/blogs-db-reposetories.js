@@ -90,7 +90,7 @@ exports.blogsRepositories = {
                 return false;
             }
             else {
-                const newPost = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { blogName: (Math.random() * 100).toString(), createdAt: new Date().toISOString() });
+                const newPost = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { blogId: _blogId.toString(), blogName: (Math.random() * 100).toString(), createdAt: new Date().toISOString() });
                 yield db_1.postsCollection.insertOne(newPost);
                 return {
                     id: newPost._id.toString(),
