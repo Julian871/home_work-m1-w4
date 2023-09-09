@@ -95,7 +95,11 @@ blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {s
         totalCount: postsCount,
         items: foundPosts
     }
-    res.send(postsList)
+    if (foundPosts.length > 0) {
+        res.send(postsList)
+    } else {
+        res.sendStatus(404)
+    }
 })
 
 blogsRouter.post('/',

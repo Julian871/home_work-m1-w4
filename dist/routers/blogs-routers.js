@@ -73,7 +73,12 @@ exports.blogsRouter.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0
         totalCount: postsCount,
         items: foundPosts
     };
-    res.send(postsList);
+    if (foundPosts.length > 0) {
+        res.send(postsList);
+    }
+    else {
+        res.sendStatus(404);
+    }
 }));
 exports.blogsRouter.post('/', authorization_1.authorizationMiddleware, blogs_validation_1.blogsValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newBlogs = yield blogs_db_reposetories_1.blogsRepositories.createNewBlog(req.body);
