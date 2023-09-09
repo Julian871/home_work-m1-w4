@@ -10,10 +10,7 @@ import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {blogsCollection, postsCollection} from "../db/db";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
-import request from "supertest";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
-import {postTypeOutput} from "../db/types/post-types";
-import {postsReposetories} from "../repositories/posts-db-reposetories";
 
 export const blogsRouter = Router({})
 
