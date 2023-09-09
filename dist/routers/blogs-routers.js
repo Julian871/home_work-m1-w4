@@ -18,16 +18,15 @@ const authorization_1 = require("../middlewares/authorization");
 const mongodb_1 = require("mongodb");
 const pagination_utility_1 = require("../utils/pagination.utility");
 const blogs_query_utility_1 = require("../utils/blogs-query.utility");
-const db_1 = require("../db/db");
 const postBlogId_validation_1 = require("../middlewares/posts/postBlogId-validation");
 const posts_query_utility_1 = require("../utils/posts-query.utility");
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogsQuery = (0, blogs_query_utility_1.getSortBlogsQuery)(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection);
     const pagination = (0, pagination_utility_1.getPaginationData)(req.query.pageNumber, req.query.pageSize);
-    const blogsCount = yield db_1.blogsCollection.estimatedDocumentCount({});
     const { pageNumber, pageSize } = pagination;
     const foundBlogs = yield blogs_db_reposetories_1.blogsRepositories.getAllBlogs(Object.assign(Object.assign({}, blogsQuery), pagination));
+    const blogsCount = foundBlogs.length;
     const blogList = {
         pagesCount: Math.ceil(blogsCount / pageSize),
         page: +pageNumber,
@@ -63,9 +62,9 @@ exports.blogsRouter.post('/:blogId/posts', authorization_1.authorizationMiddlewa
 exports.blogsRouter.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postsQuery = (0, posts_query_utility_1.getSortPostsQuery)(req.query.sortBy, req.query.sortDirection);
     const pagination = (0, pagination_utility_1.getPaginationData)(req.query.pageNumber, req.query.pageSize);
-    const postsCount = yield db_1.postsCollection.estimatedDocumentCount({});
     const { pageNumber, pageSize } = pagination;
     const foundPosts = yield blogs_db_reposetories_1.blogsRepositories.getPostByBlogId(Object.assign(Object.assign({}, postsQuery), pagination), req.params.blogId);
+    const postsCount = foundPosts.length;
     const postsList = {
         pagesCount: Math.ceil(postsCount / pageSize),
         page: +pageNumber,
