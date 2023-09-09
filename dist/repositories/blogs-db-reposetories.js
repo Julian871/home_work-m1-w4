@@ -52,7 +52,7 @@ exports.blogsRepositories = {
         return __awaiter(this, void 0, void 0, function* () {
             const _blogId = new mongodb_1.ObjectId(blogId).toString();
             const posts = yield db_1.postsCollection.find({
-                blogId: { $regex: _blogId }
+                blogId: { $regex: _blogId, $options: 'i' }
             }).sort({ [query.sortBy]: query.sortDirection })
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(+query.pageSize)
