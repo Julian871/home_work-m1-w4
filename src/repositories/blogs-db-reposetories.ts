@@ -46,7 +46,7 @@ export const blogsRepositories = {
         const _blogId = new ObjectId(blogId).toString()
 
         const posts = await postsCollection.find({
-            blogId: {$regex: _blogId, $options: 'i'}
+            blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         }).sort({[query.sortBy]: query.sortDirection })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
