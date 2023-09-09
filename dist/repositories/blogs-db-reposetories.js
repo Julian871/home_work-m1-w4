@@ -50,9 +50,9 @@ exports.blogsRepositories = {
     },
     getPostByBlogId(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _blogId = new mongodb_1.ObjectId(blogId);
+            const _blogId = new mongodb_1.ObjectId(blogId).toString();
             const posts = yield db_1.postsCollection.find({
-                blogId: { $regex: _blogId.toString() }
+                blogId: { $regex: _blogId }
             }).sort({ [query.sortBy]: query.sortDirection })
                 .skip((query.pageNumber - 1) * query.pageSize)
                 .limit(+query.pageSize)

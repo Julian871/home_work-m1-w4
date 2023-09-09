@@ -43,11 +43,10 @@ export const blogsRepositories = {
      },
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
-        const _blogId = new ObjectId(blogId)
-
+        const _blogId = new ObjectId(blogId).toString()
 
         const posts = await postsCollection.find({
-            blogId: {$regex: _blogId.toString()}
+            blogId: {$regex: _blogId}
         }).sort({[query.sortBy]: query.sortDirection })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
