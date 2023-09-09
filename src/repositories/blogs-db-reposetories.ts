@@ -44,7 +44,9 @@ export const blogsRepositories = {
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
         const _blogId = new ObjectId(blogId).toString()
-
+        const postsCount = await postsCollection.countDocuments({
+            blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
+        })
         const posts = await postsCollection.find({
             blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         }).sort({[query.sortBy]: query.sortDirection })

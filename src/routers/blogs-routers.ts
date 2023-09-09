@@ -21,7 +21,9 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-
+    const blogsCount = await blogsCollection.countDocuments({
+        name: {$regex: req.query.searchNameTerm ? req.query.searchNameTerm : '', $options: 'i'}
+    })
     const {pageNumber, pageSize} = pagination;
 
 
@@ -29,7 +31,6 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
         ...blogsQuery,
         ...pagination
     })
-    const blogsCount = foundBlogs.length
 
     const blogList = {
 
@@ -77,15 +78,16 @@ blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {s
     const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-
+    const _blogId = new ObjectId(req.params.blogId).toString()
+    const postsCount = await postsCollection.countDocuments({
+        blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
+    })
     const {pageNumber, pageSize} = pagination;
 
     const foundPosts = await blogsRepositories.getPostByBlogId({
         ...postsQuery,
         ...pagination
     }, req.params.blogId)
-
-    const postsCount = foundPosts.length
 
     const postsList = {
 
