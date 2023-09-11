@@ -4,7 +4,7 @@ import {postsValidation} from "../middlewares/posts/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {postTypeOutput} from "../db/types/post-types";
-import {RequestQueryParams} from "../db/types/requeest-query-types";
+import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {postsCollection} from "../db/db";

@@ -5,12 +5,12 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {authorizationMiddleware} from "../middlewares/authorization";
 import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
-import {RequestParams, RequestQueryParams} from "../db/types/requeest-query-types";
+import {RequestParams, RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
-import {blogsCollection} from "../db/db";
+import {blogsCollection, postsCollection} from "../db/db";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
-import {blogsService} from "../domain/blogs-service";
+import {getSortPostsQuery} from "../utils/posts-query.utility";
 
 export const blogsRouter = Router({})
 
@@ -27,7 +27,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const {pageNumber, pageSize} = pagination;
 
 
-    const foundBlogs: blogTypeOutput[] = await blogsService.getAllBlogs({
+    const foundBlogs: blogTypeOutput[] = await blogsRepositories.getAllBlogs({
         ...blogsQuery,
         ...pagination
     })
@@ -65,7 +65,7 @@ blogsRouter.post('/:blogId/posts',
     postsBlogIdValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-    const createPost = await blogsService.createNewPostByBlogId(req.params.blogId, req.body)
+    const createPost = await blogsRepositories.createNewPostByBlogId(req.params.blogId, req.body)
         if (createPost === false) {
             res.sendStatus(404)
         } else {
@@ -74,11 +74,30 @@ blogsRouter.post('/:blogId/posts',
 
 })
 
-blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {sortBy: string, sortDirection: 1 | -1, pageNumber: number, pageSize: number}>, res: Response) => {
+blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
+    const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
+    const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const postsList = await blogsService.getPostByBlogId(req.params.blogId, req.query)
+    const _blogId = new ObjectId(req.params.blogId).toString()
+    const postsCount = await postsCollection.countDocuments({
+        blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
+    })
+    const {pageNumber, pageSize} = pagination;
 
-    if (postsList.items.length > 0) {
+    const foundPosts = await blogsRepositories.getPostByBlogId({
+        ...postsQuery,
+        ...pagination
+    }, req.params.blogId)
+
+    const postsList = {
+
+        pagesCount: Math.ceil(postsCount / pageSize),
+        page: +pageNumber,
+        pageSize: +pageSize,
+        totalCount: postsCount,
+        items: foundPosts
+    }
+    if (foundPosts.length > 0) {
         res.send(postsList)
     } else {
         res.sendStatus(404)
@@ -90,7 +109,7 @@ blogsRouter.post('/',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newBlogs = await blogsService.createNewBlog(req.body)
+        const newBlogs = await blogsRepositories.createNewBlog(req.body)
         res.status(201).send(newBlogs)
 })
 
@@ -99,7 +118,7 @@ blogsRouter.put('/:id',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const isUpdate = await blogsService.updateBlogById(req.params.id, req.body)
+        const isUpdate = await blogsRepositories.updateBlogById(req.params.id, req.body)
         if (isUpdate) {
             const blog = await blogsRepositories.getBlogById(req.params.id)
             res.status(204).send(blog)
@@ -109,7 +128,7 @@ blogsRouter.put('/:id',
 })
 
 blogsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
-    const isDelete = await blogsService.deleteBlogById(req.params.id)
+    const isDelete = await blogsRepositories.deleteBlogById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)
     } else {
