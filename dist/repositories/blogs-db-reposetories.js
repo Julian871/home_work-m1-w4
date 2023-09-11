@@ -13,14 +13,8 @@ exports.blogsRepositories = void 0;
 const db_1 = require("../db/db");
 const mongodb_1 = require("mongodb");
 exports.blogsRepositories = {
-    getAllBlogs(query) {
+    getAllBlogs(blogs) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = yield db_1.blogsCollection.find({
-                name: { $regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i' }
-            }).sort({ [query.sortBy]: query.sortDirection })
-                .skip((query.pageNumber - 1) * query.pageSize)
-                .limit(+query.pageSize)
-                .toArray();
             return blogs.map((p) => ({
                 id: p._id.toString(),
                 name: p.name,
@@ -34,32 +28,11 @@ exports.blogsRepositories = {
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const _id = new mongodb_1.ObjectId(id);
-            const blog = yield db_1.blogsCollection.findOne({ _id: _id });
-            if (!blog) {
-                return null;
-            }
-            return {
-                id: blog._id.toString(),
-                name: blog.name,
-                description: blog.description,
-                websiteUrl: blog.websiteUrl,
-                createdAt: blog.createdAt,
-                isMembership: blog.isMembership
-            };
+            return yield db_1.blogsCollection.findOne({ _id: _id });
         });
     },
-    getPostByBlogId(query, blogId) {
+    getPostByBlogId(posts) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _blogId = new mongodb_1.ObjectId(blogId).toString();
-            const postsCount = yield db_1.postsCollection.countDocuments({
-                blogId: { $regex: _blogId ? _blogId : '', $options: 'i' }
-            });
-            const posts = yield db_1.postsCollection.find({
-                blogId: { $regex: _blogId ? _blogId : '', $options: 'i' }
-            }).sort({ [query.sortBy]: query.sortDirection })
-                .skip((query.pageNumber - 1) * query.pageSize)
-                .limit(+query.pageSize)
-                .toArray();
             return posts.map((p) => ({
                 id: p._id.toString(),
                 title: p.title,
@@ -71,40 +44,16 @@ exports.blogsRepositories = {
             }));
         });
     },
-    createNewBlog(data) {
+    createNewBlog(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newBlog = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { createdAt: new Date().toISOString(), isMembership: false });
             yield db_1.blogsCollection.insertOne(newBlog);
-            return {
-                id: newBlog._id.toString(),
-                name: newBlog.name,
-                description: newBlog.description,
-                websiteUrl: newBlog.websiteUrl,
-                createdAt: newBlog.createdAt,
-                isMembership: newBlog.isMembership
-            };
+            return newBlog;
         });
     },
-    createNewPostByBlogId(blogId, data) {
+    createNewPostByBlogId(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _blogId = new mongodb_1.ObjectId(blogId);
-            const checkBlogId = yield db_1.blogsCollection.findOne({ _id: _blogId });
-            if (!checkBlogId) {
-                return false;
-            }
-            else {
-                const newPost = Object.assign(Object.assign({ _id: new mongodb_1.ObjectId() }, data), { blogId: _blogId.toString(), blogName: (Math.random() * 100).toString(), createdAt: new Date().toISOString() });
-                yield db_1.postsCollection.insertOne(newPost);
-                return {
-                    id: newPost._id.toString(),
-                    title: newPost.title,
-                    shortDescription: newPost.shortDescription,
-                    content: newPost.content,
-                    blogId: newPost.blogId,
-                    blogName: newPost.blogName,
-                    createdAt: newPost.createdAt
-                };
-            }
+            yield db_1.postsCollection.insertOne(newPost);
+            return newPost;
         });
     },
     updateBlogById(id, data) {

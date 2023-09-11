@@ -13,4 +13,3 @@ app.use(jsonBodyMiddleware)
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
 app.use('/testing/all-data', testingRouter)
-
