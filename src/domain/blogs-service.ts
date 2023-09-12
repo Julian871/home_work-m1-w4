@@ -1,5 +1,6 @@
 import {blogsRepositories} from "../repositories/blogs-db-reposetories";
 import {blogTypeOutput, getBlogsQueryType} from "../db/types/blog-types";
+import {getPostsQueryType} from "../db/types/post-types";
 
 export const blogsService = {
 
@@ -9,5 +10,9 @@ export const blogsService = {
 
     async getBlogById(id: string): Promise<blogTypeOutput | null> {
         return blogsRepositories.getBlogById(id)
+    },
+
+    async getPostByBlogId(query: getPostsQueryType, blogId: string) {
+        return blogsRepositories.getPostByBlogId(query, blogId)
     },
 }

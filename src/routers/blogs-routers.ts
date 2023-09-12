@@ -85,7 +85,7 @@ blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {s
     })
     const {pageNumber, pageSize} = pagination;
 
-    const foundPosts = await blogsRepositories.getPostByBlogId({
+    const foundPosts = await blogsService.getPostByBlogId({
         ...postsQuery,
         ...pagination
     }, req.params.blogId)
