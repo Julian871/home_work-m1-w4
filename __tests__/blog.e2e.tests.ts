@@ -1,6 +1,6 @@
 import request from 'supertest'
 import {app} from "../src/settings";
-import {blogTypeOutput} from "../src/db/types/blog-types";
+
 
 describe('/blogs', () => {
     let newBlog;

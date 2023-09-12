@@ -2,7 +2,7 @@ import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-t
 import {blogsCollection, postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
-import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
+import {getPostsQueryType, postTypeInput, postTypePostPut} from "../db/types/post-types";
 
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
@@ -44,9 +44,7 @@ export const blogsRepositories = {
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
         const _blogId = new ObjectId(blogId).toString()
-        const postsCount = await postsCollection.countDocuments({
-            blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
-        })
+
         const posts = await postsCollection.find({
             blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         }).sort({[query.sortBy]: query.sortDirection })

@@ -11,6 +11,7 @@ import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {blogsCollection, postsCollection} from "../db/db";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
+import {blogsService} from "../domain/blogs-service";
 
 export const blogsRouter = Router({})
 
@@ -51,7 +52,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
         return
     }
 
-    let blog = await blogsRepositories.getBlogById(req.params.id)
+    let blog = await blogsService.getBlogById(req.params.id)
     if (blog) {
         res.status(200).send(blog)
     } else {
