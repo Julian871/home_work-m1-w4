@@ -63,13 +63,7 @@ export const blogsRepositories = {
         }))
     },
 
-    async createNewBlog(data: blogTypePostPut): Promise<blogTypeOutput> {
-        const newBlog: blogTypeInput = {
-            _id: new ObjectId(),
-            ...data,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
+    async createNewBlog(newBlog: blogTypeInput): Promise<blogTypeOutput> {
 
         await blogsCollection.insertOne(newBlog)
         return {

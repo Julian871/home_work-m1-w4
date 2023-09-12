@@ -110,7 +110,7 @@ blogsRouter.post('/',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newBlogs = await blogsRepositories.createNewBlog(req.body)
+        const newBlogs = await blogsService.createNewBlog(req.body)
         res.status(201).send(newBlogs)
 })
 
