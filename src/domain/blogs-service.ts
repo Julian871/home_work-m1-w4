@@ -24,7 +24,7 @@ export const blogsService = {
             createdAt: new Date().toISOString(),
             isMembership: false
         }
-        return await blogsRepositories.createNewBlog(newBlog)
+        return blogsRepositories.createNewBlog(newBlog)
     },
 
     async createNewPostByBlogId(blogId: string, data: postTypePostPut) {

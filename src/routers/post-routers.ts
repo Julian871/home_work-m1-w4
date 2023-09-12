@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import {postsReposetories} from "../repositories/posts-db-reposetories";
 import {postsValidation} from "../middlewares/posts/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
@@ -8,6 +7,7 @@ import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {postsCollection} from "../db/db";
+import {postsService} from "../domain/posts-service";
 
 
 
@@ -21,7 +21,7 @@ postsRouter.get('/', async (req: RequestQueryParams<{sortBy: string, sortDirecti
     const postsCount = await postsCollection.estimatedDocumentCount({})
     const {pageNumber, pageSize} = pagination;
 
-    const foundPosts: postTypeOutput[] = await postsReposetories.getAllPosts({
+    const foundPosts: postTypeOutput[] = await postsService.getAllPosts({
         ...postsQuery,
         ...pagination
     })
@@ -38,7 +38,7 @@ postsRouter.get('/', async (req: RequestQueryParams<{sortBy: string, sortDirecti
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    let post = await postsReposetories.getPostById(req.params.id)
+    let post = await postsService.getPostById(req.params.id)
     if (post) {
         res.status(200).send(post)
     } else {
@@ -51,7 +51,7 @@ postsRouter.post('/',
     postsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newPosts = await postsReposetories.createNewPost(req.body)
+        const newPosts = await postsService.createNewPost(req.body)
         res.status(201).send(newPosts)
     })
 
@@ -60,9 +60,9 @@ postsRouter.put('/:id',
     postsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const isUpdate = await postsReposetories.updatePostById(req.params.id, req.body)
+        const isUpdate = await postsService.updatePostById(req.params.id, req.body)
         if (isUpdate) {
-            const post = await postsReposetories.getPostById(req.params.id)
+            const post = await postsService.getPostById(req.params.id)
             res.status(204).send(post)
         } else {
             res.sendStatus(404)
@@ -70,7 +70,7 @@ postsRouter.put('/:id',
     })
 
 postsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
-    const isDelete = await postsReposetories.deletePostById(req.params.id)
+    const isDelete = await postsService.deletePostById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)
     } else {

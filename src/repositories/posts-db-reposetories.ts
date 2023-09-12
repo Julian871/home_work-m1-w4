@@ -42,13 +42,7 @@ export const postsReposetories = {
 
         }
     },
-    async createNewPost(data: postTypePostPut): Promise<postTypeOutput> {
-        const newPost: postTypeInput = {
-            _id: new ObjectId(),
-            ...data,
-            blogName: (Math.random()*100).toString(),
-            createdAt: new Date().toISOString()
-        }
+    async createNewPost(newPost: postTypeInput): Promise<postTypeOutput> {
         await postsCollection.insertOne(newPost)
         return  {
             id: newPost._id.toString(),
