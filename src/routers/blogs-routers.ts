@@ -119,9 +119,9 @@ blogsRouter.put('/:id',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const isUpdate = await blogsRepositories.updateBlogById(req.params.id, req.body)
+        const isUpdate = await blogsService.updateBlogById(req.params.id, req.body)
         if (isUpdate) {
-            const blog = await blogsRepositories.getBlogById(req.params.id)
+            const blog = await blogsService.getBlogById(req.params.id)
             res.status(204).send(blog)
         } else {
             res.sendStatus(404)

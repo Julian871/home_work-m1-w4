@@ -94,7 +94,6 @@ export const blogsRepositories = {
             blogName: newPost.blogName,
             createdAt: newPost.createdAt
         }
-
     },
 
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {

@@ -40,4 +40,8 @@ export const blogsService = {
         return await blogsRepositories.createNewPostByBlogId(blogId, newPost)
 
     },
+
+    async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {
+        return await blogsRepositories.updateBlogById(id, data)
+    },
 }
