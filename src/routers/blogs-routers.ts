@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import {blogsRepositories} from "../repositories/blogs-db-reposetories";
 import {blogsValidation} from "../middlewares/blogs/blogs-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
@@ -129,7 +128,7 @@ blogsRouter.put('/:id',
 })
 
 blogsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
-    const isDelete = await blogsRepositories.deleteBlogById(req.params.id)
+    const isDelete = await blogsService.deleteBlogById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)
     } else {

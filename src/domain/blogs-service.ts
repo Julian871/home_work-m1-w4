@@ -44,4 +44,8 @@ export const blogsService = {
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {
         return await blogsRepositories.updateBlogById(id, data)
     },
+
+    async deleteBlogById(id: string): Promise<boolean> {
+        return await blogsRepositories.deleteBlogById(id)
+    }
 }
