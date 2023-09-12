@@ -66,7 +66,7 @@ blogsRouter.post('/:blogId/posts',
     postsBlogIdValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-    const createPost = await blogsRepositories.createNewPostByBlogId(req.params.blogId, req.body)
+    const createPost = await blogsService.createNewPostByBlogId(req.params.blogId, req.body)
         if (createPost === false) {
             res.sendStatus(404)
         } else {

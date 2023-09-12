@@ -2,7 +2,7 @@ import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-t
 import {blogsCollection, postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
-import {getPostsQueryType, postTypeInput, postTypePostPut} from "../db/types/post-types";
+import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
 
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
@@ -76,31 +76,25 @@ export const blogsRepositories = {
         }
     },
 
-    async createNewPostByBlogId(blogId: string, data: postTypePostPut) {
+    async createNewPostByBlogId(blogId: string, newPost: postTypeInput) {
         const _blogId = new ObjectId(blogId)
         const checkBlogId = await blogsCollection.findOne({_id: _blogId})
 
         if (!checkBlogId) {
             return false
-        } else {
-            const newPost: postTypeInput = {
-                _id: new ObjectId(),
-                ...data,
-                blogId: _blogId.toString(),
-                blogName: (Math.random()*100).toString(),
-                createdAt: new Date().toISOString()
-            }
-            await postsCollection.insertOne(newPost)
-            return  {
-                id: newPost._id.toString(),
-                title: newPost.title,
-                shortDescription: newPost.shortDescription,
-                content: newPost.content,
-                blogId: newPost.blogId,
-                blogName: newPost.blogName,
-                createdAt: newPost.createdAt
-            }
         }
+
+        await postsCollection.insertOne(newPost)
+        return  {
+            id: newPost._id.toString(),
+            title: newPost.title,
+            shortDescription: newPost.shortDescription,
+            content: newPost.content,
+            blogId: newPost.blogId,
+            blogName: newPost.blogName,
+            createdAt: newPost.createdAt
+        }
+
     },
 
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {

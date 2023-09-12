@@ -1,6 +1,6 @@
 import {blogsRepositories} from "../repositories/blogs-db-reposetories";
 import {blogTypeInput, blogTypeOutput, blogTypePostPut, getBlogsQueryType} from "../db/types/blog-types";
-import {getPostsQueryType} from "../db/types/post-types";
+import {getPostsQueryType, postTypeInput, postTypePostPut} from "../db/types/post-types";
 import {ObjectId} from "mongodb";
 
 export const blogsService = {
@@ -25,5 +25,19 @@ export const blogsService = {
             isMembership: false
         }
         return await blogsRepositories.createNewBlog(newBlog)
+    },
+
+    async createNewPostByBlogId(blogId: string, data: postTypePostPut) {
+
+
+        const newPost: postTypeInput = {
+            _id: new ObjectId(),
+            ...data,
+            blogId,
+            blogName: (Math.random()*100).toString(),
+            createdAt: new Date().toISOString()
+        }
+        return await blogsRepositories.createNewPostByBlogId(blogId, newPost)
+
     },
 }
