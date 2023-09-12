@@ -28,7 +28,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const {pageNumber, pageSize} = pagination;
 
 
-    const foundBlogs: blogTypeOutput[] = await blogsRepositories.getAllBlogs({
+    const foundBlogs: blogTypeOutput[] = await blogsService.getAllBlogs({
         ...blogsQuery,
         ...pagination
     })

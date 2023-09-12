@@ -40,7 +40,7 @@ export const blogsRepositories = {
             createdAt: blog.createdAt,
             isMembership: blog.isMembership
         }
-     },
+    },
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
         const _blogId = new ObjectId(blogId).toString()
