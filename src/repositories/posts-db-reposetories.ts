@@ -25,7 +25,7 @@ export const postsReposetories = {
     },
 
     async countPosts(): Promise<number>{
-        return await postsCollection.countDocuments({})
+        return await postsCollection.countDocuments()
     },
 
     async getPostById(id: string): Promise<postTypeOutput | null>{

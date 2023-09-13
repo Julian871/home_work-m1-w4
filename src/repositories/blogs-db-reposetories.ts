@@ -32,7 +32,7 @@ export const blogsRepositories = {
 
     async countBlogsByBlogId(blogId: string): Promise<number>{
         const _blogId = new ObjectId(blogId).toString()
-        return await blogsCollection.countDocuments({
+        return await postsCollection.countDocuments({
             blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         })
     },
