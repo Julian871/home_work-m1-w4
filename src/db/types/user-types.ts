@@ -4,14 +4,14 @@ export type userTypeInput = {
     _id: ObjectId,
     login: string,
     email: string,
-    createAt: string
+    createdAt: string
 }
 
 export type userTypeOutput = {
     id: string,
     login: string,
     email: string,
-    createAt: string
+    createdAt: string
 }
 
 export type userTypePostPut = {

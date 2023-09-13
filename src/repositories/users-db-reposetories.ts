@@ -22,7 +22,7 @@ export const usersRepositories = {
             id: p._id.toString(),
             login: p.login,
             email: p.email,
-            createAt: p.createAt
+            createdAt: p.createdAt
         }))
     },
 
@@ -45,7 +45,7 @@ export const usersRepositories = {
             id: newUser._id.toString(),
             login: newUser.login,
             email: newUser.email,
-            createAt: newUser.createAt
+            createdAt: newUser.createdAt
         }
     },
 

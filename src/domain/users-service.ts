@@ -23,7 +23,7 @@ export const usersService = {
         const newUser: userTypeInput = {
             _id: new ObjectId(),
             ...data,
-            createAt: new Date().toISOString()
+            createdAt: new Date().toISOString()
 
         }
         return usersRepositories.createNewUser(newUser)
