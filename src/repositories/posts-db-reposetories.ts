@@ -24,7 +24,7 @@ export const postsReposetories = {
         }))
     },
 
-    async countPosts(query: getPostsQueryType): Promise<number>{
+    async countPosts(): Promise<number>{
         return await postsCollection.countDocuments({})
     },
 

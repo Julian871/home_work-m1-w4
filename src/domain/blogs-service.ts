@@ -3,6 +3,7 @@ import {blogTypeInput, blogTypeOutput, blogTypePostPut, getBlogsQueryType} from 
 import {getPostsQueryType, postTypeInput, postTypePostPut} from "../db/types/post-types";
 import {ObjectId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
+import {postsReposetories} from "../repositories/posts-db-reposetories";
 
 export const blogsService = {
 
@@ -25,7 +26,7 @@ export const blogsService = {
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
         const filterPostsByBlogId = await blogsRepositories.getPostByBlogId(query, blogId)
-        const countPost = await blogsRepositories.countBlogsByBlogId(blogId)
+        const countPost = await postsReposetories.countPosts()
 
         return {
 
