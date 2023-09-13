@@ -6,7 +6,7 @@ import {headTypes} from "../db/types/head-types";
 
 export const postsService = {
     async getAllPosts(query: getPostsQueryType): Promise<headTypes>{
-        const countPosts = await postsReposetories.countPosts(query)
+        const countPosts = await postsReposetories.countPosts()
         const filterPosts = await postsReposetories.getAllPosts(query)
 
         return {
