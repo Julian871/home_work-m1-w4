@@ -1,11 +1,22 @@
 import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
 import {postsReposetories} from "../repositories/posts-db-reposetories";
 import {ObjectId} from "mongodb";
+import {headTypes} from "../db/types/head-types";
 
 
 export const postsService = {
-    async getAllPosts(query: getPostsQueryType): Promise<postTypeOutput[]>{
-        return postsReposetories.getAllPosts(query)
+    async getAllPosts(query: getPostsQueryType): Promise<headTypes>{
+        const countPosts = await postsReposetories.countPosts(query)
+        const filterPosts = await postsReposetories.getAllPosts(query)
+
+        return {
+
+            pagesCount: Math.ceil(countPosts / query.pageSize),
+            page: +query.pageNumber,
+            pageSize: +query.pageSize,
+            totalCount: countPosts,
+            items: filterPosts
+        }
     },
 
     async getPostById(id: string): Promise<postTypeOutput | null>{

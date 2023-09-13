@@ -2,12 +2,10 @@ import {Request, Response, Router} from "express";
 import {blogsValidation} from "../middlewares/blogs/blogs-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
-import {blogTypeOutput} from "../db/types/blog-types";
 import {ObjectId} from "mongodb";
 import {RequestParams, RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
-import {blogsCollection, postsCollection} from "../db/db";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {blogsService} from "../domain/blogs-service";
@@ -21,25 +19,11 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
     const blogsQuery = getSortBlogsQuery(req.query.searchNameTerm, req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const blogsCount = await blogsCollection.countDocuments({
-        name: {$regex: req.query.searchNameTerm ? req.query.searchNameTerm : '', $options: 'i'}
-    })
-    const {pageNumber, pageSize} = pagination;
-
-
-    const foundBlogs: blogTypeOutput[] = await blogsService.getAllBlogs({
+    const blogList = await blogsService.getAllBlogs({
         ...blogsQuery,
         ...pagination
     })
 
-    const blogList = {
-
-        pagesCount: Math.ceil(blogsCount / pageSize),
-        page: +pageNumber,
-        pageSize: +pageSize,
-        totalCount: blogsCount,
-        items: foundBlogs
-    }
     res.send(blogList)
 })
 
@@ -78,27 +62,13 @@ blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {s
     const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const _blogId = new ObjectId(req.params.blogId).toString()
-    const postsCount = await postsCollection.countDocuments({
-        blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
-    })
-    const {pageNumber, pageSize} = pagination;
-
     const foundPosts = await blogsService.getPostByBlogId({
         ...postsQuery,
         ...pagination
     }, req.params.blogId)
 
-    const postsList = {
-
-        pagesCount: Math.ceil(postsCount / pageSize),
-        page: +pageNumber,
-        pageSize: +pageSize,
-        totalCount: postsCount,
-        items: foundPosts
-    }
-    if (foundPosts.length > 0) {
-        res.send(postsList)
+    if (foundPosts.items.length > 0) {
+        res.send(foundPosts)
     } else {
         res.sendStatus(404)
     }

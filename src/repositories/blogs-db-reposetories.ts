@@ -24,6 +24,19 @@ export const blogsRepositories = {
         }))
     },
 
+    async countBlogsByName(query: getBlogsQueryType): Promise<number>{
+        return await blogsCollection.countDocuments({
+            name: {$regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i'}
+        })
+    },
+
+    async countBlogsByBlogId(blogId: string): Promise<number>{
+        const _blogId = new ObjectId(blogId).toString()
+        return await blogsCollection.countDocuments({
+            blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
+        })
+    },
+
 
 
     async getBlogById(id: string): Promise<blogTypeOutput | null> {
@@ -62,6 +75,8 @@ export const blogsRepositories = {
             createdAt: p.createdAt
         }))
     },
+
+
 
     async createNewBlog(newBlog: blogTypeInput): Promise<blogTypeOutput> {
 

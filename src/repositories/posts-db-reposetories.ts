@@ -24,6 +24,10 @@ export const postsReposetories = {
         }))
     },
 
+    async countPosts(query: getPostsQueryType): Promise<number>{
+        return await postsCollection.countDocuments({})
+    },
+
     async getPostById(id: string): Promise<postTypeOutput | null>{
         const _id = new ObjectId(id)
         const post: postTypeInput | null = await postsCollection.findOne({_id: _id})

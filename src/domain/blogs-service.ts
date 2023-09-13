@@ -2,11 +2,21 @@ import {blogsRepositories} from "../repositories/blogs-db-reposetories";
 import {blogTypeInput, blogTypeOutput, blogTypePostPut, getBlogsQueryType} from "../db/types/blog-types";
 import {getPostsQueryType, postTypeInput, postTypePostPut} from "../db/types/post-types";
 import {ObjectId} from "mongodb";
+import {headTypes} from "../db/types/head-types";
 
 export const blogsService = {
 
-    async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]> {
-        return blogsRepositories.getAllBlogs(query)
+    async getAllBlogs(query: getBlogsQueryType): Promise<headTypes> {
+        const blogsCount = await blogsRepositories.countBlogsByName(query)
+        const filterBlogs = await blogsRepositories.getAllBlogs(query)
+        return {
+
+            pagesCount: Math.ceil(blogsCount / query.pageSize),
+            page: +query.pageNumber,
+            pageSize: +query.pageSize,
+            totalCount: blogsCount,
+            items: filterBlogs
+        }
     },
 
     async getBlogById(id: string): Promise<blogTypeOutput | null> {
@@ -14,7 +24,17 @@ export const blogsService = {
     },
 
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
-        return blogsRepositories.getPostByBlogId(query, blogId)
+        const filterPostsByBlogId = await blogsRepositories.getPostByBlogId(query, blogId)
+        const countPost = await blogsRepositories.countBlogsByBlogId(blogId)
+
+        return {
+
+            pagesCount: Math.ceil(countPost / query.pageSize),
+            page: +query.pageNumber,
+            pageSize: +query.pageSize,
+            totalCount: countPost,
+            items: filterPostsByBlogId
+        }
     },
 
     async createNewBlog(data: blogTypePostPut): Promise<blogTypeOutput> {

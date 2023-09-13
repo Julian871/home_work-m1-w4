@@ -2,11 +2,9 @@ import {Request, Response, Router} from "express";
 import {postsValidation} from "../middlewares/posts/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
-import {postTypeOutput} from "../db/types/post-types";
 import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
-import {postsCollection} from "../db/db";
 import {postsService} from "../domain/posts-service";
 
 
@@ -18,23 +16,12 @@ postsRouter.get('/', async (req: RequestQueryParams<{sortBy: string, sortDirecti
     const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
 
-    const postsCount = await postsCollection.estimatedDocumentCount({})
-    const {pageNumber, pageSize} = pagination;
-
-    const foundPosts: postTypeOutput[] = await postsService.getAllPosts({
+    const postList = await postsService.getAllPosts({
         ...postsQuery,
         ...pagination
     })
 
-    const postsList = {
-
-        pagesCount: Math.ceil(postsCount / pageSize),
-        page: +pageNumber,
-        pageSize: +pageSize,
-        totalCount: postsCount,
-        items: foundPosts
-    }
-    res.send(postsList)
+    res.send(postList)
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
