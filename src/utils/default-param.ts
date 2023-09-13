@@ -8,3 +8,6 @@ export const DEFAULT_SORT_DIRECTION = -1
 
 export const DEFAULT_SEARCH_NAME_TERM = null
 
+export const DEFAULT_SEARCH_LOGIN_TERM = null
+
+export const DEFAULT_SEARCH_EMAIL_TERM = null

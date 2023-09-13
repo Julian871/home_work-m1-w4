@@ -4,14 +4,25 @@ import {usersService} from "../domain/users-service";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {usersValidation} from "../middlewares/users/users-validation";
 import {RequestQueryParams} from "../db/types/query-types";
+import {getPaginationData} from "../utils/pagination.utility";
+import {getSortUsersQuery} from "../utils/users-query.utility";
 
 export const usersRouter = Router({})
 
 usersRouter.get('/',
     authorizationMiddleware,
-    async (req: RequestQueryParams<{}>, res: Response) => {
+    async (req: RequestQueryParams<{searchLoginTerm: string | null, searchEmailTerm: string | null, sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
 
+        const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
+        const usersQuery = getSortUsersQuery(req.query.sortBy, req.query.sortDirection, req.query.searchLoginTerm, req.query.searchEmailTerm)
+
+        const userList = await usersService.getAllUsers({
+            ...usersQuery,
+            ...pagination
+        })
+        res.send(userList)
 })
+
 
 usersRouter.post('/',
     authorizationMiddleware,

@@ -1,9 +1,23 @@
 import {usersRepositories} from "../repositories/users-db-reposetories";
-import {userTypeInput, userTypeOutput, userTypePostPut} from "../db/types/user-types";
+import {getUsersQueryType, userTypeInput, userTypeOutput, userTypePostPut} from "../db/types/user-types";
 import {ObjectId} from "mongodb";
+import {headTypes} from "../db/types/head-types";
+
 
 
 export const usersService = {
+
+    async getAllUsers(query: getUsersQueryType): Promise<headTypes> {
+        const usersCount = await usersRepositories.countUser(query)
+        const filterUsers = await usersRepositories.getAllUsers(query)
+        return {
+            pagesCount: Math.ceil(usersCount / query.pageSize),
+            page: +query.pageNumber,
+            pageSize: +query.pageSize,
+            totalCount: usersCount,
+            items: filterUsers
+        }
+    },
 
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
         const newUser: userTypeInput = {
