@@ -3,7 +3,7 @@ import {postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 
 
-export const postsReposetories = {
+export const postsRepositories = {
     async getAllPosts(query: getPostsQueryType): Promise<postTypeOutput[]>{
         const posts = await postsCollection.find({})
 

@@ -1,7 +1,7 @@
 import {authTypePost} from "../db/types/auth-types";
 
 
-export const authReposetories= {
+export const authRepositories= {
     async createAuth(password: string, loginOrEmail: string) {
         const createAuth: authTypePost = {
             loginOrEmail,

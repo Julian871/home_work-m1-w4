@@ -1,13 +1,13 @@
 import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
-import {postsReposetories} from "../repositories/posts-db-reposetories";
+import {postsRepositories} from "../repositories/posts-db-repositories";
 import {ObjectId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
 
 
 export const postsService = {
     async getAllPosts(query: getPostsQueryType): Promise<headTypes>{
-        const countPosts = await postsReposetories.countPosts()
-        const filterPosts = await postsReposetories.getAllPosts(query)
+        const countPosts = await postsRepositories.countPosts()
+        const filterPosts = await postsRepositories.getAllPosts(query)
 
         return {
 
@@ -20,7 +20,7 @@ export const postsService = {
     },
 
     async getPostById(id: string): Promise<postTypeOutput | null>{
-        return postsReposetories.getPostById(id)
+        return postsRepositories.getPostById(id)
     },
 
     async createNewPost(data: postTypePostPut): Promise<postTypeOutput> {
@@ -31,15 +31,15 @@ export const postsService = {
             createdAt: new Date().toISOString()
         }
 
-        return postsReposetories.createNewPost(newPost)
+        return postsRepositories.createNewPost(newPost)
     },
 
     async updatePostById(id: string, data: postTypePostPut): Promise<boolean> {
-        return postsReposetories.updatePostById(id, data)
+        return postsRepositories.updatePostById(id, data)
     },
 
     async deletePostById(id: string): Promise<boolean> {
-        return postsReposetories.deletePostById(id)
+        return postsRepositories.deletePostById(id)
     }
 
 }
