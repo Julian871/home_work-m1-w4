@@ -50,7 +50,7 @@ export const usersRepositories = {
     },
 
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<any> {
-        return  usersCollection.find({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
+        return usersCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
     },
 
     async deleteUserById(id: string): Promise<boolean> {

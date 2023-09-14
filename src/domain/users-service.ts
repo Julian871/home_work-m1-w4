@@ -39,12 +39,10 @@ export const usersService = {
         const user = await usersRepositories.findUserByLoginOrEmail(loginOrEmail)
 
         if(!user) return false
-        const passwordHash = await this._generateHash(password, user.password)
+        const passwordHash = await this._generateHash(password, user.passwordSalt)
         return user.passwordHash === passwordHash;
 
-
     },
-
 
     async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)

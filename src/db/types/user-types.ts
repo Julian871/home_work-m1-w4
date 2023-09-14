@@ -9,6 +9,8 @@ export type userTypeInput = {
     passwordSalt: string
 }
 
+
+
 export type userTypeOutput = {
     id: string,
     login: string,
