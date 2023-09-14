@@ -10,5 +10,5 @@ authRouter.post('',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
     const newAuth = await authReposetories.createAuth(req.body.password, req.body.loginOrEmail)
-        res.send(newAuth)
+        res.status(204).send(newAuth)
 })
