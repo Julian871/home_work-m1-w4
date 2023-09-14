@@ -12,6 +12,8 @@ authRouter.post('',
     const checkResult = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
        if(checkResult) {
            res.sendStatus(204)
+       } else {
+           res.sendStatus(401)
        }
-       res.sendStatus(401)
+
 })

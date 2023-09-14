@@ -49,7 +49,7 @@ export const usersRepositories = {
         }
     },
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<any> {
+    async findUserByLoginOrEmail(loginOrEmail: string) {
         return usersCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
     },
 
