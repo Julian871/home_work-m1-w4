@@ -1,12 +1,12 @@
 import {
     getPostsQueryType,
-    postCommentInput, postCommentOutput,
     postTypeInput,
     postTypeOutput,
     postTypePostPut
 } from "../db/types/post-types";
 import {postsCollection, postsCommentsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
+import {postCommentInput, postCommentOutput} from "../db/types/comments-types";
 
 
 export const postsRepositories = {
@@ -73,6 +73,7 @@ export const postsRepositories = {
 
         }
     },
+
     async createNewPost(newPost: postTypeInput): Promise<postTypeOutput> {
         await postsCollection.insertOne(newPost)
         return  {

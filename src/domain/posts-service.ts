@@ -1,6 +1,5 @@
 import {
     getPostsQueryType,
-    postCommentInput, postCommentOutput, postCommentPut,
     postTypeInput,
     postTypeOutput,
     postTypePostPut
@@ -8,6 +7,7 @@ import {
 import {postsRepositories} from "../repositories/posts-db-repositories";
 import {ObjectId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
+import {postCommentInput, postCommentOutput, postCommentPut} from "../db/types/comments-types";
 
 
 export const postsService = {

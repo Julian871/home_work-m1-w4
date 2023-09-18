@@ -4,7 +4,9 @@ import {postsRouter} from "./routers/post-routers";
 import {usersRouter} from "./routers/users-routers";
 import {testingRouter} from "./routers/delete-all-routers";
 import {authRouter} from "./routers/auth-routers";
+import {comRouter} from "./routers/comments-routers";
 import bodyParser from "body-parser";
+
 
 
 
@@ -20,4 +22,4 @@ app.use('/posts', postsRouter)
 app.use('/testing/all-data', testingRouter)
 app.use('/users', usersRouter)
 app.use('/auth/login', authRouter)
-
+app.use('/comments', comRouter)
