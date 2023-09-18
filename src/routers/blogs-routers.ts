@@ -28,9 +28,7 @@ blogsRouter.get('/',async (req: RequestQueryParams<{searchNameTerm: string | nul
 })
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
-    const isValid = ObjectId.isValid(req.params.id)
-
-    if(!isValid){
+    if(!ObjectId.isValid(req.params.id)){
         res.sendStatus(404)
         return
     }
@@ -88,6 +86,10 @@ blogsRouter.put('/:id',
     blogsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
+        if(!ObjectId.isValid(req.params.id)){
+            res.sendStatus(404)
+            return
+        }
         const isUpdate = await blogsService.updateBlogById(req.params.id, req.body)
         if (isUpdate) {
             const blog = await blogsService.getBlogById(req.params.id)
@@ -98,6 +100,10 @@ blogsRouter.put('/:id',
 })
 
 blogsRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
+    if(!ObjectId.isValid(req.params.id)){
+        res.sendStatus(404)
+        return
+    }
     const isDelete = await blogsService.deleteBlogById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)

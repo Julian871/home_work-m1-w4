@@ -1,4 +1,10 @@
-import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
+import {
+    getPostsQueryType,
+    postCommentInput, postCommentOutput, postCommentPut,
+    postTypeInput,
+    postTypeOutput,
+    postTypePostPut
+} from "../db/types/post-types";
 import {postsRepositories} from "../repositories/posts-db-repositories";
 import {ObjectId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
@@ -19,6 +25,19 @@ export const postsService = {
         }
     },
 
+    async getAllPostsComments(query: getPostsQueryType): Promise<headTypes>{
+        const countPostsComments = await postsRepositories.countPostsComments()
+        const filterPostsComments = await postsRepositories.getAllPostsComments(query)
+
+        return {
+            pagesCount: Math.ceil(countPostsComments / query.pageSize),
+            page: +query.pageNumber,
+            pageSize: +query.pageSize,
+            totalCount: countPostsComments,
+            items: filterPostsComments
+        }
+    },
+
     async getPostById(id: string): Promise<postTypeOutput | null>{
         return postsRepositories.getPostById(id)
     },
@@ -32,6 +51,29 @@ export const postsService = {
         }
 
         return postsRepositories.createNewPost(newPost)
+    },
+
+    async createNewPostComment(idPost: string, data: postCommentPut): Promise<postCommentOutput> {
+        const newPostComment: postCommentInput = {
+            _id: new ObjectId(),
+            ...data,
+            commentatorInfo: {
+                userId: 'string',
+                userLogin: 'string'
+            },
+            createdAt: new Date().toISOString(),
+            idPost
+        }
+
+        return postsRepositories.createNewPostComment(newPostComment)
+    },
+
+    async checkPostCollection(id: string): Promise<boolean> {
+        return postsRepositories.checkPostCollection(id)
+    },
+
+    async checkPostCommentCollection(id: string): Promise<boolean> {
+        return postsRepositories.checkPostCommentCollection(id)
     },
 
     async updatePostById(id: string, data: postTypePostPut): Promise<boolean> {

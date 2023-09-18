@@ -6,6 +6,7 @@ import {usersValidation} from "../middlewares/users/users-validation";
 import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortUsersQuery} from "../utils/users-query.utility";
+import {ObjectId} from "mongodb";
 
 export const usersRouter = Router({})
 
@@ -36,6 +37,10 @@ usersRouter.post('/',
 
 
 usersRouter.delete('/:id', authorizationMiddleware, async (req: Request, res: Response) => {
+    if(!ObjectId.isValid(req.params.id)){
+        res.sendStatus(404)
+        return
+    }
     const isDelete = await usersService.deleteBlogById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)

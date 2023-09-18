@@ -1,5 +1,11 @@
-import {getPostsQueryType, postTypeInput, postTypeOutput, postTypePostPut} from "../db/types/post-types";
-import {postsCollection} from "../db/db";
+import {
+    getPostsQueryType,
+    postCommentInput, postCommentOutput,
+    postTypeInput,
+    postTypeOutput,
+    postTypePostPut
+} from "../db/types/post-types";
+import {postsCollection, postsCommentsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 
 
@@ -24,8 +30,29 @@ export const postsRepositories = {
         }))
     },
 
+    async getAllPostsComments(query: getPostsQueryType): Promise<postCommentOutput[]>{
+        const posts = await postsCommentsCollection.find({})
+
+            .skip((query.pageNumber - 1) * query.pageSize)
+            .limit(+query.pageSize)
+            .sort({[query.sortBy]: query.sortDirection })
+            .toArray()
+
+        return posts.map((p) => ({
+            id: p._id.toString(),
+            content: p.content,
+            commentatorInfo: p.commentatorInfo,
+            createdAt: p.createdAt
+
+        }))
+    },
+
     async countPosts(): Promise<number>{
         return await postsCollection.countDocuments()
+    },
+
+    async countPostsComments(): Promise<number>{
+        return await postsCommentsCollection.countDocuments()
     },
 
     async getPostById(id: string): Promise<postTypeOutput | null>{
@@ -59,6 +86,17 @@ export const postsRepositories = {
         }
     },
 
+    async createNewPostComment(newPostComment: postCommentInput): Promise<postCommentOutput> {
+        await postsCommentsCollection.insertOne(newPostComment)
+        return  {
+            id: newPostComment._id.toString(),
+            content: newPostComment.content,
+            commentatorInfo: newPostComment.commentatorInfo,
+            createdAt: newPostComment.createdAt
+
+        }
+    },
+
     async updatePostById(id: string, data: postTypePostPut): Promise<boolean> {
         const _id = new ObjectId(id)
         const result = await postsCollection.updateOne({_id: _id}, {
@@ -69,6 +107,17 @@ export const postsRepositories = {
                 blogId: data.blogId
             }})
         return result.matchedCount === 1
+    },
+
+    async checkPostCollection(id: string): Promise<boolean> {
+        const _id = new ObjectId(id)
+        const result = await postsCollection.findOne({_id: _id})
+        return !!result;
+    },
+
+    async checkPostCommentCollection(id: string): Promise<boolean> {
+        const result = await postsCommentsCollection.findOne({idPost: id})
+        return !!result;
     },
 
     async deletePostById(id: string): Promise<boolean> {
