@@ -26,6 +26,19 @@ export const usersRepositories = {
         }))
     },
 
+    async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
+        const user: userTypeInput | null = await usersCollection.findOne({_id: id})
+        if (!user) {
+            return null
+        }
+        return {
+            id: user._id.toString(),
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt
+        }
+    },
+
     async countUser(query: getUsersQueryType): Promise<number> {
         return usersCollection.countDocuments({
             $or: [

@@ -20,6 +20,10 @@ export const usersService = {
         }
     },
 
+    async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
+        return usersRepositories.getUserById(id)
+    },
+
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(data.password, passwordSalt)

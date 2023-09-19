@@ -21,5 +21,7 @@ app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
 app.use('/testing/all-data', testingRouter)
 app.use('/users', usersRouter)
-app.use('/auth/login', authRouter)
+app.use('/auth', authRouter)
 app.use('/comments', comRouter)
+
+export const JWT_SECRET = process.env.JWT_SECRET || '123'
