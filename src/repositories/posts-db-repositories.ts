@@ -30,8 +30,10 @@ export const postsRepositories = {
         }))
     },
 
-    async getAllPostsComments(query: getPostsQueryType): Promise<postCommentOutput[]>{
-        const posts = await postsCommentsCollection.find({})
+    async getAllPostsComments(query: getPostsQueryType, id: string): Promise<postCommentOutput[]>{
+        const posts = await postsCommentsCollection.find({
+            idPost: {$regex: id ? id : '', $options: 'i'}
+        })
 
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
@@ -51,8 +53,10 @@ export const postsRepositories = {
         return await postsCollection.countDocuments()
     },
 
-    async countPostsComments(): Promise<number>{
-        return await postsCommentsCollection.countDocuments()
+    async countPostsComments(id: string): Promise<number>{
+        return await postsCommentsCollection.countDocuments({
+            idPost: {$regex: id ? id : '', $options: 'i'}
+        })
     },
 
     async getPostById(id: string): Promise<postTypeOutput | null>{

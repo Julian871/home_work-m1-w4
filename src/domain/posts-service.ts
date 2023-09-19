@@ -25,9 +25,9 @@ export const postsService = {
         }
     },
 
-    async getAllPostsComments(query: getPostsQueryType): Promise<headTypes>{
-        const countPostsComments = await postsRepositories.countPostsComments()
-        const filterPostsComments = await postsRepositories.getAllPostsComments(query)
+    async getAllPostsComments(query: getPostsQueryType, id: string): Promise<headTypes>{
+        const countPostsComments = await postsRepositories.countPostsComments(id)
+        const filterPostsComments = await postsRepositories.getAllPostsComments(query, id)
 
         return {
             pagesCount: Math.ceil(countPostsComments / query.pageSize),

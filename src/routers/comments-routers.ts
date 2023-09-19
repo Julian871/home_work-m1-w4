@@ -25,7 +25,7 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
         const postCommentsList = await postsService.getAllPostsComments({
             ...postsQuery,
             ...pagination
-        });
+        }, req.params.id);
 
         res.send(postCommentsList)
     } else {
