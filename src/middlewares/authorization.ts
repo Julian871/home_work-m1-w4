@@ -22,6 +22,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     if(userId) {
         req.user = await usersService.getUserById(userId)
         next()
+        return
     }
     res.send(401)
 }
