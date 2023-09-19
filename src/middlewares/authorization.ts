@@ -12,18 +12,7 @@ export const authorizationMiddleware = (req: Request<any, any, any, any>, res: R
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-
-    const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-    const token = await jwtService.createJWT(user)
-
-    if(req.headers.authorization !== 'Bearer '+ token) {
-        return res.sendStatus(401)
-
-    } else {
-        return next();
-    }
-
-    /*if (!req.headers.authorization) {
+    if (!req.headers.authorization) {
         res.sendStatus(401)
         return
     }
@@ -32,8 +21,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     const userId = await jwtService.getUserIdToken(token)
     if(userId) {
-        req.user = await usersService.getUserById(userId)
+        req.body = await usersService.getUserById(userId)
         next()
     }
-    res.send(401)*/
+    res.send(401)
 }
