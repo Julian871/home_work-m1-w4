@@ -1,4 +1,6 @@
 import {NextFunction, Request, Response} from "express";
+import {jwtService} from "../application/jwt-service";
+import {usersService} from "../domain/users-service";
 
 export const authorizationMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
     if(req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
@@ -10,7 +12,11 @@ export const authorizationMiddleware = (req: Request<any, any, any, any>, res: R
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    if(req.headers.authorization !== 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTUxMTEwNDksImV4cCI6MTY5NTExNDY0OX0.UMUEyc9SN5z9FM0nn2DcL5K7elejKy1WFlq-S8vlp_s') {
+
+    const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const token = await jwtService.createJWT(user)
+
+    if(req.headers.authorization !== 'Bearer '+ token) {
         return res.sendStatus(401)
 
     } else {
