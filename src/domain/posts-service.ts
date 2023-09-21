@@ -8,6 +8,7 @@ import {postsRepositories} from "../repositories/posts-db-repositories";
 import {ObjectId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
 import {postCommentInput, postCommentOutput, postCommentPut} from "../db/types/comments-types";
+import {userTypeOutput} from "../db/types/user-types";
 
 
 export const postsService = {
@@ -53,13 +54,14 @@ export const postsService = {
         return postsRepositories.createNewPost(newPost)
     },
 
-    async createNewPostComment(idPost: string, data: postCommentPut): Promise<postCommentOutput> {
+    async createNewPostComment(idPost: string, data: postCommentPut, user: userTypeOutput ): Promise<postCommentOutput> {
+
         const newPostComment: postCommentInput = {
             _id: new ObjectId(),
             ...data,
             commentatorInfo: {
-                userId: 'string',
-                userLogin: 'string'
+                userId: user.id,
+                userLogin: user.login
             },
             createdAt: new Date().toISOString(),
             idPost

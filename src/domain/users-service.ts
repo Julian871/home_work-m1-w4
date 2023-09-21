@@ -1,6 +1,6 @@
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {getUsersQueryType, userTypeInput, userTypeOutput, userTypePostPut} from "../db/types/user-types";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
 import bcrypt from 'bcrypt'
 
@@ -21,7 +21,7 @@ export const usersService = {
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
-        return usersRepositories.getUserById(id)
+        return await usersRepositories.getUserById(id)
     },
 
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
@@ -39,12 +39,16 @@ export const usersService = {
         return usersRepositories.createNewUser(newUser)
     },
 
-    async checkCredentials(loginOrEmail: string, password: string) {
+    async checkCredentials(loginOrEmail: string, password: string): Promise<WithId<userTypeInput> | null> {
         const user = await usersRepositories.findUserByLoginOrEmail(loginOrEmail)
 
-        if(!user) return false
+        if(!user) return null
         const passwordHash = await this._generateHash(password, user.passwordSalt)
-        return user.passwordHash === passwordHash;
+
+        if(user.passwordHash !== passwordHash){
+            return null
+        }
+        return user;
 
     },
 

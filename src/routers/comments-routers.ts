@@ -43,6 +43,9 @@ comRouter.put('/:id',
             res.sendStatus(404)
             return
         }
+
+        // const checkOwner = await
+
         const isUpdate = await commentsService.updateCommentById(req.params.id, req.body)
         if (isUpdate) {
             res.sendStatus(204)
@@ -79,7 +82,7 @@ postsRouter.post('/:id/comments',
         const checkID = await postsService.checkPostCollection(req.params.id)
 
         if(checkID) {
-            const newPostComment = await postsService.createNewPostComment(req.params.id, req.body)
+            const newPostComment = await postsService.createNewPostComment(req.params.id, req.body, req.user!)
             res.status(201).send(newPostComment)
         } else {
             res.sendStatus(404)

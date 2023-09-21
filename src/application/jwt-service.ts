@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken'
 import {JWT_SECRET} from "../settings";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
+import {userTypeInput} from "../db/types/user-types";
 
 
 export const jwtService = {
-    async createJWT(user: any) {
+    async createJWT(user: WithId<userTypeInput>) {
         return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '1h'})
     },
 
