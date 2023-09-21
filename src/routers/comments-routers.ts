@@ -44,7 +44,10 @@ comRouter.put('/:id',
             return
         }
 
-        // const checkOwner = await
+        const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
+        if(!checkOwner) {
+            res.sendStatus(403)
+        }
 
         const isUpdate = await commentsService.updateCommentById(req.params.id, req.body)
         if (isUpdate) {
@@ -94,6 +97,12 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         res.sendStatus(404)
         return
     }
+
+    const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
+    if(!checkOwner) {
+        res.sendStatus(403)
+    }
+
     const isDelete = await commentsService.deleteCommentById(req.params.id)
     if (isDelete) {
         res.sendStatus(204)
