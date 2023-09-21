@@ -44,6 +44,12 @@ comRouter.put('/:id',
             return
         }
 
+        let comment = await commentsService.getCommentById(req.params.id)
+        if (!comment) {
+            res.sendStatus(404)
+            return
+        }
+
         const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
         if(!checkOwner) {
             res.sendStatus(403)
