@@ -44,7 +44,7 @@ export const usersRepositories = {
     },
 
     async getUserByLogin(login: string){
-        return await usersCollection.findOne({'accountData.login': login})
+        return await usersCollection.findOne({'accountData.userName': login})
     },
 
     async countUser(query: getUsersQueryType): Promise<number> {

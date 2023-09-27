@@ -10,7 +10,7 @@ export const usersValidation = [
         .custom(async (value) => {
             const email = await usersRepositories.getUserByLogin(value)
             if (email !== null) {
-                throw new Error('email already exist')
+                throw new Error('login already exist')
             }
         }),
     body('password').isString().withMessage('login is not string'),
