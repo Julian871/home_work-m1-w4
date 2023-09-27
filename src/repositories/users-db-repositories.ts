@@ -1,6 +1,6 @@
 import {ObjectId} from "mongodb";
 import {usersCollection} from "../db/db";
-import {getUsersQueryType, userTypeInput, userTypeOutput} from "../db/types/user-types";
+import {getUsersQueryType, userAccountDBType, userTypeInput, userTypeOutput} from "../db/types/user-types";
 
 export const usersRepositories = {
 
@@ -60,6 +60,12 @@ export const usersRepositories = {
             email: newUser.email,
             createdAt: newUser.createdAt
         }
+    },
+
+    async createAuthNewUser(newUser: userAccountDBType){
+
+        await usersCollection.insertOne(newUser)
+        return newUser
     },
 
     async findUserByLoginOrEmail(loginOrEmail: string) {

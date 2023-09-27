@@ -1,5 +1,20 @@
 import {ObjectId} from "mongodb";
 
+export type userAccountDBType = {
+    _id: ObjectId,
+    accountData: {
+        userName: string,
+        email: string,
+        passwordHash: string,
+        createdAt: Date
+    },
+    emailConfirmation: {
+        confirmationCode: string,
+        expirationDate: Date,
+        isConfirmation: boolean
+    }
+}
+
 export type userTypeInput = {
     _id: ObjectId,
     login: string,
@@ -8,8 +23,6 @@ export type userTypeInput = {
     passwordHash: string,
     passwordSalt: string
 }
-
-
 
 export type userTypeOutput = {
     id: string,
