@@ -9,13 +9,16 @@ import {emailManager} from "../manegers/email-meneger";
 
 export const authService = {
     async createUser(login: string, email: string, password: string) {
-        const passwordHash = await this._generateHash(password)
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await this._generateHash(password, passwordSalt)
+
         const user: userAccountDBType = {
             _id: new ObjectId(),
             accountData: {
-                userName: login,
+                login,
                 email,
                 passwordHash,
+                passwordSalt,
                 createdAt: new Date()
             },
             emailConfirmation: {
@@ -31,14 +34,12 @@ export const authService = {
         try {
             await emailManager.sendMessage(email, user.emailConfirmation.confirmationCode)
         } catch (error) {
-            console.error(error)
             await usersRepositories.deleteUserById(user._id.toString())
         }
 
     },
 
-    async _generateHash(password: string) {
-        const salt = await bcrypt.genSalt(10)
+    async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)
     },
 }

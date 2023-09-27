@@ -44,7 +44,7 @@ export const usersRepositories = {
     },
 
     async getUserByLogin(login: string){
-        return await usersCollection.findOne({'accountData.userName': login})
+        return await usersCollection.findOne({'accountData.login': login})
     },
 
     async countUser(query: getUsersQueryType): Promise<number> {
@@ -77,7 +77,8 @@ export const usersRepositories = {
     },
 
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return usersCollection.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
+        console.log(loginOrEmail)
+        return usersCollection.findOne({$or: [{'accountData.login': loginOrEmail}, {"accountData.email": loginOrEmail}]})
     },
 
     async deleteUserById(id: string): Promise<boolean> {

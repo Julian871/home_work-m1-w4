@@ -3,9 +3,10 @@ import {ObjectId} from "mongodb";
 export type userAccountDBType = {
     _id: ObjectId,
     accountData: {
-        userName: string,
+        login: string,
         email: string,
         passwordHash: string,
+        passwordSalt: string,
         createdAt: Date
     },
     emailConfirmation: {
