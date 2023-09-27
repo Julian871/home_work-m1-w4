@@ -23,20 +23,21 @@ authRouter
             }
         })
 
-    .post('/registration-confirmation',
+/*    .post('/registration-confirmation',
         async (req: Request, res: Response) => {
 
-        })
+        })*/
 
     .post('/registration',
         usersValidation,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
-            res.sendStatus(204)
+            res.status(204).send('Confirmation code send on email')
         })
 
+/*
     .post('/registration-email-resending',
         async (req: Request, res: Response) => {
 
-        });
+        });*/
