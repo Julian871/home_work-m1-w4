@@ -39,6 +39,14 @@ export const usersRepositories = {
         }
     },
 
+    async getUserByEmail(email: string){
+        return await usersCollection.findOne({'accountData.email': email})
+    },
+
+    async getUserByLogin(login: string){
+        return await usersCollection.findOne({'accountData.login': login})
+    },
+
     async countUser(query: getUsersQueryType): Promise<number> {
         return usersCollection.countDocuments({
             $or: [

@@ -16,6 +16,11 @@ export const postsValidation = [
             if (!blog) {
                 throw new Error('incorrect blogID')
             }
-        })
+        }).custom(async (value) => {
+        const blog = await blogsRepositories.getBlogById(value)
+        if (!blog) {
+            throw new Error('incorrect blogID')
+        }
+    })
         .withMessage('incorrect blogID')
 ]

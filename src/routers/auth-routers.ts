@@ -33,7 +33,7 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
-            res.status(204).send('Confirmation code send on email')
+            res.sendStatus(204)
         })
 
 /*
