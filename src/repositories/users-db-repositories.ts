@@ -77,7 +77,6 @@ export const usersRepositories = {
     },
 
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        console.log(loginOrEmail)
         return usersCollection.findOne({$or: [{'accountData.login': loginOrEmail}, {"accountData.email": loginOrEmail}]})
     },
 
