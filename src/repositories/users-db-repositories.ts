@@ -7,9 +7,9 @@ export const usersRepositories = {
     async getAllUsers(query: getUsersQueryType): Promise<userTypeOutput[]> {
         const users = await usersCollection.find({
             $or: [
-                {login: {
+                {'accountData.login': {
                     $regex :query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
-                {email: {
+                {'accountData.email': {
                     $regex: query.searchEmailTerm ? query.searchEmailTerm : '',
                     $options: 'i'
                 }}]
@@ -50,9 +50,9 @@ export const usersRepositories = {
     async countUser(query: getUsersQueryType): Promise<number> {
         return usersCollection.countDocuments({
             $or: [
-                {login: {
+                {'accountData.login': {
                         $regex :query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
-                {email: {
+                {'accountData.email': {
                         $regex: query.searchEmailTerm ? query.searchEmailTerm : '',
                         $options: 'i'
                     }}]
