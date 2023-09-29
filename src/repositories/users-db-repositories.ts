@@ -1,6 +1,6 @@
 import {ObjectId} from "mongodb";
 import {usersCollection} from "../db/db";
-import {getUsersQueryType, userAccountDBType, userTypeInput, userTypeOutput} from "../db/types/user-types";
+import {getUsersQueryType, userAccountDBType, userTypeOutput} from "../db/types/user-types";
 
 export const usersRepositories = {
 
@@ -20,22 +20,22 @@ export const usersRepositories = {
 
         return users.map((p) => ({
             id: p._id.toString(),
-            login: p.login,
-            email: p.email,
-            createdAt: p.createdAt
+            login: p.accountData.login,
+            email: p.accountData.email,
+            createdAt: p.accountData.createdAt.toISOString()
         }))
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
-        const user: userTypeInput | null = await usersCollection.findOne({_id: id})
+        const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
         if (!user) {
             return null
         }
         return {
             id: user._id.toString(),
-            login: user.login,
-            email: user.email,
-            createdAt: user.createdAt
+            login: user.accountData.login,
+            email: user.accountData.email,
+            createdAt: user.accountData.createdAt.toISOString()
         }
     },
 
@@ -59,14 +59,14 @@ export const usersRepositories = {
         })
     },
 
-    async createNewUser(newUser: userTypeInput): Promise<userTypeOutput> {
+    async createNewUser(newUser: userAccountDBType): Promise<userTypeOutput> {
 
         await usersCollection.insertOne(newUser)
         return {
             id: newUser._id.toString(),
-            login: newUser.login,
-            email: newUser.email,
-            createdAt: newUser.createdAt
+            login: newUser.accountData.login,
+            email: newUser.accountData.email,
+            createdAt: newUser.accountData.createdAt.toISOString()
         }
     },
 

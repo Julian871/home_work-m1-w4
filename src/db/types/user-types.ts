@@ -16,15 +16,6 @@ export type userAccountDBType = {
     }
 }
 
-export type userTypeInput = {
-    _id: ObjectId,
-    login: string,
-    email: string,
-    createdAt: string,
-    passwordHash: string,
-    passwordSalt: string
-}
-
 export type userTypeOutput = {
     id: string,
     login: string,
