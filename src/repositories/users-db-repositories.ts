@@ -39,9 +39,9 @@ export const usersRepositories = {
         const user = await usersCollection.findOne({'accountData.email': email})
         if(!user) {
             return null
-        } else {
+        } else if (user.emailConfirmation.isConfirmation) {
             return user
-        }
+        } else {return null}
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
@@ -102,6 +102,12 @@ export const usersRepositories = {
         const _id = new ObjectId(id)
         const result = await usersCollection.deleteOne({_id: _id})
         return result.deletedCount === 1
-    }
+    },
 
+    async updateConfirmStatus(_id: ObjectId) {
+        await usersCollection.updateOne({_id: _id}, {
+            $set: {
+                'emailConfirmation.isConfirmation': true
+            }})
+    }
 }

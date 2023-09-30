@@ -49,7 +49,7 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const user = await usersService.checkEmail(req.body.email)
-            if (user) {
+            if (!user) {
                 res.sendStatus(204)
-            } else {res.sendStatus(404)}
+            } else {res.sendStatus(400)}
         });

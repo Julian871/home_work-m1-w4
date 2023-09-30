@@ -58,6 +58,7 @@ export const usersService = {
             return false
         } else {
             await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
+            await usersRepositories.updateConfirmStatus(user._id)
             return true
         }
     },
