@@ -1,11 +1,10 @@
 import {Request, Response, Router} from "express";
-import {authValidation} from "../middlewares/auth-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
-import {authRegistrationConfirm} from "../middlewares/auth-registration-confirm";
+import {authCode, authEmail, authValidation} from "../middlewares/auth";
 
 
 export const authRouter = Router({})
@@ -16,6 +15,9 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+            /*console.log('user: ', user)
+            console.log('loginOrEmail: ', req.body.loginOrEmail)
+            console.log('password', req.body.password)*/
             if (user) {
                 const token = await jwtService.createJWT(user)
                 res.status(200).send({accessToken: token})
@@ -25,11 +27,13 @@ authRouter
         })
 
     .post('/registration-confirmation',
-        authRegistrationConfirm,
+        authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const result = await usersService.checkConfirmationCode(req.body.code)
-            if (result) {res.sendStatus(204)}
+        const user = await usersService.checkConfirmationCode(req.body.code)
+            if (user) {
+                res.sendStatus(204)
+            } else {res.sendStatus(404)}
         })
 
     .post('/registration',
@@ -40,8 +44,12 @@ authRouter
             res.sendStatus(204)
         })
 
-/*
     .post('/registration-email-resending',
+        authEmail,
+        inputValidationMiddleware,
         async (req: Request, res: Response) => {
-
-        });*/
+            const user = await usersService.checkEmail(req.body.email)
+            if (user) {
+                res.sendStatus(204)
+            } else {res.sendStatus(404)}
+        });

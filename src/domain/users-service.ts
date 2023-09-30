@@ -55,9 +55,19 @@ export const usersService = {
     async checkConfirmationCode(code: string) {
         const user = await usersRepositories.checkUserByConfirmationCode(code)
         if(user === null) {
-            return null
+            return false
         } else {
             await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
+            return true
+        }
+    },
+
+    async checkEmail(email: string) {
+        const user = await usersRepositories.checkUserByEmail(email)
+        if(user === null) {
+            return false
+        } else {
+            await emailManager.sendConfirmationCode(user.accountData.email, user.emailConfirmation.confirmationCode)
             return true
         }
     },

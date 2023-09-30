@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import {postsValidation} from "../middlewares/posts/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
-import {RequestParams, RequestQueryParams} from "../db/types/query-types";
+import {RequestQueryParams} from "../db/types/query-types";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {postsService} from "../domain/posts-service";

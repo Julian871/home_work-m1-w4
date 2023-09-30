@@ -35,6 +35,15 @@ export const usersRepositories = {
         }
     },
 
+    async checkUserByEmail(email: string) {
+        const user = await usersCollection.findOne({'accountData.email': email})
+        if(!user) {
+            return null
+        } else {
+            return user
+        }
+    },
+
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
         const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
         if (!user) {
