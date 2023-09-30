@@ -32,7 +32,7 @@ export const authService = {
         }
         await usersRepositories.createAuthNewUser(user)
         try {
-            await emailManager.sendMessage(email, user.emailConfirmation.confirmationCode)
+            await emailManager.sendConfirmationCode(email, user.emailConfirmation.confirmationCode)
         } catch (error) {
             await usersRepositories.deleteUserById(user._id.toString())
         }

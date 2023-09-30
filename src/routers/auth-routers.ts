@@ -5,6 +5,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
+import {authRegistrationConfirm} from "../middlewares/auth-registration-confirm";
 
 
 export const authRouter = Router({})
@@ -23,10 +24,13 @@ authRouter
             }
         })
 
-/*    .post('/registration-confirmation',
+    .post('/registration-confirmation',
+        authRegistrationConfirm,
+        inputValidationMiddleware,
         async (req: Request, res: Response) => {
-
-        })*/
+        const result = await usersService.checkConfirmationCode(req.body.code)
+            if (result) {res.sendStatus(204)}
+        })
 
     .post('/registration',
         usersValidation,

@@ -5,6 +5,7 @@ import {headTypes} from "../db/types/head-types";
 import bcrypt from 'bcrypt'
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
+import {emailManager} from "../manegers/email-meneger";
 
 
 
@@ -49,6 +50,16 @@ export const usersService = {
             }
         }
         return usersRepositories.createNewUser(newUser)
+    },
+
+    async checkConfirmationCode(code: string) {
+        const user = await usersRepositories.checkUserByConfirmationCode(code)
+        if(user === null) {
+            return null
+        } else {
+            await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
+            return true
+        }
     },
 
     async checkCredentials(loginOrEmail: string, password: string): Promise<WithId<userAccountDBType> | null> {

@@ -26,6 +26,15 @@ export const usersRepositories = {
         }))
     },
 
+    async checkUserByConfirmationCode(code: string) {
+        const user = await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
+        if(!user) {
+            return null
+        } else {
+            return user
+        }
+    },
+
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
         const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
         if (!user) {
