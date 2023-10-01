@@ -33,7 +33,7 @@ authRouter
         const user = await usersService.checkConfirmationCode(req.body.code)
             if (user === true) {
                 res.sendStatus(204)
-            } else {res.status(404).send(user)}
+            } else {res.status(400).send(user)}
         })
 
     .post('/registration',
