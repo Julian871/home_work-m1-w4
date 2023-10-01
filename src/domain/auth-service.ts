@@ -37,6 +37,8 @@ export const authService = {
             await usersRepositories.deleteUserById(user._id.toString())
         }
 
+        return user
+
     },
 
     async _generateHash(password: string, salt: string) {
