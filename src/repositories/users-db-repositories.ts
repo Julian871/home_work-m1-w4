@@ -13,9 +13,10 @@ export const usersRepositories = {
                     $regex: query.searchEmailTerm ? query.searchEmailTerm : '',
                     $options: 'i'
                 }}]
-        }).sort({[query.sortBy]: query.sortDirection })
+        })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
+            .sort({[query.sortBy]: query.sortDirection })
             .toArray()
 
         return users.map((p) => ({

@@ -15,9 +15,6 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-            /*console.log('user: ', user)
-            console.log('loginOrEmail: ', req.body.loginOrEmail)
-            console.log('password', req.body.password)*/
             if (user) {
                 const token = await jwtService.createJWT(user)
                 res.status(200).send({accessToken: token})
