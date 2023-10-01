@@ -55,7 +55,7 @@ export const usersService = {
     async checkConfirmationCode(code: string) {
         const user = await usersRepositories.checkUserByConfirmationCode(code)
         if(user === null) {
-            return false
+            return { errorsMessages: [{ message: 'Incorrect code', field: "code" }] }
         } else {
             await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
             await usersRepositories.updateConfirmStatus(user._id)
@@ -64,12 +64,14 @@ export const usersService = {
     },
 
     async checkEmail(email: string) {
-        const user = await usersRepositories.checkUserByEmail(email)
-        if(user === null) {
-            return false
-        } else {
-            await emailManager.sendConfirmationCode(user.accountData.email, user.emailConfirmation.confirmationCode)
+        const confirmStatus = await usersRepositories.checkConfirmationStatus(email)
+        if(confirmStatus === undefined) {
+            return { errorsMessages: [{ message: 'Incorrect email', field: "email" }] }
+        } else if(confirmStatus.emailConfirmation.isConfirmation) {
+            await emailManager.sendConfirmationCode(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
             return true
+        } else {
+            return { errorsMessages: [{ message: 'no confirm', field: "email" }] }
         }
     },
 
@@ -87,6 +89,7 @@ export const usersService = {
     async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)
     },
+
     async deleteBlogById(id: string): Promise<boolean> {
         return await usersRepositories.deleteUserById(id)
     }

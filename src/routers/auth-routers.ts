@@ -31,9 +31,9 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
         const user = await usersService.checkConfirmationCode(req.body.code)
-            if (user) {
+            if (user === true) {
                 res.sendStatus(204)
-            } else {res.sendStatus(404)}
+            } else {res.status(404).send(user)}
         })
 
     .post('/registration',
@@ -49,7 +49,7 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             const user = await usersService.checkEmail(req.body.email)
-            if (!user) {
+            if (user === true) {
                 res.sendStatus(204)
-            } else {res.sendStatus(400)}
+            } else {res.status(400).send(user)}
         });

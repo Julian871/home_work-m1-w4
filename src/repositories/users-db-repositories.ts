@@ -35,13 +35,13 @@ export const usersRepositories = {
         }
     },
 
-    async checkUserByEmail(email: string) {
+    async checkConfirmationStatus(email: string) {
         const user = await usersCollection.findOne({'accountData.email': email})
         if(!user) {
-            return null
-        } else if (user.emailConfirmation.isConfirmation) {
+            return undefined
+        } else {
             return user
-        } else {return null}
+        }
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
