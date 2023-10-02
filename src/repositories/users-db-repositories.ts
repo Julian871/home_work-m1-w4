@@ -7,12 +7,11 @@ export const usersRepositories = {
     async getAllUsers(query: getUsersQueryType): Promise<userTypeOutput[]> {
         const users = await usersCollection.find({
             $or: [
-                {'accountData.login': {
-                    $regex :query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
-                {'accountData.email': {
-                    $regex: query.searchEmailTerm ? query.searchEmailTerm : '',
-                    $options: 'i'
-                }}]
+                {login: {
+                    $regex: query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
+                {email: {
+                    $regex: query.searchEmailTerm ? query.searchEmailTerm : '', $options: 'i'} }
+            ]
         })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
