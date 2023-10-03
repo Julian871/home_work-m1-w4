@@ -32,11 +32,12 @@ export const authService = {
         }
         await usersRepositories.createAuthNewUser(user)
         try {
-            await emailManager.sendConfirmationCode(email, user.emailConfirmation.confirmationCode)
+            await emailManager.sendConfirmationLink(email, user.emailConfirmation.confirmationCode)
         } catch (error) {
-            await usersRepositories.deleteUserById(user._id.toString())
+            console.log('email send Error:', error)
+            //await usersRepositories.deleteUserById(user._id.toString())
         }
-
+return;
     },
 
     async _generateHash(password: string, salt: string) {

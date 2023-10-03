@@ -38,7 +38,7 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
-            res.sendStatus(204)
+           return res.sendStatus(204)
         })
 
     .post('/registration-email-resending',
