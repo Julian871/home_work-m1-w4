@@ -71,7 +71,7 @@ export const usersService = {
         if(user === undefined) {
             return { errorsMessages: [{ message: 'Incorrect email', field: "email" }] }
         } else if(!user.emailConfirmation.isConfirmation) {
-            await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
+            await emailManager.sendConfirmationLink(user.accountData.email, newConfirmationCode)
             await usersRepositories.updateConfirmCode(user._id, newConfirmationCode)
             return true
         } else {
