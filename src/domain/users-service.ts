@@ -53,13 +53,14 @@ export const usersService = {
     },
 
     async checkConfirmationCode(code: string) {
-        const user = await usersRepositories.checkUserByConfirmationCode(code)
-        if(user === null) {
+        const confirmStatus = await usersRepositories.checkUserByConfirmationCode(code)
+        if(confirmStatus === undefined) {
             return { errorsMessages: [{ message: 'Incorrect code', field: "code" }] }
-        } else {
-            await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
-            await usersRepositories.updateConfirmStatus(user._id)
+        } else if(!confirmStatus.emailConfirmation.isConfirmation) {
+            await emailManager.sendConfirmationLink(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
             return true
+        } else {
+            return { errorsMessages: [{ message: 'code confirm', field: "code" }] }
         }
     },
 

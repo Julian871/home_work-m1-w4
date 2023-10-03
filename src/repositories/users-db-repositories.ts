@@ -28,7 +28,7 @@ export const usersRepositories = {
     async checkUserByConfirmationCode(code: string) {
         const user = await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
         if(!user) {
-            return null
+            return undefined
         } else {
             return user
         }
