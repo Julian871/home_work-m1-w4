@@ -108,5 +108,12 @@ export const usersRepositories = {
             $set: {
                 'emailConfirmation.isConfirmation': true
             }})
+    },
+
+    async updateConfirmCode(_id: ObjectId, newConfirmationCode: string) {
+        await usersCollection.updateOne({_id: _id}, {
+            $set: {
+                'emailConfirmation.confirmationCode': newConfirmationCode
+            }})
     }
 }
