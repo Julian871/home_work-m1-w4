@@ -34,7 +34,7 @@ export const usersRepositories = {
         }
     },
 
-    async checkConfirmationStatus(email: string) {
+    async checkUserByEmail(email: string) {
         const user = await usersCollection.findOne({'accountData.email': email})
         if(!user) {
             return undefined

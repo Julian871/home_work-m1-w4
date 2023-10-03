@@ -58,6 +58,7 @@ export const usersService = {
             return { errorsMessages: [{ message: 'Incorrect code', field: "code" }] }
         } else if(!confirmStatus.emailConfirmation.isConfirmation) {
             await emailManager.sendConfirmationLink(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
+            await usersRepositories.updateConfirmStatus(confirmStatus._id)
             return true
         } else {
             return { errorsMessages: [{ message: 'code confirm', field: "code" }] }
@@ -65,11 +66,11 @@ export const usersService = {
     },
 
     async checkEmail(email: string) {
-        const confirmStatus = await usersRepositories.checkConfirmationStatus(email)
-        if(confirmStatus === undefined) {
+        const user = await usersRepositories.checkUserByEmail(email)
+        if(user === undefined) {
             return { errorsMessages: [{ message: 'Incorrect email', field: "email" }] }
-        } else if(!confirmStatus.emailConfirmation.isConfirmation) {
-            await emailManager.sendConfirmationLink(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
+        } else if(!user.emailConfirmation.isConfirmation) {
+            await emailManager.sendConfirmationLink(user.accountData.email, user.emailConfirmation.confirmationCode)
             return true
         } else {
             return { errorsMessages: [{ message: 'no confirm', field: "email" }] }
