@@ -27,3 +27,4 @@ app.use('/auth', authRouter)
 app.use('/comments', comRouter)
 
 export const JWT_SECRET = process.env.JWT_SECRET || '123'
+export const REFRESH_JWT_SECRET = process.env.JWT_SECRET || '234'
