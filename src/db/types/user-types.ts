@@ -13,6 +13,10 @@ export type userAccountDBType = {
         confirmationCode: string,
         expirationDate: Date,
         isConfirmation: boolean
+    },
+    token: {
+        accessToken: string | null,
+        refreshToken: string | null
     }
 }
 

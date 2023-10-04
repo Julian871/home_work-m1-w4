@@ -5,7 +5,7 @@ import {usersRouter} from "./routers/users-routers";
 import {testingRouter} from "./routers/delete-all-routers";
 import {authRouter} from "./routers/auth-routers";
 import {comRouter} from "./routers/comments-routers";
-import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser'
 
 
 
@@ -13,8 +13,7 @@ import bodyParser from "body-parser";
 
 export const app = express()
 
-const jsonBodyMiddleware = bodyParser.json()
-app.use(jsonBodyMiddleware)
+app.use(cookieParser())
 
 
 app.use('/blogs', blogsRouter)

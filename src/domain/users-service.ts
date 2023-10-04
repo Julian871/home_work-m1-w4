@@ -47,6 +47,10 @@ export const usersService = {
                     minutes: 3
                 }),
                 isConfirmation: false
+            },
+            token: {
+                accessToken: null,
+                refreshToken: null
             }
         }
         return usersRepositories.createNewUser(newUser)
@@ -87,6 +91,16 @@ export const usersService = {
             return null
         }
         return user;
+
+    },
+
+    async getUserByAccessToken(token: string) {
+        const user = await usersRepositories.getUserByAccessToken(token)
+        if(!user) {
+            return null
+        } else {
+            return user
+        }
 
     },
 

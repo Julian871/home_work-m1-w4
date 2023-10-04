@@ -13,6 +13,7 @@ export const blogsCollection = db.collection<blogTypeInput>('blogs')
 export const postsCollection = db.collection<postTypeInput>('posts')
 export const usersCollection = db.collection<userAccountDBType>('users')
 export const postsCommentsCollection = db.collection<postCommentInput>('postsComments')
+export const blackListCollection = db.collection<any>('blackList')
 
 export async function runDb() {
     try {

@@ -28,6 +28,10 @@ export const authService = {
                     minutes: 3
                 }),
                 isConfirmation: false
+            },
+            token: {
+                accessToken: null,
+                refreshToken: null
             }
         }
         await usersRepositories.createAuthNewUser(user)

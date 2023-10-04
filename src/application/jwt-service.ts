@@ -6,7 +6,11 @@ import {userAccountDBType} from "../db/types/user-types";
 
 export const jwtService = {
     async createJWT(user: WithId<userAccountDBType>) {
-        return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '1h'})
+        return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '10'})
+    },
+
+    async createJWTRefresh(user: WithId<userAccountDBType>) {
+        return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '20'})
     },
 
     async getUserIdToken(token: string) {

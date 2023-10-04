@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {usersCollection} from "../db/db";
+import {blackListCollection, usersCollection} from "../db/db";
 import {getUsersQueryType, userAccountDBType, userTypeOutput} from "../db/types/user-types";
 
 export const usersRepositories = {
@@ -115,5 +115,21 @@ export const usersRepositories = {
             $set: {
                 'emailConfirmation.confirmationCode': newConfirmationCode
             }})
-    }
+    },
+
+    async updateToken(token: string, refreshToken: string, _id: ObjectId) {
+        await usersCollection.updateOne({_id: _id}, {
+            $set: {
+                'token.accessToken': token,
+                'token.refreshToken': refreshToken
+            }})
+    },
+
+    async getUserByAccessToken(token: string){
+        return await usersCollection.findOne({'token.accessToken': token})
+    },
+
+    async updateBlackList(refreshToken: string){
+        await blackListCollection.updateOne({}, {$push: {refreshToken}})
+    },
 }
