@@ -1,5 +1,11 @@
 import {usersRepositories} from "../repositories/users-db-repositories";
-import {getUsersQueryType, userAccountDBType, userTypeOutput, userTypePostPut} from "../db/types/user-types";
+import {
+    getUsersQueryType,
+    userAccountDBType,
+    userTypeOutput,
+    userTypeOutputAuthMe,
+    userTypePostPut
+} from "../db/types/user-types";
 import {ObjectId, WithId} from "mongodb";
 import {headTypes} from "../db/types/head-types";
 import bcrypt from 'bcrypt'
@@ -21,6 +27,12 @@ export const usersService = {
             totalCount: usersCount,
             items: filterUsers
         }
+    },
+
+    async getUserInformation(user: userTypeOutput): Promise<userTypeOutputAuthMe | null> {
+        const userId = new ObjectId(user.id)
+        return await usersRepositories.getUserInformation(userId)
+
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {

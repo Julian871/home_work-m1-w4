@@ -6,6 +6,7 @@ import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
 import {authAccessToken, authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
+import {authMiddleware} from "../middlewares/authorization";
 
 
 export const authRouter = Router({})
@@ -26,7 +27,7 @@ authRouter
             } else {
                 res.sendStatus(401)
             }
-        })
+    })
 
     .post('/registration-confirmation',
         authCode,
@@ -36,7 +37,7 @@ authRouter
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
-        })
+    })
 
     .post('/registration',
         usersValidation,
@@ -44,7 +45,7 @@ authRouter
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
            return res.sendStatus(204)
-        })
+    })
 
     .post('/registration-email-resending',
         authEmail,
@@ -54,7 +55,7 @@ authRouter
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
-        })
+    })
 
     .post('/refresh-token',
     authAccessToken,
@@ -72,7 +73,15 @@ authRouter
             res.cookie('refresh token', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken: token})
 
-        } else {
-            res.sendStatus(401)
-        }
+        } else {res.sendStatus(401)}
+    })
+    .get('/me',
+        authMiddleware,
+        async (req: Request, res: Response) => {
+        const userInformation = await usersService.getUserInformation(req.user!)
+            if(!userInformation) {
+                res.sendStatus(404)
+            } else {
+                res.status(200).send(userInformation)
+            }
     })

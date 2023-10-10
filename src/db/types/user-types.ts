@@ -27,6 +27,12 @@ export type userTypeOutput = {
     createdAt: string
 }
 
+export type userTypeOutputAuthMe = {
+    login: string,
+    email: string,
+    createdAt: string
+}
+
 export type userTypePostPut = {
     login: string,
     email: string,

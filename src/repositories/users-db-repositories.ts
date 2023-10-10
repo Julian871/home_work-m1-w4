@@ -1,6 +1,6 @@
 import {ObjectId} from "mongodb";
 import {blackListCollection, usersCollection} from "../db/db";
-import {getUsersQueryType, userAccountDBType, userTypeOutput} from "../db/types/user-types";
+import {getUsersQueryType, userAccountDBType, userTypeOutput, userTypeOutputAuthMe} from "../db/types/user-types";
 
 export const usersRepositories = {
 
@@ -50,6 +50,18 @@ export const usersRepositories = {
         }
         return {
             id: user._id.toString(),
+            login: user.accountData.login,
+            email: user.accountData.email,
+            createdAt: user.accountData.createdAt.toISOString()
+        }
+    },
+
+    async getUserInformation(id: ObjectId): Promise<userTypeOutputAuthMe | null> {
+        const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
+        if (!user) {
+            return null
+        }
+        return {
             login: user.accountData.login,
             email: user.accountData.email,
             createdAt: user.accountData.createdAt.toISOString()
