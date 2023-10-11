@@ -62,6 +62,9 @@ authRouter
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
+        if(refreshToken == undefined) {
+            res.sendStatus(400)
+        }
         const user = await usersService.getUserByAccessToken(req.body.accessToken)
         if(user === null) {
             res.sendStatus(404)
