@@ -61,12 +61,12 @@ authRouter
     async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
         if(!refreshToken) {
-            res.sendStatus(400)
+            res.sendStatus(401)
         }
         const user = await usersService.getUserByRefreshToken(req.cookies.refreshToken)
         if(user === null) {
-            res.sendStatus(404)
-        } else if (refreshToken == user.token.refreshToken) {
+            res.sendStatus(401)
+        } else if (refreshToken === user.token.refreshToken) {
             const token = await jwtService.createJWT(user)
             const refreshToken = await jwtService.createJWTRefresh(user)
             await usersRepositories.updateToken(token, refreshToken, user._id)
@@ -79,8 +79,9 @@ authRouter
     .get('/me',
         authMiddleware,
         async (req: Request, res: Response) => {
+
         const userInformation = await usersService.getUserInformation(req.user!)
-            if(!userInformation) {
+            if(userInformation === null) {
                 res.sendStatus(401)
             } else {
                 res.status(200).send(userInformation)
