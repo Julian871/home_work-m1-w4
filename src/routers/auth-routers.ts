@@ -66,15 +66,14 @@ authRouter
         const user = await usersService.getUserByRefreshToken(req.cookies.refreshToken)
         if(user === null) {
             res.sendStatus(401)
-        } else if (refreshToken === user.token.refreshToken) {
+        } else {
             const token = await jwtService.createJWT(user)
             const refreshToken = await jwtService.createJWTRefresh(user)
             await usersRepositories.updateToken(token, refreshToken, user._id)
             await usersRepositories.updateBlackList(refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken: token})
-
-        } else {res.sendStatus(401)}
+        }
     })
     .get('/me',
         authMiddleware,
