@@ -137,8 +137,8 @@ export const usersRepositories = {
             }})
     },
 
-    async getUserByAccessToken(token: string){
-        return await usersCollection.findOne({'token.accessToken': token})
+    async getUserByRefreshToken(token: string){
+        return await usersCollection.findOne({'token.refreshToken': token})
     },
 
     async updateBlackList(refreshToken: string){

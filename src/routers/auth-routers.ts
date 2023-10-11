@@ -4,7 +4,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
-import {authAccessToken, authCode, authEmail, authValidation} from "../middlewares/auth";
+import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authMiddleware} from "../middlewares/authorization";
 
@@ -58,14 +58,12 @@ authRouter
     })
 
     .post('/refresh-token',
-    authAccessToken,
-    inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
         if(!refreshToken) {
             res.sendStatus(400)
         }
-        const user = await usersService.getUserByAccessToken(req.body.accessToken)
+        const user = await usersService.getUserByRefreshToken(req.cookies.refreshToken)
         if(user === null) {
             res.sendStatus(404)
         } else if (refreshToken == user.token.refreshToken) {

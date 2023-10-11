@@ -106,8 +106,8 @@ export const usersService = {
 
     },
 
-    async getUserByAccessToken(token: string) {
-        const user = await usersRepositories.getUserByAccessToken(token)
+    async getUserByRefreshToken(token: string) {
+        const user = await usersRepositories.getUserByRefreshToken(token)
         if(!user) {
             return null
         } else {
