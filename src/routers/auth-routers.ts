@@ -81,7 +81,7 @@ authRouter
         async (req: Request, res: Response) => {
         const userInformation = await usersService.getUserInformation(req.user!)
             if(!userInformation) {
-                res.sendStatus(404)
+                res.sendStatus(401)
             } else {
                 res.status(200).send(userInformation)
             }
