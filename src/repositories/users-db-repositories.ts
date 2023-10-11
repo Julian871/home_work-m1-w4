@@ -64,7 +64,8 @@ export const usersRepositories = {
         return {
             login: user.accountData.login,
             email: user.accountData.email,
-            createdAt: user.accountData.createdAt.toISOString()
+            userId: user._id.toString()
+
         }
     },
 

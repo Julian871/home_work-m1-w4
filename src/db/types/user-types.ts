@@ -30,7 +30,7 @@ export type userTypeOutput = {
 export type userTypeOutputAuthMe = {
     login: string,
     email: string,
-    createdAt: string
+    userId: string
 }
 
 export type userTypePostPut = {
