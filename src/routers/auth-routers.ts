@@ -62,7 +62,7 @@ authRouter
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken
-        if(refreshToken == undefined) {
+        if(!refreshToken) {
             res.sendStatus(400)
         }
         const user = await usersService.getUserByAccessToken(req.body.accessToken)
@@ -88,3 +88,14 @@ authRouter
                 res.status(200).send(userInformation)
             }
     })
+
+    .get('/l',
+        async (req: Request, res: Response) => {
+        const refreshTokenByCookies = req.cookies.refreshToken
+            if(!refreshTokenByCookies) {
+                res.sendStatus(401)
+            } else {
+                await usersRepositories.updateBlackList(req.cookies.refreshToken)
+                res.sendStatus(204)
+            }
+        })
