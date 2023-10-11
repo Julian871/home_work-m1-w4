@@ -97,3 +97,4 @@ authRouter
                 res.sendStatus(204)
             }
     })
+
