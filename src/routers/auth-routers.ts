@@ -98,4 +98,4 @@ authRouter
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
             }
-        })
+    })
