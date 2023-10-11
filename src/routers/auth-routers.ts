@@ -93,6 +93,11 @@ authRouter
         const refreshTokenByCookies = req.cookies.refreshToken
             if(!refreshTokenByCookies) {
                 res.sendStatus(401)
+            }
+
+            const user = await usersService.getUserByRefreshToken(req.cookies.refreshToken)
+            if(user === null) {
+                res.sendStatus(401)
             } else {
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
