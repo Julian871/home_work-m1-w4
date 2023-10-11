@@ -89,7 +89,7 @@ authRouter
             }
     })
 
-    .get('/logout',
+    .post('/logout',
         async (req: Request, res: Response) => {
         const refreshTokenByCookies = req.cookies.refreshToken
             if(!refreshTokenByCookies) {
