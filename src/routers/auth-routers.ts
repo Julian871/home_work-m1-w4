@@ -60,6 +60,9 @@ authRouter
     .post('/refresh-token',
     authCookie,
     async (req: Request, res: Response) => {
+        if(!req.headers.cookie) {
+            res.sendStatus(401)
+        }
         const user = await usersService.getUserAllInfo(req.user!)
         if(user === null) {
             res.sendStatus(401)
@@ -88,6 +91,7 @@ authRouter
     .post('/logout',
         authCookie,
         async (req: Request, res: Response) => {
+
             const user = await usersService.getUserAllInfo(req.user!)
             if(user === null) {
                 res.sendStatus(401)
