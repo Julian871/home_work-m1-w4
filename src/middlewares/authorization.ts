@@ -28,7 +28,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 }
 
 export const authCookie = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.cookies.refreshToken) {
+    if (!req.cookies.refreshToken || req.cookies.refreshToken != req.headers.cookie) {
         res.sendStatus(401)
         return
     }
