@@ -15,8 +15,7 @@ export type userAccountDBType = {
         isConfirmation: boolean
     },
     token: {
-        accessToken: string | null,
-        refreshToken: string | null
+        accessToken: string | null
     }
 }
 

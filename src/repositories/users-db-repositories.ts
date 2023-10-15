@@ -56,7 +56,17 @@ export const usersRepositories = {
         }
     },
 
-    async getUserInformation(id: ObjectId): Promise<userTypeOutputAuthMe | null> {
+    async getAllInformationUser(id: ObjectId) {
+        const user = await usersCollection.findOne({_id: id})
+        if(!user) {
+            return null
+        } else {
+            return user
+        }
+    },
+
+
+    async getUserInformation(id: any): Promise<userTypeOutputAuthMe | null> {
         const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
         if (!user) {
             return null
@@ -130,16 +140,11 @@ export const usersRepositories = {
             }})
     },
 
-    async updateToken(token: string, refreshToken: string, _id: ObjectId) {
+    async updateToken(token: string, _id: ObjectId) {
         await usersCollection.updateOne({_id: _id}, {
             $set: {
-                'token.accessToken': token,
-                'token.refreshToken': refreshToken
+                'token.accessToken': token
             }})
-    },
-
-    async getUserByRefreshToken(token: string){
-        return await usersCollection.findOne({'token.refreshToken': token})
     },
 
     async updateBlackList(refreshToken: string){

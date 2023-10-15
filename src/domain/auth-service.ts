@@ -30,8 +30,7 @@ export const authService = {
                 isConfirmation: false
             },
             token: {
-                accessToken: null,
-                refreshToken: null
+                accessToken: null
             }
         }
         await usersRepositories.createAuthNewUser(user)

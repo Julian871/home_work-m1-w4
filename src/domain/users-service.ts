@@ -32,11 +32,15 @@ export const usersService = {
     async getUserInformation(user: userTypeOutput): Promise<userTypeOutputAuthMe | null> {
         const userId = new ObjectId(user.id)
         return await usersRepositories.getUserInformation(userId)
-
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
         return await usersRepositories.getUserById(id)
+    },
+
+    async getUserAllInfo(user: userTypeOutput): Promise<userAccountDBType | null> {
+        const id = new ObjectId(user.id)
+        return await usersRepositories.getAllInformationUser(id)
     },
 
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
@@ -61,8 +65,7 @@ export const usersService = {
                 isConfirmation: false
             },
             token: {
-                accessToken: null,
-                refreshToken: null
+                accessToken: null
             }
         }
         return usersRepositories.createNewUser(newUser)
@@ -103,16 +106,6 @@ export const usersService = {
             return null
         }
         return user;
-
-    },
-
-    async getUserByRefreshToken(token: string) {
-        const user = await usersRepositories.getUserByRefreshToken(token)
-        if(!user) {
-            return null
-        } else {
-            return user
-        }
 
     },
 
