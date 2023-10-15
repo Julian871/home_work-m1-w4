@@ -28,12 +28,12 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 }
 
 export const authCookie = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.cookies) {
+    if (!req.headers.cookie) {
         res.sendStatus(401)
         return
     }
 
-    const token = req.cookies.split(' ')[1]
+    const token = req.headers.cookie.split(' ')[1]
     const userId = await jwtService.getUserIdToken(token)
     if(userId) {
         req.user = await usersService.getUserById(userId)
