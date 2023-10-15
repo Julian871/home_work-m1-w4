@@ -32,10 +32,6 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
         res.sendStatus(401)
         return
     }
-    if(req.cookies.refreshToken !== req.headers.cookie) {
-        res.sendStatus(401)
-        return
-    }
 
     const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
     if(userId) {
