@@ -43,11 +43,6 @@ export const usersService = {
         return await usersRepositories.getAllInformationUser(id)
     },
 
-    async getU(user: userTypeOutput): Promise<userAccountDBType | null> {
-        const id = new ObjectId(user.id)
-        return await usersRepositories.getAllInformationUser(id)
-    },
-
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(data.password, passwordSalt)

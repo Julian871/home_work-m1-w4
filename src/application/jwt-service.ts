@@ -22,5 +22,16 @@ export const jwtService = {
             console.log(error)
             return null
         }
+    },
+
+    async getUserIdRefreshToken(token: string) {
+        try {
+            console.log('token: ', token)
+            const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
+            return new ObjectId(result.userId)
+        } catch (error) {
+            console.log(error)
+            return null
+        }
     }
 }
