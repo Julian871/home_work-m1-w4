@@ -33,8 +33,8 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
         return
     }
 
-    const token = req.headers.cookie
-    console.log('token: ', token )
+    const reqToken = req.headers.cookie
+    const token = reqToken.substring(13)
     const userId = await jwtService.getUserIdToken(token)
     if(userId) {
         req.user = await usersService.getUserById(userId)
