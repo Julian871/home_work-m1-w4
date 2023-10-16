@@ -59,7 +59,7 @@ export const checkBlackList = async (req: Request, res: Response, next: NextFunc
 
 export const checkInvalidHeadersCookie = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.cookie) {
-        next()
+        res.sendStatus(401)
         return
     }
     const checkResult = await jwtService.getUserIdRefreshToken(req.headers.cookie)
