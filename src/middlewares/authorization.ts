@@ -35,14 +35,18 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
     }
 
     const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
-    if(userId) {
-        const checkResult = await usersRepositories.checkBlackList(req.cookies.refreshToken)
-        if(checkResult) {
-            res.sendStatus(401)
-        }
+    if(userId === null) {
+        res.sendStatus(401)
+        return
+    }
+    const checkResult = await usersRepositories.checkBlackList(req.cookies.refreshToken)
+
+    if(checkResult) {
+        res.sendStatus(401)
+        return
+    } else {
         req.user = await usersService.getUserById(userId)
         next()
         return
     }
-    res.sendStatus(401)
 }
