@@ -21,7 +21,6 @@ authRouter
                 const token= await jwtService.createJWT(user)
                 const refreshToken = await jwtService.createJWTRefresh(user)
                 await usersRepositories.updateToken(token, user._id)
-                await usersRepositories.updateBlackList(refreshToken)
                 res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
                 res.status(200).send({accessToken: token})
                 return
@@ -89,7 +88,6 @@ authRouter
     .post('/logout',
         authCookie,
         async (req: Request, res: Response) => {
-
             const user = await usersService.getUserAllInfo(req.user!)
             if(user === null) {
                 res.sendStatus(401)
