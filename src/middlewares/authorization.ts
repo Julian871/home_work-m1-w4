@@ -51,7 +51,20 @@ export const checkBlackList = async (req: Request, res: Response, next: NextFunc
     const checkResult = await usersRepositories.checkBlackList(req.headers.cookie)
     if(checkResult) {
         res.sendStatus(401)
+    } else {
+        next()
         return
+    }
+}
+
+export const checkInvalidHeadersCookie = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.cookie) {
+        next()
+        return
+    }
+    const checkResult = await jwtService.getUserIdRefreshToken(req.headers.cookie)
+    if(!checkResult) {
+        res.sendStatus(401)
     } else {
         next()
         return
