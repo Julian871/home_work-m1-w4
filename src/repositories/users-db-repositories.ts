@@ -148,6 +148,15 @@ export const usersRepositories = {
     },
 
     async updateBlackList(refreshToken: string){
-        await blackListCollection.updateOne({}, {$push: {refreshToken}})
+        await blackListCollection.updateOne({refreshToken}, {$push: {refreshToken}})
     },
+
+    async checkBlackList(refreshToken: string){
+        return await blackListCollection.findOne({refreshToken: refreshToken})
+    },
+
+    async createBlackList(refreshToken: string){
+        return await blackListCollection.insertOne({refreshToken: {refreshToken}})
+    },
+
 }

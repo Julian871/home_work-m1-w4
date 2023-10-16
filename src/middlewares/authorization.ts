@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
+import {usersRepositories} from "../repositories/users-db-repositories";
 
 export const authorizationMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
     if(req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
@@ -40,4 +41,19 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
         return
     }
     res.sendStatus(401)
+}
+
+export const checkBlackList = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.cookie) {
+        res.sendStatus(401)
+        return
+    }
+    const checkResult = await usersRepositories.checkBlackList(req.headers.cookie)
+    if(checkResult) {
+        res.sendStatus(401)
+        return
+    } else {
+        next()
+        return
+    }
 }

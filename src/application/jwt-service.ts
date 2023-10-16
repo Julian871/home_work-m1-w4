@@ -10,7 +10,7 @@ export const jwtService = {
     },
 
     async createJWTRefresh(user: WithId<userAccountDBType>) {
-        return jwt.sign({userId: user._id}, REFRESH_JWT_SECRET, {expiresIn: '200s'})
+        return jwt.sign({userId: user._id}, REFRESH_JWT_SECRET, {expiresIn: '20s'})
     },
 
     async getUserIdToken(token: string) {
@@ -31,10 +31,5 @@ export const jwtService = {
         } catch (error) {
             return null
         }
-    },
-
-    /*async checkExpired(token: string) {
-        const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
-        return result.expiresIn <= Date.now()
-    }*/
+    }
 }
