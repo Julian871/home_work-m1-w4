@@ -60,7 +60,6 @@ authRouter
 
     .post('/refresh-token',
     checkBlackList,
-    //checkInvalidHeadersCookie,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -90,7 +89,6 @@ authRouter
 
     .post('/logout',
         checkBlackList,
-        //checkInvalidHeadersCookie,
         authCookie,
         async (req: Request, res: Response) => {
 

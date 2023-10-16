@@ -56,18 +56,3 @@ export const checkBlackList = async (req: Request, res: Response, next: NextFunc
         return
     }
 }
-
-/*
-export const checkInvalidHeadersCookie = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.headers.cookie) {
-        res.sendStatus(401)
-        return
-    }
-    const checkResult = await jwtService.getUserIdRefreshToken(req.headers.cookie)
-    if(!checkResult) {
-        res.sendStatus(401)
-    } else {
-        next()
-        return
-    }
-}*/
