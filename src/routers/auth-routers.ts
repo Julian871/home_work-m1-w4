@@ -6,7 +6,7 @@ import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
 import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
-import {authCookie, authMiddleware, checkBlackList} from "../middlewares/authorization";
+import {authCookie, authMiddleware, checkBlackList, checkInvalid} from "../middlewares/authorization";
 
 
 export const authRouter = Router({})
@@ -60,6 +60,7 @@ authRouter
 
     .post('/refresh-token',
     checkBlackList,
+    checkInvalid,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -89,6 +90,7 @@ authRouter
 
     .post('/logout',
         checkBlackList,
+        checkInvalid,
         authCookie,
         async (req: Request, res: Response) => {
 
