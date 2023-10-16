@@ -6,7 +6,7 @@ import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
 import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
-import {authCookie, authMiddleware, checkBlackList} from "../middlewares/authorization";
+import {authCookie, authMiddleware} from "../middlewares/authorization";
 
 
 export const authRouter = Router({})
@@ -59,7 +59,6 @@ authRouter
     })
 
     .post('/refresh-token',
-    checkBlackList,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -69,7 +68,7 @@ authRouter
             const token = await jwtService.createJWT(user)
             const refreshToken = await jwtService.createJWTRefresh(user)
             await usersRepositories.updateToken(token, user._id)
-            await usersRepositories.updateBlackList(refreshToken)
+            await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken: token})
         }
@@ -88,7 +87,6 @@ authRouter
     })
 
     .post('/logout',
-        checkBlackList,
         authCookie,
         async (req: Request, res: Response) => {
 
