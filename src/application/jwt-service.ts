@@ -33,8 +33,8 @@ export const jwtService = {
         }
     },
 
-    async checkExpired(token: string) {
+    /*async checkExpired(token: string) {
         const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
-        return result.expiresIn <= Date.now();
-    }
+        return result.expiresIn <= Date.now()
+    }*/
 }
