@@ -10,5 +10,9 @@ export const connectRepositories = {
     async countLimitConnection(ip: string, url: string) {
         const limitDate = +new Date - 15000
         return await connectCollection.countDocuments({$and: [ {IP: ip}, {URL: url }, {date: { $gt: limitDate} } ] }, {limit: 6})
+    },
+
+    async getConnectInfo(ip: string, deviceName: string) {
+        return await connectCollection.findOne({$and: [ {IP: ip}, {deviceName: deviceName}]})
     }
 }

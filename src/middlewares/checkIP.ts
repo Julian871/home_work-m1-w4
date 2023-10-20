@@ -4,8 +4,9 @@ import {connectService} from "../domain/connect-service";
 export const checkIP = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
     const IP = req.ip
     const URL = req.baseUrl
-    const checkIpConnection = await connectService.checkIP(IP, URL)
-    console.log('checkIpConnection: ', checkIpConnection)
+    const deviceName = req.headers['user-agent'] || 'hacker'
+    const checkIpConnection = await connectService.checkIP(IP, URL, deviceName)
+    console.log()
     if (checkIpConnection) {
         return next()
     } else {
