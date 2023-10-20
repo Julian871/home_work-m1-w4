@@ -7,12 +7,14 @@ import {usersValidation} from "../middlewares/users/users-validation";
 import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
+import {checkIP} from "../middlewares/checkIP";
 
 
 export const authRouter = Router({})
 
 authRouter
     .post('/login',
+        checkIP,
         authValidation,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
@@ -30,6 +32,7 @@ authRouter
     })
 
     .post('/registration-confirmation',
+        checkIP,
         authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
@@ -40,6 +43,7 @@ authRouter
     })
 
     .post('/registration',
+        checkIP,
         usersValidation,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
@@ -48,6 +52,7 @@ authRouter
     })
 
     .post('/registration-email-resending',
+        checkIP,
         authEmail,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
