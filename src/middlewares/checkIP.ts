@@ -10,6 +10,7 @@ export const checkIP = async (req: Request<any, any, any, any>, res: Response, n
     if (checkIpConnection) {
         return next()
     } else {
-        return res.sendStatus(429)
+        res.sendStatus(429)
+        res.sendStatus(204)
     }
 }
