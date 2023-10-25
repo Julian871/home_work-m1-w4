@@ -16,3 +16,8 @@ deviceRouter
             res.status(200).send(getConnectionInfo)
         } else {res.sendStatus(404)}
     })
+
+    /*.delete('/',
+        async (req:Request, res: Response) => {
+
+    })*/

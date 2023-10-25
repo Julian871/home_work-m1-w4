@@ -5,10 +5,3 @@ export type connectType = {
     title: string,
     deviceId: string
 }
-
-export type connectTypeOutput = {
-    ip: string,
-    title: string,
-    lastActiveDate: string,
-    deviceId: string
-}

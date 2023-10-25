@@ -1,5 +1,4 @@
 import {connectRepositories} from "../repositories/connect-repositories";
-import {connectType} from "../db/types/connect-types";
 
 
 export const connectService = {
@@ -19,16 +18,7 @@ export const connectService = {
     },
 
     async getConnectInfo(ip: string, deviceName: string) {
-        const connectInfo = await connectRepositories.getConnectInfo(ip, deviceName)
-        if(connectInfo) {
-            return {
-                ip: ip,
-                title: deviceName,
-                lastActiveDate: connectInfo.date,
-                deviceId: connectInfo.deviceId
-            }
-        } else {
-            return null
-        }
+        return await connectRepositories.getConnectInfo(ip, deviceName)
+
     }
 }
