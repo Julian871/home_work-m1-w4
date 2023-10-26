@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {connectService} from "../domain/connect-service";
 import {authCookie} from "../middlewares/authorization";
+import {jwtService} from "../application/jwt-service";
 
 export const deviceRouter = Router({})
 
@@ -8,9 +9,13 @@ deviceRouter
     .get('/',
         authCookie,
         async (req: Request, res: Response) => {
-        const IP = req.ip
-        const deviceName = req.headers['user-agent'] || 'hacker'
-        const getConnectionInfo = await connectService.getConnectInfo(IP, deviceName)
+            const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+            if(!userId) {
+                res.status(404).send('no userId')
+                return
+            }
+
+            const getConnectionInfo = await connectService.getConnectInfo(userId)
 
         if(getConnectionInfo) {
             res.status(200).send(getConnectionInfo)

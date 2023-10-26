@@ -1,5 +1,6 @@
-import {blogsCollection, connectCollection} from "../db/db";
+import {connectCollection} from "../db/db";
 import {connectType} from "../db/types/connect-types";
+import {ObjectId} from "mongodb";
 
 
 export const connectRepositories = {
@@ -12,14 +13,13 @@ export const connectRepositories = {
         return await connectCollection.countDocuments({IP: ip, URL: url, date: { $gt: limitDate}   })
     },
 
-    async getConnectInfo(ip: string, deviceName: string) {
-        const connectInfo = await connectCollection.find({
-            $and: [{IP: ip}, {title: deviceName}]
-        }).toArray()
+    async getConnectInfo(_id: ObjectId) {
+        const connectInfo = await connectCollection.find({userId: _id}
+        ).toArray()
 
         return connectInfo.map((p) => ({
-            ip: ip,
-            title: deviceName,
+            ip: p.IP,
+            title: p.title,
             lastActiveDate: p.date.toString(),
             deviceId: p.deviceId
         }))
@@ -28,5 +28,5 @@ export const connectRepositories = {
     async disconnectByDeviceId(deviceId: string) {
         const result = await connectCollection.deleteOne({deviceId: deviceId})
         return result.deletedCount === 1
-    }
+    },
 }

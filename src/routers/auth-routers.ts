@@ -14,9 +14,9 @@ export const authRouter = Router({})
 
 authRouter
     .post('/login',
-        checkIP,
         authValidation,
         inputValidationMiddleware,
+        checkIP,
         async (req: Request, res: Response) => {
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
@@ -32,9 +32,9 @@ authRouter
     })
 
     .post('/registration-confirmation',
-        checkIP,
         authCode,
         inputValidationMiddleware,
+        checkIP,
         async (req: Request, res: Response) => {
         const user = await usersService.checkConfirmationCode(req.body.code)
             if (user === true) {
@@ -43,18 +43,18 @@ authRouter
     })
 
     .post('/registration',
-        checkIP,
         usersValidation,
         inputValidationMiddleware,
+        checkIP,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
            return res.sendStatus(204)
     })
 
     .post('/registration-email-resending',
-        checkIP,
         authEmail,
         inputValidationMiddleware,
+        checkIP,
         async (req: Request, res: Response) => {
             const user = await usersService.checkEmail(req.body.email)
             if (user === true) {
