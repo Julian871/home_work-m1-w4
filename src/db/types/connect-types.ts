@@ -1,10 +1,9 @@
-import {ObjectId} from "mongodb";
-
 export type connectType = {
+    specialId: string,
     IP: string,
     URL: string,
     date: number,
     title: string,
     deviceId: string,
-    userId: ObjectId | undefined
+    userId: Object | null
 }

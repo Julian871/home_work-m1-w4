@@ -9,17 +9,17 @@ deviceRouter
     .get('/',
         authCookie,
         async (req: Request, res: Response) => {
-            const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+        const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
             if(!userId) {
-                res.status(404).send('no userId')
-                return
+                res.sendStatus(404)
+            } else {
+                const getConnectionInfo = await connectService.getConnectInfo(userId)
+                if (getConnectionInfo) {
+                    res.status(200).send(getConnectionInfo)
+                } else {
+                    res.sendStatus(404)
+                }
             }
-
-            const getConnectionInfo = await connectService.getConnectInfo(userId)
-
-        if(getConnectionInfo) {
-            res.status(200).send(getConnectionInfo)
-        } else {res.sendStatus(404)}
     })
 
     .delete('/:id',

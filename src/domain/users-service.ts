@@ -12,6 +12,7 @@ import bcrypt from 'bcrypt'
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
 import {emailManager} from "../manegers/email-meneger";
+import {connectRepositories} from "../repositories/connect-repositories";
 
 
 
@@ -71,20 +72,21 @@ export const usersService = {
         return usersRepositories.createNewUser(newUser)
     },
 
-    async checkConfirmationCode(code: string) {
+    async checkConfirmationCode(code: string, specialId: string) {
         const confirmStatus = await usersRepositories.checkUserByConfirmationCode(code)
         if(confirmStatus === undefined) {
             return { errorsMessages: [{ message: 'Incorrect code', field: "code" }] }
         } else if(!confirmStatus.emailConfirmation.isConfirmation) {
             await emailManager.sendConfirmationLink(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
             await usersRepositories.updateConfirmStatus(confirmStatus._id)
+            await connectRepositories.updateUserId(specialId, confirmStatus._id)
             return true
         } else {
             return { errorsMessages: [{ message: 'code confirm', field: "code" }] }
         }
     },
 
-    async checkEmail(email: string) {
+    async checkEmail(email: string, specialId: string) {
         const user = await usersRepositories.checkUserByEmail(email)
         const newConfirmationCode = uuidv4()
         if(user === undefined) {
@@ -92,6 +94,7 @@ export const usersService = {
         } else if(!user.emailConfirmation.isConfirmation) {
             await emailManager.sendConfirmationLink(user.accountData.email, newConfirmationCode)
             await usersRepositories.updateConfirmCode(user._id, newConfirmationCode)
+            await connectRepositories.updateUserId(specialId, user._id)
             return true
         } else {
             return { errorsMessages: [{ message: 'no confirm', field: "email" }] }

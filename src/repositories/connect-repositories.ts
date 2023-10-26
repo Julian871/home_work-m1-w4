@@ -14,9 +14,8 @@ export const connectRepositories = {
     },
 
     async getConnectInfo(_id: ObjectId) {
-        const connectInfo = await connectCollection.find({userId: _id}
-        ).toArray()
-
+        console.log(_id)
+        const connectInfo = await connectCollection.find({userId: _id}).toArray()
         return connectInfo.map((p) => ({
             ip: p.IP,
             title: p.title,
@@ -29,4 +28,8 @@ export const connectRepositories = {
         const result = await connectCollection.deleteOne({deviceId: deviceId})
         return result.deletedCount === 1
     },
+
+    async updateUserId(specialId: string, userId: ObjectId) {
+        await connectCollection.updateOne({specialId: specialId}, {$set: { userId: userId}})
+    }
 }
