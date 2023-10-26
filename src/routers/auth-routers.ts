@@ -21,7 +21,7 @@ authRouter
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
                 const token= await jwtService.createJWT(user)
-                const refreshToken = await jwtService.createJWTRefresh(user)
+                const refreshToken = await jwtService.createJWTRefresh(user, req.device_id)
                 await usersRepositories.updateToken(token, user._id)
                 res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
                 res.status(200).send({accessToken: token})
@@ -70,7 +70,7 @@ authRouter
             res.sendStatus(401)
         } else {
             const token = await jwtService.createJWT(user)
-            const refreshToken = await jwtService.createJWTRefresh(user)
+            const refreshToken = await jwtService.createJWTRefresh(user, req.device_id)
             await usersRepositories.updateToken(token, user._id)
             await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})

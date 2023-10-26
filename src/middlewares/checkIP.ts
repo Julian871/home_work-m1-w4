@@ -7,7 +7,9 @@ export const checkIP = async (req: Request<any, any, any, any>, res: Response, n
     const deviceName = req.headers['user-agent'] || 'hacker'
     const checkIpConnection = await connectService.checkIP(IP, URL, deviceName)
     if (checkIpConnection) {
-        return next()
+        req.device_id = checkIpConnection.deviceId
+        next()
+        return
     } else {
         return res.sendStatus(429)
     }

@@ -23,5 +23,10 @@ export const connectRepositories = {
             lastActiveDate: p.date.toString(),
             deviceId: p.deviceId
         }))
+    },
+
+    async disconnectByDeviceId(deviceId: string) {
+        const result = await connectCollection.deleteOne({deviceId: deviceId})
+        return result.deletedCount === 1
     }
 }
