@@ -8,7 +8,7 @@ export const checkConnect = async (req: Request<any, any, any, any>, res: Respon
     const deviceName = req.headers['user-agent'] || 'hacker'
     const user = await usersRepositories.findUserByLoginOrEmail(req.body.loginOrEmail)
 
-    const checkIpConnection = await connectService.checkIP(IP, URL, deviceName, user?._id)
+    const checkIpConnection = await connectService.checkIP(IP, URL, deviceName)
     if (checkIpConnection) {
         req.connectInfo = checkIpConnection
         next()

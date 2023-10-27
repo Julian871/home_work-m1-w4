@@ -19,7 +19,7 @@ export const connectRepositories = {
         return connectInfo.map((p) => ({
             ip: p.IP,
             title: p.title,
-            lastActiveDate: p.date.toString(),
+            lastActiveDate: new Date(p.date).toString(),
             deviceId: p.deviceId
         }))
     },
