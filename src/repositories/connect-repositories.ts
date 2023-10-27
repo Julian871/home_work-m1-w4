@@ -30,5 +30,9 @@ export const connectRepositories = {
 
     async updateUserId(specialId: string, userId: ObjectId) {
         await connectCollection.updateOne({specialId: specialId}, {$set: { userId: userId}})
-    }
+    },
+
+    async deleteSession(userId: ObjectId, deviceName: string) {
+        await connectCollection.deleteMany({userId: userId, $nor:[{deviceName: deviceName}]})
+    },
 }

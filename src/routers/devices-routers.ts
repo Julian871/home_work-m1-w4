@@ -35,3 +35,18 @@ deviceRouter
                 res.sendStatus(204)
             }
     })
+
+    .delete('/',
+        authCookie,
+        async (req:Request, res: Response) => {
+            const deviceName = req.headers['user-agent'] || 'hacker'
+            const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+            if(!userId){
+                res.sendStatus(404)
+                return
+            } else {
+                await connectService.deleteSession(userId, deviceName)
+                return res.sendStatus(204)
+
+            }
+        })
