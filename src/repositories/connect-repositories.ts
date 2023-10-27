@@ -14,12 +14,11 @@ export const connectRepositories = {
     },
 
     async getConnectInfo(_id: ObjectId) {
-        console.log(_id)
         const connectInfo = await connectCollection.find({userId: _id}).toArray()
         return connectInfo.map((p) => ({
             ip: p.IP,
             title: p.title,
-            lastActiveDate: new Date(p.date).toString(),
+            lastActiveDate: new Date(p.date),
             deviceId: p.deviceId
         }))
     },
