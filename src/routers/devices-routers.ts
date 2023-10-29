@@ -28,7 +28,7 @@ deviceRouter
         async (req:Request, res: Response) => {
         const checkUser = await connectService.checkUser(req.cookies.refreshToken, req.params.id)
             if(!checkUser) {
-                res.sendStatus(404)
+                res.sendStatus(403)
                 return
             }
         const disconnect = await connectService.disconnectByDeviceId(req.params.id)
