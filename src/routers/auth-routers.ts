@@ -77,7 +77,8 @@ authRouter
             res.sendStatus(401)
         } else {
             const token = await jwtService.createJWT(user)
-            const refreshToken = await jwtService.createJWTRefresh(user, req.connectInfo.deviceId)
+            const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
+            const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
             await usersRepositories.updateToken(token, user._id)
             await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
