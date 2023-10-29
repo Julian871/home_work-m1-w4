@@ -2,6 +2,7 @@ import {Request, Response, Router} from "express";
 import {connectService} from "../domain/connect-service";
 import {authCookie} from "../middlewares/authorization";
 import {jwtService} from "../application/jwt-service";
+import {ObjectId} from "mongodb";
 
 export const deviceRouter = Router({})
 
@@ -40,13 +41,12 @@ deviceRouter
         authCookie,
         async (req:Request, res: Response) => {
             const deviceName = req.headers['user-agent'] || 'hacker'
-            const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
-            if(!userId){
-                res.sendStatus(404)
+            if(!req.user?.id){
+                res.sendStatus(401)
                 return
             } else {
+                const userId = new ObjectId(req.user.id)
                 await connectService.deleteSession(userId, deviceName)
                 return res.sendStatus(204)
-
             }
         })
