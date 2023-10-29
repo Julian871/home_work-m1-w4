@@ -36,7 +36,11 @@ export const connectService = {
         return await connectRepositories.disconnectByDeviceId(deviceId)
     },
 
-    async checkUser(token: string, deviceId: string) {
+    async checkID(token: string, deviceId: string) {
+        const findID = await connectRepositories.findID(deviceId)
+        if(!findID) {
+            return null
+        }
         const deviceIdFromCookieToken = await jwtService.getDeviceIdRefreshToken(token)
         return deviceIdFromCookieToken === deviceId
     },

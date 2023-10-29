@@ -26,11 +26,17 @@ deviceRouter
     .delete('/:id',
         authCookie,
         async (req:Request, res: Response) => {
-        const checkUser = await connectService.checkUser(req.cookies.refreshToken, req.params.id)
-            if(!checkUser) {
+        const checkUser = await connectService.checkID(req.cookies.refreshToken, req.params.id)
+            if(checkUser === null) {
                 res.sendStatus(403)
                 return
             }
+
+            if(!checkUser) {
+                res.sendStatus(404)
+                return
+            }
+
         const disconnect = await connectService.disconnectByDeviceId(req.params.id)
             if(disconnect) {
                 res.sendStatus(204)
