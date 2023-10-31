@@ -24,12 +24,13 @@ export const connectRepositories = {
     },
 
     async disconnectByDeviceId(deviceId: string) {
+        console.log(deviceId)
         const result = await connectCollection.deleteMany({deviceId: deviceId})
         return result.deletedCount > 0
     },
 
-    async updateUserId(deviceId: string, userId: ObjectId) {
-        await connectCollection.updateOne({deviceId: deviceId}, {$set: { userId: userId}})
+    async updateUserId(specialId: string, userId: ObjectId) {
+        await connectCollection.updateOne({specialId: specialId}, {$set: { userId: userId}})
     },
 
     async deleteSession(userId: ObjectId, deviceName: string) {
@@ -41,7 +42,7 @@ export const connectRepositories = {
         return await connectCollection.findOne({deviceId: deviceId})
     },
 
-    async updateDeviceId(deviceId: string, userId: Object) {
-        await connectCollection.updateOne({userId: userId}, {$set: {deviceId: deviceId}})
+    async updateDeviceId(deviceId: string, specialId: string) {
+        await connectCollection.updateOne({specialId: specialId}, {$set: {deviceId: deviceId}})
     },
 }
