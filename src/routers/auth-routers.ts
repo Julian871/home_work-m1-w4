@@ -108,8 +108,6 @@ authRouter
                 res.sendStatus(401)
             } else {
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
-                const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
-                await connectRepositories.disconnectByDeviceId(deviceId)
                 res.sendStatus(204)
             }
     })

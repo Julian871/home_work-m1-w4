@@ -24,7 +24,6 @@ export const connectRepositories = {
     },
 
     async disconnectByDeviceId(deviceId: string) {
-        console.log(deviceId)
         const result = await connectCollection.deleteMany({deviceId: deviceId})
         return result.deletedCount > 0
     },
