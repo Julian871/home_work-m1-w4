@@ -80,6 +80,7 @@ authRouter
             const token = await jwtService.createJWT(user)
             const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
             const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
+            await connectService.disconnectByDeviceId(deviceId)
             await connectService.updateDeviceId(deviceId, req.connectInfo.specialId)
             await connectRepositories.updateUserId(req.connectInfo.specialId, user._id)
             await usersRepositories.updateToken(token, user._id)
