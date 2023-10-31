@@ -58,4 +58,8 @@ export const connectService = {
     async deleteSession(userId: ObjectId, deviceName: string) {
         await connectRepositories.deleteSession(userId, deviceName)
     },
+
+    async updateDeviceId(deviceId: string, specialId: string) {
+        await connectRepositories.updateDeviceId(deviceId, specialId)
+    },
 }

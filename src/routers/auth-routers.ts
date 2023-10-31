@@ -70,6 +70,7 @@ authRouter
     })
 
     .post('/refresh-token',
+    checkConnect,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -79,6 +80,8 @@ authRouter
             const token = await jwtService.createJWT(user)
             const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
             const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
+            await connectService.updateDeviceId(deviceId, req.connectInfo.specialId)
+            await connectRepositories.updateUserId(req.connectInfo.specialId, user._id)
             await usersRepositories.updateToken(token, user._id)
             await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})

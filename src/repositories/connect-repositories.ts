@@ -1,6 +1,7 @@
 import {connectCollection} from "../db/db";
 import {connectType} from "../db/types/connect-types";
 import {ObjectId} from "mongodb";
+import {de} from "date-fns/locale";
 
 
 export const connectRepositories = {
@@ -39,5 +40,9 @@ export const connectRepositories = {
 
     async findID(deviceId: string) {
         return await connectCollection.findOne({deviceId: deviceId})
+    },
+
+    async updateDeviceId(deviceId: string, specialId: string) {
+        await connectCollection.updateOne({specialId: specialId}, {$set: {deviceId: deviceId}})
     },
 }
