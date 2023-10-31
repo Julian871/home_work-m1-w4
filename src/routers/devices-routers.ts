@@ -43,6 +43,7 @@ deviceRouter
             }
     })
 
+
     .delete('/',
         authCookie,
         async (req:Request, res: Response) => {
