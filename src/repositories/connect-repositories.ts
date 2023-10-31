@@ -1,7 +1,6 @@
 import {connectCollection} from "../db/db";
 import {connectType} from "../db/types/connect-types";
 import {ObjectId} from "mongodb";
-import {de} from "date-fns/locale";
 
 
 export const connectRepositories = {
@@ -25,8 +24,8 @@ export const connectRepositories = {
     },
 
     async disconnectByDeviceId(deviceId: string) {
-        const result = await connectCollection.deleteOne({deviceId: deviceId})
-        return result.deletedCount === 1
+        const result = await connectCollection.deleteMany({deviceId: deviceId})
+        return result.deletedCount > 0
     },
 
     async updateUserId(specialId: string, userId: ObjectId) {
