@@ -46,13 +46,13 @@ deviceRouter
     .delete('/',
         authCookie,
         async (req:Request, res: Response) => {
-            const deviceName = req.headers['user-agent'] || 'hacker'
+            const deviceId = jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
             if(!req.user?.id){
                 res.sendStatus(401)
                 return
             } else {
                 const userId = new ObjectId(req.user.id)
-                await connectService.deleteSession(userId, deviceName)
+                await connectService.deleteSession(userId)
                 return res.sendStatus(204)
             }
         })
