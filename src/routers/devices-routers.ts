@@ -3,6 +3,7 @@ import {connectService} from "../domain/connect-service";
 import {authCookie} from "../middlewares/authorization";
 import {jwtService} from "../application/jwt-service";
 import {ObjectId} from "mongodb";
+import {usersRepositories} from "../repositories/users-db-repositories";
 
 export const deviceRouter = Router({})
 
@@ -36,6 +37,8 @@ deviceRouter
                 res.sendStatus(403)
                 return
             }
+
+            await usersRepositories.updateBlackList(req.cookies.refreshToken)
 
         const disconnect = await connectService.disconnectByDeviceId(req.params.id)
             if(disconnect) {
