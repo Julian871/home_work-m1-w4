@@ -41,8 +41,13 @@ export const connectService = {
         if(!findID) {
             return null
         }
-        const deviceIdFromCookieToken = await jwtService.getDeviceIdRefreshToken(token)
-        return deviceIdFromCookieToken === deviceId
+        const userIdFromCookieToken = await jwtService.getUserIdRefreshToken(token)
+        if(findID.userId && userIdFromCookieToken) {
+            let find = findID.userId.toString()
+            let tokenId = userIdFromCookieToken.toString()
+            return find === tokenId
+        }
+        return null
     },
 
     async updateUserId(specialId: string, login: string) {
