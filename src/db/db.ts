@@ -4,7 +4,7 @@ import {postTypeInput} from "./types/post-types";
 import {postCommentInput} from "./types/comments-types";
 import {userAccountDBType} from "./types/user-types";
 import {blackList} from "./types/blackList-types";
-import {connectType} from "./types/connect-types";
+import {connectType} from "./types/sessions-type";
 
 const mongoUri = process.env.mongoURI || 'mongodb+srv://Julian871:datajulianbase2023@julian871.cehbrfy.mongodb.net/hw3?retryWrites=true&w=majority'
 

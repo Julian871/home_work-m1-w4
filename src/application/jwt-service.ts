@@ -9,8 +9,8 @@ export const jwtService = {
         return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '10s'})
     },
 
-    async createJWTRefresh(user: WithId<userAccountDBType>, deviceId: string | null) {
-        return jwt.sign({deviceId: deviceId,userId: user._id}, REFRESH_JWT_SECRET, {expiresIn: '20s'})
+    async createJWTRefresh(user: WithId<userAccountDBType>) {
+        return jwt.sign({userId: user._id}, REFRESH_JWT_SECRET, {expiresIn: '200s'})
     },
 
     async getUserIdToken(token: string) {
@@ -27,16 +27,6 @@ export const jwtService = {
         try {
             const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
             return new ObjectId(result.userId)
-        } catch (error) {
-            console.log(error)
-            return null
-        }
-    },
-
-    async getDeviceIdRefreshToken(token: string) {
-        try {
-            const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
-            return result.deviceId
         } catch (error) {
             console.log(error)
             return null

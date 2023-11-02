@@ -38,6 +38,7 @@ export const authService = {
             await emailManager.sendConfirmationLink(email, user.emailConfirmation.confirmationCode)
         } catch (error) {
             console.log('email send Error:', error)
+            //await usersRepositories.deleteUserById(user._id.toString())
         }
 return;
     },

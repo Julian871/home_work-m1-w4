@@ -7,9 +7,7 @@ import {usersValidation} from "../middlewares/users/users-validation";
 import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
-import {checkConnect} from "../middlewares/checkConnect";
-import {connectService} from "../domain/connect-service";
-import {connectRepositories} from "../repositories/connect-repositories";
+import {checkConnect} from "../middlewares/connect";
 
 
 export const authRouter = Router({})
@@ -23,9 +21,8 @@ authRouter
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
                 const token= await jwtService.createJWT(user)
-                const refreshToken = await jwtService.createJWTRefresh(user, req.connectInfo.deviceId)
+                const refreshToken = await jwtService.createJWTRefresh(user)
                 await usersRepositories.updateToken(token, user._id)
-                await connectRepositories.updateUserId(req.connectInfo.specialId, user._id)
                 res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
                 res.status(200).send({accessToken: token})
                 return
@@ -39,7 +36,7 @@ authRouter
         authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const user = await usersService.checkConfirmationCode(req.body.code, req.connectInfo.specialId)
+        const user = await usersService.checkConfirmationCode(req.body.code)
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
@@ -51,10 +48,6 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password)
-            const isGood = await connectService.updateUserId(req.connectInfo.specialId, req.body.login)
-            if(isGood) {
-                return res.sendStatus(204)
-            }
            return res.sendStatus(204)
     })
 
@@ -63,14 +56,13 @@ authRouter
         authEmail,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-            const user = await usersService.checkEmail(req.body.email, req.connectInfo.specialId)
+            const user = await usersService.checkEmail(req.body.email)
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
     })
 
     .post('/refresh-token',
-    checkConnect,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -78,11 +70,7 @@ authRouter
             res.sendStatus(401)
         } else {
             const token = await jwtService.createJWT(user)
-            const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
-            const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
-            await connectService.disconnectByDeviceId(deviceId)
-            await connectService.updateDeviceId(deviceId, req.connectInfo.specialId)
-            await connectRepositories.updateUserId(req.connectInfo.specialId, user._id)
+            const refreshToken = await jwtService.createJWTRefresh(user)
             await usersRepositories.updateToken(token, user._id)
             await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
@@ -110,8 +98,6 @@ authRouter
                 res.sendStatus(401)
             } else {
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
-                const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
-                await connectRepositories.disconnectByDeviceId(deviceId)
                 res.sendStatus(204)
             }
     })
