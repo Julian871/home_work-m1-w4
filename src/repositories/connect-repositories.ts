@@ -6,7 +6,7 @@ export const connectRepositories = {
 
     async countConnection(IP: string, URL: string) {
         const limitDate = +new Date - 10000
-        return await connectCollection.countDocuments({IP: IP, URL: URL, date: { $gt: limitDate}})
+        return await connectCollection.countDocuments({IP: IP, URL: URL, lastActiveDate: { $gt: limitDate}})
     },
 
     async createConnectionInfo(connectInformation: connectType) {
