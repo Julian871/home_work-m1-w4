@@ -10,7 +10,6 @@ import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/checkConnect";
 import {connectService} from "../domain/connect-service";
 import {connectRepositories} from "../repositories/connect-repositories";
-import {checkBlackList} from "../utils/checkBlackList.utility";
 
 
 export const authRouter = Router({})
@@ -18,7 +17,6 @@ export const authRouter = Router({})
 authRouter
     .post('/login',
         checkConnect,
-        checkBlackList,
         authValidation,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
@@ -38,7 +36,6 @@ authRouter
 
     .post('/registration-confirmation',
         checkConnect,
-        checkBlackList,
         authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
@@ -74,7 +71,6 @@ authRouter
 
     .post('/refresh-token',
     checkConnect,
-    checkBlackList,
     authCookie,
     async (req: Request, res: Response) => {
         const user = await usersService.getUserAllInfo(req.user!)
@@ -107,7 +103,6 @@ authRouter
     })
 
     .post('/logout',
-        checkBlackList,
         authCookie,
         async (req: Request, res: Response) => {
             const user = await usersService.getUserAllInfo(req.user!)
