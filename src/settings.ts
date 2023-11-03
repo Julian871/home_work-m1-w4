@@ -7,6 +7,7 @@ import {authRouter} from "./routers/auth-routers";
 import {comRouter} from "./routers/comments-routers";
 import cookieParser from 'cookie-parser'
 import bodyParser from "body-parser";
+import {deviceRouter} from "./routers/device-routers";
 
 
 
@@ -26,6 +27,7 @@ app.use('/testing/all-data', testingRouter)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 app.use('/comments', comRouter)
+app.use('/security/devices', deviceRouter)
 
 export const JWT_SECRET = process.env.JWT_SECRET || '123'
 export const REFRESH_JWT_SECRET = process.env.JWT_SECRET || '234'

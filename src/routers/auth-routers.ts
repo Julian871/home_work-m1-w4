@@ -8,6 +8,7 @@ import {authCode, authEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/connect";
+import {connectRepositories} from "../repositories/connect-repositories";
 
 
 export const authRouter = Router({})
@@ -21,7 +22,8 @@ authRouter
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
                 const token= await jwtService.createJWT(user)
-                const refreshToken = await jwtService.createJWTRefresh(user)
+                const refreshToken = await jwtService.createJWTRefresh(user, req.deviceId)
+                await connectRepositories.updateUserId(user._id, req.deviceId)
                 await usersRepositories.updateToken(token, user._id)
                 res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
                 res.status(200).send({accessToken: token})
@@ -36,7 +38,7 @@ authRouter
         authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const user = await usersService.checkConfirmationCode(req.body.code)
+        const user = await usersService.checkConfirmationCode(req.body.code, req.deviceId)
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
@@ -47,7 +49,7 @@ authRouter
         usersValidation,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-            await authService.createUser(req.body.login, req.body.email, req.body.password)
+            await authService.createUser(req.body.login, req.body.email, req.body.password, req.deviceId)
            return res.sendStatus(204)
     })
 
@@ -56,7 +58,7 @@ authRouter
         authEmail,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-            const user = await usersService.checkEmail(req.body.email)
+            const user = await usersService.checkEmail(req.body.email, req.deviceId)
             if (user === true) {
                 res.sendStatus(204)
             } else {res.status(400).send(user)}
@@ -70,9 +72,11 @@ authRouter
             res.sendStatus(401)
         } else {
             const token = await jwtService.createJWT(user)
-            const refreshToken = await jwtService.createJWTRefresh(user)
+            const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
+            const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
             await usersRepositories.updateToken(token, user._id)
             await usersRepositories.updateBlackList(req.cookies.refreshToken)
+            await connectRepositories.updateConnectDate(req.ip, req.originalUrl, user._id, deviceId)
             res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken: token})
         }

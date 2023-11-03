@@ -5,10 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add'
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {emailManager} from "../manegers/email-meneger";
+import {connectRepositories} from "../repositories/connect-repositories";
 
 
 export const authService = {
-    async createUser(login: string, email: string, password: string) {
+    async createUser(login: string, email: string, password: string, deviceId: string) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
 
@@ -34,6 +35,7 @@ export const authService = {
             }
         }
         await usersRepositories.createAuthNewUser(user)
+        await connectRepositories.updateUserId(user._id, deviceId)
         try {
             await emailManager.sendConfirmationLink(email, user.emailConfirmation.confirmationCode)
         } catch (error) {
