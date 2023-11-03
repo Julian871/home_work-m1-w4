@@ -40,4 +40,8 @@ export const connectRepositories = {
     async deleteByDeviceId(deviceId: string) {
         await connectCollection.deleteMany({deviceId: deviceId})
     },
+
+    async deleteUserSession(userId: ObjectId | null, deviceId: string) {
+        await connectCollection.deleteMany({userId: userId, deviceId: {$not: {$regex: deviceId}} })
+    },
 }

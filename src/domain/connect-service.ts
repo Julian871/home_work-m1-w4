@@ -36,4 +36,10 @@ export const connectService = {
             return true
         }
     },
+
+    async deleteUserSession(token: string) {
+        const userId = await jwtService.getUserIdRefreshToken(token)
+        const deviceId = await jwtService.getDeviceIdRefreshToken(token)
+        await connectRepositories.deleteUserSession(userId, deviceId)
+    },
 }
