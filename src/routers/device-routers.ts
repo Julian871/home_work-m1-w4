@@ -15,7 +15,6 @@ deviceRouter
             if(!userId) {
                 res.sendStatus(401)
             } else {
-                await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 const deviceList = await connectService.getDeviceList(userId)
                 res.status(200).send(deviceList)
             }
