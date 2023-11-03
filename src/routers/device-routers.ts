@@ -20,3 +20,21 @@ deviceRouter
                 res.status(200).send(deviceList)
             }
     })
+
+    .delete('/:id',
+        authCookie,
+        async (req: Request, res: Response) => {
+            await usersRepositories.updateBlackList(req.cookies.refreshToken)
+
+            const checkResult = await connectService.checkDeviceId(req.params.id, req.cookies.refreshToken)
+
+            if(checkResult === null) {
+                return res.sendStatus(404)
+            }
+
+            if(!checkResult) {
+                return res.sendStatus(403)
+            } else {
+                return res.sendStatus(204)
+            }
+    })

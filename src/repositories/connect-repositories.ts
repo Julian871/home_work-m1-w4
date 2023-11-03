@@ -32,4 +32,12 @@ export const connectRepositories = {
     async updateConnectDate(IP: string, URL: string, userId: ObjectId, deviceId: string) {
         await connectCollection.updateOne({IP: IP, URL: URL, deviceId: deviceId, userId: userId}, {$set: {lastActiveDate: +new Date}})
     },
+
+    async findDeviceId(deviceId: string) {
+        return await connectCollection.findOne({deviceId: deviceId})
+    },
+
+    async deleteByDeviceId(deviceId: string) {
+        await connectCollection.deleteMany({deviceId: deviceId})
+    },
 }
