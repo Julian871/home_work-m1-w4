@@ -23,8 +23,6 @@ deviceRouter
     .delete('/:id',
         authCookie,
         async (req: Request, res: Response) => {
-            await usersRepositories.updateBlackList(req.cookies.refreshToken)
-
             const checkResult = await connectService.checkDeviceId(req.params.id, req.cookies.refreshToken)
 
             if(checkResult === null) {
@@ -34,6 +32,7 @@ deviceRouter
             if(!checkResult) {
                 return res.sendStatus(403)
             } else {
+                await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 return res.sendStatus(204)
             }
     })
