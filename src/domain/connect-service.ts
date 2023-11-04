@@ -27,13 +27,13 @@ export const connectService = {
             return null
         }
 
-        console.log('point 1')
         const tokenDeviceId = await jwtService.getDeviceIdRefreshToken(token)
+
         if(findDeviceId.deviceId === tokenDeviceId) {
-            return false
-        } else {
             await connectRepositories.deleteByDeviceId(deviceId)
             return true
+        } else {
+            return false
         }
     },
 

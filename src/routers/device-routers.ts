@@ -24,6 +24,7 @@ deviceRouter
         authCookie,
         async (req: Request, res: Response) => {
             const checkResult = await connectService.checkDeviceId(req.params.id, req.cookies.refreshToken)
+            console.log('checkResult: ', checkResult)
 
             if(checkResult === null) {
                 return res.sendStatus(404)
