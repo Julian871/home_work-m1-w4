@@ -40,6 +40,7 @@ deviceRouter
     .delete('/',
         authCookie,
         async (req: Request, res: Response) => {
-        await connectService.deleteUserSession(req.cookies.refreshToken)
+            await connectService.deleteUserSession(req.cookies.refreshToken)
+            await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.sendStatus(204)
         })
