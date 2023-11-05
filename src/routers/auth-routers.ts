@@ -101,6 +101,8 @@ authRouter
             if(user === null) {
                 res.sendStatus(401)
             } else {
+                const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
+                await connectRepositories.deleteByDeviceId(deviceId)
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
             }
