@@ -33,7 +33,6 @@ deviceRouter
             if(!checkResult) {
                 return res.sendStatus(403)
             } else {
-                await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 return res.sendStatus(204)
             }
     })
@@ -41,7 +40,6 @@ deviceRouter
     .delete('/',
         authCookie,
         async (req: Request, res: Response) => {
-        await usersRepositories.updateBlackList(req.cookies.refreshToken)
         await connectService.deleteUserSession(req.cookies.refreshToken)
             res.sendStatus(204)
         })
