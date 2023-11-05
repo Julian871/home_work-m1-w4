@@ -32,7 +32,7 @@ deviceRouter
             if(!checkResult) {
                 return res.sendStatus(403)
             } else {
-                await usersRepositories.updateBlackList(req.cookies.refreshToken)
+
                 return res.sendStatus(204)
             }
     })

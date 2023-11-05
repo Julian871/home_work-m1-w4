@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
 import {usersRepositories} from "../repositories/users-db-repositories";
+import {connectRepositories} from "../repositories/connect-repositories";
 
 export const authorizationMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
     if(req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
@@ -33,6 +34,13 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
         res.status(401).send('no refresh token')
         return
     }
+
+    const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
+    const checkDeviceId = await connectRepositories.findDeviceId(deviceId)
+    if(!checkDeviceId) {
+        return res.status(401).send('no device id in db')
+    }
+
 
     const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
     if(userId === null) {
