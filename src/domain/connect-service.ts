@@ -27,9 +27,16 @@ export const connectService = {
             return null
         }
 
-        const tokenDeviceId = await jwtService.getDeviceIdRefreshToken(token)
+        const tokenUserId = await jwtService.getUserIdRefreshToken(token)
+        let userId;
+        let tokenUser;
 
-        if(findDeviceId.deviceId === tokenDeviceId) {
+        if(findDeviceId.userId && tokenUserId) {
+            userId = findDeviceId.userId.toString()
+            tokenUser = tokenUserId.toString()
+        }
+
+        if(userId === tokenUser) {
             await connectRepositories.deleteByDeviceId(deviceId)
             return true
         } else {
