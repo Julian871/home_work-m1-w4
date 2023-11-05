@@ -2,7 +2,6 @@ import {Request, Response, Router} from "express";
 import {connectService} from "../domain/connect-service";
 import {jwtService} from "../application/jwt-service";
 import {authCookie} from "../middlewares/authorization";
-import {usersRepositories} from "../repositories/users-db-repositories";
 
 
 export const deviceRouter = Router({})
@@ -41,6 +40,5 @@ deviceRouter
         authCookie,
         async (req: Request, res: Response) => {
             await connectService.deleteUserSession(req.cookies.refreshToken)
-            await usersRepositories.updateBlackList(req.cookies.refreshToken)
             res.sendStatus(204)
         })
