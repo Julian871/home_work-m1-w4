@@ -29,8 +29,8 @@ export const connectRepositories = {
         await connectCollection.updateMany({deviceId: deviceId}, {$set: {userId: userId}})
     },
 
-    async updateConnectDate(IP: string, URL: string, userId: ObjectId, deviceId: string) {
-        await connectCollection.updateOne({IP: IP, URL: URL, deviceId: deviceId, userId: userId}, {$set: {lastActiveDate: +new Date}})
+    async updateConnectDate(deviceId: string) {
+        await connectCollection.updateOne({deviceId: deviceId}, {$set: {lastActiveDate: +new Date}})
     },
 
     async findDeviceId(deviceId: string) {
