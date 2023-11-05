@@ -30,19 +30,19 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 export const authCookie = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.cookies.refreshToken) {
-        res.sendStatus(401)
+        res.status(401).send('no refresh token')
         return
     }
 
     const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
     if(userId === null) {
-        res.sendStatus(401)
+        res.status(401).send('no userID')
         return
     }
     const checkResult = await usersRepositories.checkBlackList(req.cookies.refreshToken)
 
     if(checkResult) {
-        res.sendStatus(401)
+        res.status(401).send('in black list')
         return
     } else {
         req.user = await usersService.getUserById(userId)
