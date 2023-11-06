@@ -4,7 +4,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
-import {authCode, authEmail, authRecoverPassword, authValidation} from "../middlewares/auth";
+import {authCode, authEmail, authRecoverPassword, authRecoveryEmail, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/connect";
@@ -110,7 +110,7 @@ authRouter
 
     .post('/password-recovery',
         checkConnect,
-        authEmail,
+        authRecoveryEmail,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
         await usersService.sendPasswordRecovery(req.body.email)
