@@ -4,7 +4,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
-import {authCode, authEmail, authValidation} from "../middlewares/auth";
+import {authCode, authEmail, authRecoverPassword, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/connect";
@@ -106,6 +106,29 @@ authRouter
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
             }
+    })
+
+    .post('/password-recovery',
+        checkConnect,
+        authEmail,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        await usersService.sendPasswordRecovery(req.body.email)
+            return res.sendStatus(204)
+    })
+
+    .post('/new-password',
+        checkConnect,
+        authRecoverPassword,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        const confirmationPassword = await usersService.checkRecoveryCode(req.body.password, req.body.recoveryCode)
+            if(!confirmationPassword){
+                return res.sendStatus(400)
+            } else {
+                return res.sendStatus(204)
+            }
+
     })
 
 

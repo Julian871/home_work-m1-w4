@@ -4,6 +4,7 @@ export type userAccountDBType = {
     _id: ObjectId,
     accountData: {
         login: string,
+        recoveryCode: string | null
         email: string,
         passwordHash: string,
         passwordSalt: string,
