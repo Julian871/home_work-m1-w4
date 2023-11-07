@@ -30,6 +30,13 @@ export const authRecoverPassword =  [
 ]
 
 export const authRecoveryEmail =  [
-    body('email').isString().withMessage('email is not string'),
-    body('email').trim().isLength({min: 1}).withMessage('email is incorrect length')
+    body('email')
+        .isString()
+        .withMessage('email is not string')
+        .trim()
+        .isLength({min: 1})
+        .withMessage('email is incorrect length')
+        .isEmail()
+        .normalizeEmail()
+        .withMessage('invalid email')
 ]
