@@ -132,7 +132,14 @@ export const usersService = {
     async checkRecoveryCode(password: string, recoveryCode: string) {
         const findRecoveryCode = await usersRepositories.findRecoveryCode(recoveryCode)
         if(!findRecoveryCode) {
-            return false
+            return {
+                "errorsMessages": [
+                    {
+                        "message": "incorrect recoveryCode",
+                        "field": "recoveryCode"
+                    }
+                ]
+            }
         } else {
             let passwordSalt = await bcrypt.genSalt(10)
             let passwordHash = await authService._generateHash(password, passwordSalt)
