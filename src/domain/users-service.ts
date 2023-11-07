@@ -137,7 +137,7 @@ export const usersService = {
             let passwordSalt = await bcrypt.genSalt(10)
             let passwordHash = await authService._generateHash(password, passwordSalt)
             await usersRepositories.recoveryPassword(passwordSalt, passwordHash, recoveryCode)
-            await usersRepositories.invalidRecoveryCode(recoveryCode)
+            await usersRepositories.invalidRecoveryCode(findRecoveryCode._id)
             return true
         }
     },
