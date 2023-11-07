@@ -167,4 +167,5 @@ export const usersRepositories = {
         await usersCollection.updateOne({'accountData.recoveryCode': recoveryCode},
             {$set: {'accountData.passwordHash': passwordHash, 'accountData.passwordSalt': passwordSalt}})
     },
+
 }
