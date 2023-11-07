@@ -167,8 +167,4 @@ export const usersRepositories = {
         await usersCollection.updateOne({'accountData.recoveryCode': recoveryCode},
             {$set: {'accountData.passwordHash': passwordHash, 'accountData.passwordSalt': passwordSalt}})
     },
-
-    async invalidRecoveryCode(userId: ObjectId){
-        await usersCollection.updateOne({_id: userId}, {$set:{'accountData.recoveryCode': null}})
-    },
 }
