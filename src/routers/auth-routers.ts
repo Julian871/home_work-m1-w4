@@ -122,10 +122,9 @@ authRouter
         authRecoverPassword,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const recoveryCode = req.body.recoveryCode
         const confirmationPassword = await usersService.checkRecoveryCode(req.body.newPassword, req.body.recoveryCode)
-            if(!confirmationPassword){
-                return res.status(400).send(recoveryCode)
+            if(confirmationPassword !== true){
+                return res.status(400).send(confirmationPassword)
             } else {
                 return res.sendStatus(204)
             }
