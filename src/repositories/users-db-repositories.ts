@@ -156,19 +156,19 @@ export const usersRepositories = {
     },
 
     async updateRecoveryCode(email: string, recoveryCode: string){
-        await usersCollection.updateOne({'accountData.email': email}, {'accountDate.recoveryCode': recoveryCode})
+        await usersCollection.updateOne({'accountData.email': email}, {$set: {'accountData.recoveryCode': recoveryCode}})
     },
 
     async findRecoveryCode(recoveryCode: string){
-        return await usersCollection.findOne({'accountDate.recoveryCode': recoveryCode})
+        return await usersCollection.findOne({'accountData.recoveryCode': recoveryCode})
     },
 
     async recoveryPassword(passwordSalt: string, passwordHash: string, recoveryCode: string){
-        await usersCollection.updateOne({'accountDate.recoveryCode': recoveryCode},
-            {$set: {'accountDate.passwordHash': passwordHash, 'accountDate.passwordSalt': passwordSalt}})
+        await usersCollection.updateOne({'accountData.recoveryCode': recoveryCode},
+            {$set: {'accountData.passwordHash': passwordHash, 'accountData.passwordSalt': passwordSalt}})
     },
 
-    async invalidRecoveryCode(recoveryCode: string){
-        await usersCollection.updateOne({'accountDate.recoveryCode': recoveryCode}, {'accountDate.recoveryCode': null})
+    async invalidRecoveryCode(userId: ObjectId){
+        await usersCollection.updateOne({_id: userId}, {$set:{'accountData.recoveryCode': null}})
     },
 }
