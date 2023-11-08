@@ -125,7 +125,7 @@ authRouter
         const recoveryCode = req.body.recoveryCode
         const confirmationPassword = await usersService.checkRecoveryCode(req.body.newPassword, req.body.recoveryCode)
             if(!confirmationPassword){
-                return res.sendStatus(400).send(recoveryCode)
+                return res.status(400).send(recoveryCode)
             } else {
                 return res.sendStatus(204)
             }
