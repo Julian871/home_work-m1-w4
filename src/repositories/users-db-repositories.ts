@@ -153,5 +153,22 @@ export const usersRepositories = {
 
     async checkBlackList(refreshToken: string){
         return await blackListCollection.findOne({refreshToken: refreshToken})
-    }
+    },
+
+    async updateRecoveryCode(email: string, newRecoveryCode: string){
+        await usersCollection.updateOne({'accountData.email': email},{$set: {recoveryCode: newRecoveryCode}})
+    },
+
+    async checkRecoveryCode(recoveryCode: string){
+        return await usersCollection.findOne({recoveryCode: recoveryCode})
+    },
+
+    async updatePassword(recoveryCode: string, passwordHash: string, passwordSalt: string){
+        return await usersCollection.updateOne({recoveryCode: recoveryCode},
+            {$set: {'accountData.passwordHash': passwordHash, 'accountData.passwordSalt': passwordSalt}})
+    },
+
+    async invalidRecoveryCode(recoveryCode: string){
+        await usersCollection.updateOne({recoveryCode: recoveryCode}, {$set: {recoveryCode: null}})
+    },
 }

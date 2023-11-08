@@ -12,7 +12,6 @@ import bcrypt from 'bcrypt'
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
 import {emailManager} from "../manegers/email-meneger";
-import {connectService} from "./connect-service";
 import {connectRepositories} from "../repositories/connect-repositories";
 
 
@@ -51,6 +50,7 @@ export const usersService = {
 
         const newUser: userAccountDBType = {
             _id: new ObjectId(),
+            recoveryCode: null,
             accountData: {
                 login: data.login,
                 email: data.email,
@@ -119,5 +119,32 @@ export const usersService = {
 
     async deleteBlogById(id: string): Promise<boolean> {
         return await usersRepositories.deleteUserById(id)
-    }
+    },
+
+    async sendRecoveryCode (email: string){
+        const newRecoveryCode = uuidv4()
+        console.log('newRecoveryCode: ', newRecoveryCode)
+        await emailManager.sendRecoveryCode(email, newRecoveryCode)
+        await usersRepositories.updateRecoveryCode(email, newRecoveryCode)
+    },
+
+    async updatePassword (newPassword: string, recoveryCode: string){
+        const checkRecoveryCode = await usersRepositories.checkRecoveryCode(recoveryCode)
+        if(!checkRecoveryCode) {
+            return {
+                "errorsMessages": [
+                    {
+                        "message": "recovery code incorrect",
+                        "field": "recoveryCode"
+                    }
+                ]}
+        }
+
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await this._generateHash(newPassword, passwordSalt)
+        await usersRepositories.updatePassword(recoveryCode, passwordHash, passwordSalt)
+        await usersRepositories.invalidRecoveryCode(recoveryCode)
+        return true
+
+    },
 }

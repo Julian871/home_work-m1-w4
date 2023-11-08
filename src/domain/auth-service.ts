@@ -15,6 +15,7 @@ export const authService = {
 
         const user: userAccountDBType = {
             _id: new ObjectId(),
+            recoveryCode: null,
             accountData: {
                 login,
                 email,

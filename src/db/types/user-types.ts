@@ -2,6 +2,7 @@ import {ObjectId} from "mongodb";
 
 export type userAccountDBType = {
     _id: ObjectId,
+    recoveryCode: string | null,
     accountData: {
         login: string,
         email: string,

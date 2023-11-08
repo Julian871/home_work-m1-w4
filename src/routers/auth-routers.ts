@@ -4,7 +4,7 @@ import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwt-service";
 import {authService} from "../domain/auth-service";
 import {usersValidation} from "../middlewares/users/users-validation";
-import {authCode, authEmail, authValidation} from "../middlewares/auth";
+import {authCode, authEmail, authRecoveryPassword, authValidation} from "../middlewares/auth";
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/connect";
@@ -105,6 +105,28 @@ authRouter
                 await connectRepositories.deleteByDeviceId(deviceId)
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
+            }
+    })
+
+    .post('/password-recovery',
+        checkConnect,
+        authEmail,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        await usersService.sendRecoveryCode(req.body.email)
+            return res.sendStatus(204)
+    })
+
+    .post('/new-password',
+        checkConnect,
+        authRecoveryPassword,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        const updatePassword = await usersService.updatePassword(req.body.newPassword, req.body.recoveryCode)
+            if(updatePassword !== true) {
+                return res.status(400).send(updatePassword)
+            } else {
+                return res.sendStatus(204)
             }
     })
 
