@@ -1,5 +1,4 @@
 import {MongoClient} from "mongodb";
-import mongoose from 'mongoose'
 import {blogTypeInput} from "./types/blog-types";
 import {postTypeInput} from "./types/post-types";
 import {postCommentInput} from "./types/comments-types";
@@ -23,11 +22,9 @@ export async function runDb() {
     try {
         await client.connect()
         await client.db('blogs').command({ping: 1})
-        await mongoose.connect(mongoUri + '/' + 'hw3')
         console.log('Connected successful to server')
     } catch {
         console.log('Error connect to server')
         await client.close()
-        await mongoose.disconnect()
     }
 }

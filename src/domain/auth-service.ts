@@ -17,7 +17,6 @@ export const authService = {
             _id: new ObjectId(),
             accountData: {
                 login,
-                recoveryCode: null,
                 email,
                 passwordHash,
                 passwordSalt,
