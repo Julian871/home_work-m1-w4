@@ -64,7 +64,8 @@ export const postsService = {
                 userLogin: user.login
             },
             createdAt: new Date().toISOString(),
-            idPost
+            idPost,
+            likeStatus: 'None'
         }
 
         return postsRepositories.createNewPostComment(newPostComment)

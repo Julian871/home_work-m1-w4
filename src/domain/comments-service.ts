@@ -20,6 +20,10 @@ export const commentsService = {
         const comment = await commentsRepositories.getCommentById(id)
         const userId = comment?.commentatorInfo.userId
         return user.id === userId;
-    }
+    },
+
+    async updateLikeStatus(id: string, likeStatus: string) {
+        await commentsRepositories.updateLikeStatus(id, likeStatus)
+    },
 
 }

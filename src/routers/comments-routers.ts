@@ -9,6 +9,8 @@ import {postsRouter} from "./post-routers";
 import {RequestParams} from "../db/types/query-types";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {getPaginationData} from "../utils/pagination.utility";
+import {authLikeStatus} from "../middlewares/auth";
+import {commentsRepositories} from "../repositories/comment-repositories";
 
 
 export const comRouter = Router({})
@@ -123,4 +125,16 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
     } else {
         res.sendStatus(404)
     }
+})
+
+comRouter.put('/:id/like-status',
+    authMiddleware,
+    authLikeStatus,
+    async (req: Request, res: Response) => {
+    const checkId = await commentsRepositories.getCommentById(req.params.id)
+        if(!checkId) return res.sendStatus(404)
+
+        await commentsService.updateLikeStatus(req.params.id, req.body.likeStatus)
+        return res.sendStatus(204)
+
 })

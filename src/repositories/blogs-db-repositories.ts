@@ -1,5 +1,5 @@
 import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
-import {blogsCollection, postsCollection} from "../db/db";
+import {BlogsModel, postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
 import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
@@ -7,12 +7,12 @@ import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
 
-        const blogs = await blogsCollection.find({
+        const blogs = await BlogsModel.find({
         name: {$regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i'}
         }).sort({[query.sortBy]: query.sortDirection })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
-            .toArray()
+            .lean()
 
         return blogs.map((p) => ({
                     id: p._id.toString(),
@@ -25,9 +25,9 @@ export const blogsRepositories = {
     },
 
     async countBlogsByName(query: getBlogsQueryType): Promise<number>{
-        return await blogsCollection.countDocuments({
+        return BlogsModel.countDocuments({
             name: {$regex: query.searchNameTerm ? query.searchNameTerm : '', $options: 'i'}
-        })
+        });
     },
 
     async countBlogsByBlogId(blogId: string): Promise<number>{
@@ -41,7 +41,7 @@ export const blogsRepositories = {
 
     async getBlogById(id: string): Promise<blogTypeOutput | null> {
         const _id = new ObjectId(id)
-        const blog: blogTypeInput | null = await blogsCollection.findOne({_id: _id})
+        const blog: blogTypeInput | null = await BlogsModel.findOne({_id: _id})
         if (!blog) {
             return null
         }
@@ -80,7 +80,7 @@ export const blogsRepositories = {
 
     async createNewBlog(newBlog: blogTypeInput): Promise<blogTypeOutput> {
 
-        await blogsCollection.insertOne(newBlog)
+        await BlogsModel.insertMany(newBlog)
         return {
             id: newBlog._id.toString(),
             name: newBlog.name,
@@ -93,7 +93,7 @@ export const blogsRepositories = {
 
     async createNewPostByBlogId(blogId: string, newPost: postTypeInput) {
         const _blogId = new ObjectId(blogId)
-        const checkBlogId = await blogsCollection.findOne({_id: _blogId})
+        const checkBlogId = await BlogsModel.findOne({_id: _blogId})
 
         if (!checkBlogId) {
             return false
@@ -114,7 +114,7 @@ export const blogsRepositories = {
 
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {
         const _id = new ObjectId(id)
-        const result = await blogsCollection.updateOne({_id: _id}, {
+        const result = await BlogsModel.updateOne({_id: _id}, {
             $set: {
                 name: data.name,
                 description: data.description,
@@ -126,7 +126,7 @@ export const blogsRepositories = {
 
     async deleteBlogById(id: string): Promise<boolean> {
         const _id = new ObjectId(id)
-        const result = await blogsCollection.deleteOne({_id: _id})
+        const result = await BlogsModel.deleteOne({_id: _id})
         return result.deletedCount === 1
     }
 }

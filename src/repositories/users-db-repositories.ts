@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {blackListCollection, usersCollection} from "../db/db";
+import {BlackListModel, usersCollection} from "../db/db";
 import {getUsersQueryType, userAccountDBType, userTypeOutput, userTypeOutputAuthMe} from "../db/types/user-types";
 
 export const usersRepositories = {
@@ -148,11 +148,11 @@ export const usersRepositories = {
     },
 
     async updateBlackList(refreshToken: string){
-        await blackListCollection.insertOne({refreshToken})
+        await BlackListModel.insertMany({refreshToken})
     },
 
     async checkBlackList(refreshToken: string){
-        return await blackListCollection.findOne({refreshToken: refreshToken})
+        return BlackListModel.findOne({refreshToken: refreshToken});
     },
 
     async updateRecoveryCode(email: string, newRecoveryCode: string){

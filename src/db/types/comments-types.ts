@@ -11,14 +11,15 @@ export type postCommentOutput = {
 }
 
 export type postCommentInput = {
-    _id: ObjectId,
-    content: string,
+    _id: ObjectId
+    content: string
     commentatorInfo: {
-        userId: string,
+        userId: string
         userLogin: string
     },
     createdAt: string
     idPost: string
+    likeStatus: string
 }
 
 export type postCommentPut = {

@@ -25,3 +25,13 @@ export const authRecoveryPassword =  [
     body('newPassword').trim().isLength({min: 6, max: 20}).withMessage('password is incorrect length'),
     body('recoveryCode').isString().withMessage('recovery code is not string'),
 ]
+
+export const authLikeStatus =  [
+    body('likeStatus')
+        .custom(async (value) => {
+            if (value !== 'Like' || value !== 'Dislike' || value !== 'None') {
+                throw new Error('incorrect like status')
+            }
+        })
+
+]
