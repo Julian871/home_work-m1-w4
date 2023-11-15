@@ -25,7 +25,11 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
     if(!req.headers.authorization) {
         userId = '1'
     } else {
-        const _id = jwtService.getUserIdToken(req.headers.authorization)
+        const _id = await jwtService.getUserIdToken(req.headers.authorization)
+        if(!_id){
+            res.status(401).send('token == null')
+            return
+        }
         userId = _id.toString()
     }
 
@@ -59,7 +63,11 @@ comRouter.put('/:id',
         if(!req.headers.authorization) {
             userId = '1'
         } else {
-            const _id = jwtService.getUserIdToken(req.headers.authorization)
+            const _id = await jwtService.getUserIdToken(req.headers.authorization)
+            if(!_id){
+                res.status(401).send('token == null')
+                return
+            }
             userId = _id.toString()
         }
 
@@ -85,7 +93,6 @@ comRouter.put('/:id',
 
 comRouter.get('/:id',
     async (req: Request, res: Response) => {
-    console.log('headers.aut: ', req.headers.authorization)
         if(!ObjectId.isValid(req.params.id)){
             res.sendStatus(404)
             return
@@ -95,9 +102,14 @@ comRouter.get('/:id',
         if(!req.headers.authorization) {
          userId = '1'
         } else {
-            const _id = jwtService.getUserIdToken(req.headers.authorization)
+            const _id = await jwtService.getUserIdToken(req.headers.authorization)
+            if(!_id){
+                res.status(401).send('token == null')
+                return
+            }
             userId = _id.toString()
         }
+        console.log('userId: ', userId)
 
         let comment = await commentsService.getCommentById(req.params.id, userId)
         if (comment) {
