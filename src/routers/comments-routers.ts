@@ -11,6 +11,7 @@ import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {getPaginationData} from "../utils/pagination.utility";
 import {commentsRepositories} from "../repositories/comment-repositories";
 import {authLikeStatus} from "../middlewares/auth";
+import {jwtService} from "../application/jwt-service";
 
 
 export const comRouter = Router({})
@@ -46,7 +47,12 @@ comRouter.put('/:id',
             return
         }
 
-        let comment = await commentsService.getCommentById(req.params.id)
+        const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
+        if(!userId) {
+            res.status(401).send('problem with access token')
+        }
+
+        let comment = await commentsService.getCommentById(req.params.id, userId.toString())
         if (!comment) {
             res.sendStatus(404)
             return
@@ -72,7 +78,11 @@ comRouter.get('/:id',
             res.sendStatus(404)
             return
         }
-        let comment = await commentsService.getCommentById(req.params.id)
+        const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
+        if(!userId) {
+            res.status(401).send('problem with access token')
+        }
+        let comment = await commentsService.getCommentById(req.params.id, userId.toString())
         if (comment) {
             res.status(200).send(comment)
         } else {
@@ -107,7 +117,12 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         return
     }
 
-    let comment = await commentsService.getCommentById(req.params.id)
+    const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
+    if(!userId) {
+        res.status(401).send('problem with access token')
+    }
+
+    let comment = await commentsService.getCommentById(req.params.id, userId.toString())
     if (!comment) {
         res.sendStatus(404)
         return
