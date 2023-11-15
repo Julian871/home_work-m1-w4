@@ -12,6 +12,7 @@ export const commentsService = {
     async getCommentById(id: string): Promise<postCommentOutput | null>{
         const commentInfo = await commentsRepositories.getCommentById(id)
         if(!commentInfo) return null
+        const myStatus = await getMyStatus(id, commentInfo.commentatorInfo.userId)
             return {
                 id: commentInfo._id.toString(),
                 content: commentInfo.content,
@@ -20,7 +21,7 @@ export const commentsService = {
                 likesInfo: {
                     likesCount: commentInfo.likesInfo.countLike,
                     dislikesCount: commentInfo.likesInfo.countDislike,
-                    myStatus: await getMyStatus(id, commentInfo.commentatorInfo.userId)
+                    myStatus: myStatus
                 }
             }
     },
