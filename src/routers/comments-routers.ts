@@ -21,6 +21,14 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
 
     const checkPostsComments = await postsService.checkPostCommentCollection(req.params.id)
 
+    let userId: string
+    if(!req.headers.authorization) {
+        userId = '1'
+    } else {
+        const _id = jwtService.getUserIdToken(req.headers.authorization)
+        userId = _id.toString()
+    }
+
     if(checkPostsComments) {
         const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
         const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
@@ -28,7 +36,7 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
         const postCommentsList = await postsService.getAllPostsComments({
             ...postsQuery,
             ...pagination
-        }, req.params.id);
+        }, req.params.id, userId);
 
         res.send(postCommentsList)
     } else {
@@ -47,12 +55,15 @@ comRouter.put('/:id',
             return
         }
 
-        const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
-        if(!userId) {
-            res.status(401).send('problem with access token')
+        let userId: string
+        if(!req.headers.authorization) {
+            userId = '1'
+        } else {
+            const _id = jwtService.getUserIdToken(req.headers.authorization)
+            userId = _id.toString()
         }
 
-        let comment = await commentsService.getCommentById(req.params.id, userId.toString())
+        let comment = await commentsService.getCommentById(req.params.id, userId)
         if (!comment) {
             res.sendStatus(404)
             return
@@ -74,15 +85,21 @@ comRouter.put('/:id',
 
 comRouter.get('/:id',
     async (req: Request, res: Response) => {
+    console.log('headers.aut: ', req.headers.authorization)
         if(!ObjectId.isValid(req.params.id)){
             res.sendStatus(404)
             return
         }
-        const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
-        if(!userId) {
-            res.status(401).send('problem with access token')
+
+        let userId: string
+        if(!req.headers.authorization) {
+         userId = '1'
+        } else {
+            const _id = jwtService.getUserIdToken(req.headers.authorization)
+            userId = _id.toString()
         }
-        let comment = await commentsService.getCommentById(req.params.id, userId.toString())
+
+        let comment = await commentsService.getCommentById(req.params.id, userId)
         if (comment) {
             res.status(200).send(comment)
         } else {
@@ -117,12 +134,15 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         return
     }
 
-    const userId = jwtService.getUserIdToken(req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkxMCIsImlhdCI6MTcwMDAzNDU4MSwiZXhwIjoxNzAwMDM1MTgxfQ.TDfc5FFORQadvfrx7rn0kU1H1fZyT38_LgUddWCc__Y')
-    if(!userId) {
-        res.status(401).send('problem with access token')
+    let userId: string
+    if(!req.headers.authorization) {
+        userId = '1'
+    } else {
+        const _id = jwtService.getUserIdToken(req.headers.authorization)
+        userId = _id.toString()
     }
 
-    let comment = await commentsService.getCommentById(req.params.id, userId.toString())
+    let comment = await commentsService.getCommentById(req.params.id, userId)
     if (!comment) {
         res.sendStatus(404)
         return
