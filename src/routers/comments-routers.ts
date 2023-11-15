@@ -21,16 +21,16 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
 
     const checkPostsComments = await postsService.checkPostCommentCollection(req.params.id)
 
-    let userId: string
+    let userId = '0'
     if(!req.headers.authorization) {
         userId = '1'
     } else {
         const _id = await jwtService.getUserIdToken(req.headers.authorization)
         if(!_id){
-            res.status(401).send('token == null')
-            return
+            userId = '1'
+        } else if(_id) {
+            userId = _id.toString()
         }
-        userId = _id.toString()
     }
 
     if(checkPostsComments) {
@@ -59,16 +59,16 @@ comRouter.put('/:id',
             return
         }
 
-        let userId: string
+        let userId = '0'
         if(!req.headers.authorization) {
             userId = '1'
         } else {
             const _id = await jwtService.getUserIdToken(req.headers.authorization)
             if(!_id){
-                res.status(401).send('token == null')
-                return
+                userId = '1'
+            } else if(_id) {
+                userId = _id.toString()
             }
-            userId = _id.toString()
         }
 
         let comment = await commentsService.getCommentById(req.params.id, userId)
@@ -98,16 +98,16 @@ comRouter.get('/:id',
             return
         }
 
-        let userId: string
+        let userId = '0'
         if(!req.headers.authorization) {
          userId = '1'
         } else {
             const _id = await jwtService.getUserIdToken(req.headers.authorization)
             if(!_id){
-                res.status(401).send('token == null')
-                return
+                userId = '1'
+            } else if(_id) {
+                userId = _id.toString()
             }
-            userId = _id.toString()
         }
         console.log('userId: ', userId)
 
@@ -146,12 +146,16 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         return
     }
 
-    let userId: string
+    let userId = '0'
     if(!req.headers.authorization) {
         userId = '1'
     } else {
         const _id = jwtService.getUserIdToken(req.headers.authorization)
-        userId = _id.toString()
+        if(!_id){
+            userId = '1'
+        } else if(_id) {
+            userId = _id.toString()
+        }
     }
 
     let comment = await commentsService.getCommentById(req.params.id, userId)
