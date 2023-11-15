@@ -21,17 +21,19 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
 
     const checkPostsComments = await postsService.checkPostCommentCollection(req.params.id)
 
-    let userId = '0'
+    let userId: string
     if(!req.headers.authorization) {
-        userId = '1'
+        userId = '0'
     } else {
-        const _id = await jwtService.getUserIdToken(req.headers.authorization)
-        if(!_id){
-            userId = '1'
-        } else if(_id) {
-            userId = _id.toString()
+        const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+        if(!getUserId) {
+            userId = '0'
+        } else {
+            userId = getUserId.toString()
         }
     }
+
+
 
     if(checkPostsComments) {
         const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
@@ -59,15 +61,15 @@ comRouter.put('/:id',
             return
         }
 
-        let userId = '0'
+        let userId: string
         if(!req.headers.authorization) {
-            userId = '1'
+            userId = '0'
         } else {
-            const _id = await jwtService.getUserIdToken(req.headers.authorization)
-            if(!_id){
-                userId = '1'
-            } else if(_id) {
-                userId = _id.toString()
+            const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+            if(!getUserId) {
+                userId = '0'
+            } else {
+                userId = getUserId.toString()
             }
         }
 
@@ -98,18 +100,17 @@ comRouter.get('/:id',
             return
         }
 
-        let userId = '0'
+        let userId: string
         if(!req.headers.authorization) {
-         userId = '1'
+            userId = '0'
         } else {
-            const _id = await jwtService.getUserIdToken(req.headers.authorization)
-            if(!_id){
-                userId = '1'
-            } else if(_id) {
-                userId = _id.toString()
+            const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+            if(!getUserId) {
+                userId = '0'
+            } else {
+                userId = getUserId.toString()
             }
         }
-        console.log('userId: ', userId)
 
         let comment = await commentsService.getCommentById(req.params.id, userId)
         if (comment) {
@@ -145,16 +146,15 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         res.sendStatus(404)
         return
     }
-
-    let userId = '0'
+    let userId: string
     if(!req.headers.authorization) {
-        userId = '1'
+        userId = '0'
     } else {
-        const _id = jwtService.getUserIdToken(req.headers.authorization)
-        if(!_id){
-            userId = '1'
-        } else if(_id) {
-            userId = _id.toString()
+        const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+        if(!getUserId) {
+            userId = '0'
+        } else {
+            userId = getUserId.toString()
         }
     }
 
