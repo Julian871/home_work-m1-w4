@@ -20,7 +20,8 @@ export const comRouter = Router({})
 postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
 
     const checkPostsComments = await postsService.checkPostCommentCollection(req.params.id)
-    const userId = jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+    const token = req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwIiwiaWF0IjoxNzAwMDM0NTgxLCJleHAiOjE3MDAwMzUxODF9.OjWpr2q-5jSTmqnNbLaGmteehGuNKxeUAv56J8Jt6sg'
+    const userId = jwtService.getUserIdToken(token)
     if(!userId) {
         res.status(401).send('problem with refresh-token')
         return
@@ -33,7 +34,7 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
         const postCommentsList = await postsService.getAllPostsComments({
             ...postsQuery,
             ...pagination
-        }, req.params.id, userId);
+        }, req.params.id, userId.toString());
 
         res.send(postCommentsList)
     } else {
@@ -51,7 +52,8 @@ comRouter.put('/:id',
             res.sendStatus(404)
             return
         }
-        const userId = jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+        const token = req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwIiwiaWF0IjoxNzAwMDM0NTgxLCJleHAiOjE3MDAwMzUxODF9.OjWpr2q-5jSTmqnNbLaGmteehGuNKxeUAv56J8Jt6sg'
+        const userId = jwtService.getUserIdToken(token)
         if(!userId) {
             res.status(401).send('problem with refresh-token')
             return
@@ -83,7 +85,8 @@ comRouter.get('/:id',
             res.sendStatus(404)
             return
         }
-        const userId = jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+        const token = req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwIiwiaWF0IjoxNzAwMDM0NTgxLCJleHAiOjE3MDAwMzUxODF9.OjWpr2q-5jSTmqnNbLaGmteehGuNKxeUAv56J8Jt6sg'
+        const userId = jwtService.getUserIdToken(token)
         if(!userId) {
             res.status(401).send('problem with refresh-token')
             return
@@ -124,7 +127,8 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
         res.sendStatus(404)
         return
     }
-    const userId = jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
+    const token = req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwIiwiaWF0IjoxNzAwMDM0NTgxLCJleHAiOjE3MDAwMzUxODF9.OjWpr2q-5jSTmqnNbLaGmteehGuNKxeUAv56J8Jt6sg'
+    const userId = jwtService.getUserIdToken(token)
     if(!userId) {
         res.status(401).send('problem with refresh-token')
         return
