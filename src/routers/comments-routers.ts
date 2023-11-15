@@ -26,7 +26,7 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
         userId = '0'
     } else {
         console.log('headers to all: ', req.headers.authorization)
-        const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+        const getUserId = await jwtService.getUserIdExpireToken(req.headers.authorization)
         console.log('userId from get all comments for one posts: ', getUserId)
         if(!getUserId) {
             userId = '0'
@@ -106,7 +106,7 @@ comRouter.get('/:id',
             userId = '0'
         } else {
             console.log('headers to by id: ', req.headers.authorization)
-            const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+            const getUserId = await jwtService.getUserIdExpireToken(req.headers.authorization)
             console.log('userId from get comment by id: ', getUserId)
             if(!getUserId) {
                 userId = '0'

@@ -23,6 +23,11 @@ export const jwtService = {
         }
     },
 
+    async getUserIdExpireToken(token: string) {
+        const result: any = jwt.verify(token, JWT_SECRET)
+        return new ObjectId(result.userId)
+    },
+
     async getUserIdRefreshToken(token: string) {
         try {
             const result: any = jwt.verify(token, REFRESH_JWT_SECRET)
