@@ -65,7 +65,12 @@ export const postsService = {
             },
             createdAt: new Date().toISOString(),
             idPost,
-            likeStatus: 'None'
+            likeInfo: {
+                countLike: 0,
+                countDislike: 0,
+                likeList: [],
+                dislikeList: []
+            }
         }
 
         return postsRepositories.createNewPostComment(newPostComment)

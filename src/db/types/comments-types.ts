@@ -7,7 +7,12 @@ export type postCommentOutput = {
         userId: string,
         userLogin: string
     },
-    createdAt: string
+    createdAt: string,
+    likeInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string
+    }
 }
 
 export type postCommentInput = {
@@ -19,7 +24,12 @@ export type postCommentInput = {
     },
     createdAt: string
     idPost: string
-    likeStatus: string
+    likeInfo: {
+        countLike: number,
+        countDislike: number,
+        likeList:[],
+        dislikeList:[]
+    }
 }
 
 export type postCommentPut = {

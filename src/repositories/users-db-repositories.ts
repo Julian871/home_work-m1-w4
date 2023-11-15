@@ -1,11 +1,11 @@
 import {ObjectId} from "mongodb";
-import {BlackListModel, usersCollection} from "../db/db";
+import {BlackListModel, UserModel} from "../db/db";
 import {getUsersQueryType, userAccountDBType, userTypeOutput, userTypeOutputAuthMe} from "../db/types/user-types";
 
 export const usersRepositories = {
 
     async getAllUsers(query: getUsersQueryType): Promise<userTypeOutput[]> {
-        const users = await usersCollection.find({
+        const users = await UserModel.find({
             '$or': [
                 {'accountData.login': {
                     $regex: query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
@@ -15,7 +15,7 @@ export const usersRepositories = {
         }).sort({[query.sortBy]: query.sortDirection })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
-            .toArray()
+            .lean()
 
         return users.map((p) => ({
             id: p._id.toString(),
@@ -26,7 +26,7 @@ export const usersRepositories = {
     },
 
     async checkUserByConfirmationCode(code: string) {
-        const user = await usersCollection.findOne({'emailConfirmation.confirmationCode': code})
+        const user = await UserModel.findOne({'emailConfirmation.confirmationCode': code})
         if(!user) {
             return undefined
         } else {
@@ -35,7 +35,7 @@ export const usersRepositories = {
     },
 
     async checkUserByEmail(email: string) {
-        const user = await usersCollection.findOne({'accountData.email': email})
+        const user = await UserModel.findOne({'accountData.email': email})
         if(!user) {
             return undefined
         } else {
@@ -44,7 +44,7 @@ export const usersRepositories = {
     },
 
     async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
-        const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
+        const user: userAccountDBType | null = await UserModel.findOne({_id: id})
         if (!user) {
             return null
         }
@@ -57,7 +57,7 @@ export const usersRepositories = {
     },
 
     async getAllInformationUser(id: ObjectId) {
-        const user = await usersCollection.findOne({_id: id})
+        const user = await UserModel.findOne({_id: id})
         if(!user) {
             return null
         } else {
@@ -67,7 +67,7 @@ export const usersRepositories = {
 
 
     async getUserInformation(id: any): Promise<userTypeOutputAuthMe | null> {
-        const user: userAccountDBType | null = await usersCollection.findOne({_id: id})
+        const user: userAccountDBType | null = await UserModel.findOne({_id: id})
         if (!user) {
             return null
         }
@@ -80,15 +80,15 @@ export const usersRepositories = {
     },
 
     async getUserByEmail(email: string){
-        return await usersCollection.findOne({'accountData.email': email})
+        return UserModel.findOne({'accountData.email': email});
     },
 
     async getUserByLogin(login: string){
-        return await usersCollection.findOne({'accountData.login': login})
+        return UserModel.findOne({'accountData.login': login})
     },
 
     async countUser(query: getUsersQueryType): Promise<number> {
-        return usersCollection.countDocuments({
+        return UserModel.countDocuments({
             $or: [
                 {'accountData.login': {
                         $regex :query.searchLoginTerm ? query.searchLoginTerm : '', $options: 'i'} },
@@ -101,7 +101,7 @@ export const usersRepositories = {
 
     async createNewUser(newUser: userAccountDBType): Promise<userTypeOutput> {
 
-        await usersCollection.insertOne(newUser)
+        await UserModel.insertMany(newUser)
         return {
             id: newUser._id.toString(),
             login: newUser.accountData.login,
@@ -112,36 +112,36 @@ export const usersRepositories = {
 
     async createAuthNewUser(newUser: userAccountDBType){
 
-        await usersCollection.insertOne(newUser)
+        await UserModel.insertMany(newUser)
         return newUser
     },
 
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return usersCollection.findOne({$or: [{'accountData.login': loginOrEmail}, {"accountData.email": loginOrEmail}]})
+        return UserModel.findOne({$or: [{'accountData.login': loginOrEmail}, {"accountData.email": loginOrEmail}]})
     },
 
     async deleteUserById(id: string): Promise<boolean> {
         const _id = new ObjectId(id)
-        const result = await usersCollection.deleteOne({_id: _id})
+        const result = await UserModel.deleteOne({_id: _id})
         return result.deletedCount === 1
     },
 
     async updateConfirmStatus(_id: ObjectId) {
-        await usersCollection.updateOne({_id: _id}, {
+        await UserModel.updateOne({_id: _id}, {
             $set: {
                 'emailConfirmation.isConfirmation': true
             }})
     },
 
     async updateConfirmCode(_id: ObjectId, newConfirmationCode: string) {
-        await usersCollection.updateOne({_id: _id}, {
+        await UserModel.updateOne({_id: _id}, {
             $set: {
                 'emailConfirmation.confirmationCode': newConfirmationCode
             }})
     },
 
     async updateToken(token: string, _id: ObjectId) {
-        await usersCollection.updateOne({_id: _id}, {
+        await UserModel.updateOne({_id: _id}, {
             $set: {
                 'token.accessToken': token
             }})
@@ -156,19 +156,19 @@ export const usersRepositories = {
     },
 
     async updateRecoveryCode(email: string, newRecoveryCode: string){
-        await usersCollection.updateOne({'accountData.email': email},{$set: {recoveryCode: newRecoveryCode}})
+        await UserModel.updateOne({'accountData.email': email},{$set: {recoveryCode: newRecoveryCode}})
     },
 
     async checkRecoveryCode(recoveryCode: string){
-        return await usersCollection.findOne({recoveryCode: recoveryCode})
+        return UserModel.findOne({recoveryCode: recoveryCode})
     },
 
     async updatePassword(recoveryCode: string, passwordHash: string, passwordSalt: string){
-        return await usersCollection.updateOne({recoveryCode: recoveryCode},
+        return UserModel.updateOne({recoveryCode: recoveryCode},
             {$set: {'accountData.passwordHash': passwordHash, 'accountData.passwordSalt': passwordSalt}})
     },
 
     async invalidRecoveryCode(recoveryCode: string){
-        await usersCollection.updateOne({recoveryCode: recoveryCode}, {$set: {recoveryCode: null}})
+        await UserModel.updateOne({recoveryCode: recoveryCode}, {$set: {recoveryCode: null}})
     },
 }

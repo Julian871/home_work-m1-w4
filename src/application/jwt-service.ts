@@ -6,7 +6,7 @@ import {userAccountDBType} from "../db/types/user-types";
 
 export const jwtService = {
     async createJWT(user: WithId<userAccountDBType>) {
-        return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '10s'})
+        return jwt.sign({userId: user._id}, JWT_SECRET, {expiresIn: '600s'})
     },
 
     async createJWTRefresh(user: WithId<userAccountDBType>, deviceId: string) {

@@ -1,9 +1,10 @@
 import {Request, Response, Router} from "express";
-import {db} from "../db/db";
+import mongoose from "mongoose";
+
 
 export const testingRouter = Router({})
 
 testingRouter.delete('', async (req: Request, res: Response) => {
-    await db.dropDatabase()
+    await mongoose.connection.dropDatabase()
     res.sendStatus(204)
 })

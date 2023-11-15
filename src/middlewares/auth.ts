@@ -28,10 +28,8 @@ export const authRecoveryPassword =  [
 
 export const authLikeStatus =  [
     body('likeStatus')
-        .custom(async (value) => {
-            if (value !== 'Like' || value !== 'Dislike' || value !== 'None') {
-                throw new Error('incorrect like status')
-            }
-        })
-
+        .isString()
+        .withMessage('is not string')
+        .isIn(['Like', 'Dislike', 'None'])
+        .withMessage('incorrect status')
 ]

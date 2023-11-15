@@ -1,5 +1,5 @@
 import {blogTypeInput, blogTypeOutput, blogTypePostPut} from "../db/types/blog-types";
-import {BlogsModel, postsCollection} from "../db/db";
+import {BlogsModel, PostModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
 import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
@@ -32,7 +32,7 @@ export const blogsRepositories = {
 
     async countBlogsByBlogId(blogId: string): Promise<number>{
         const _blogId = new ObjectId(blogId).toString()
-        return await postsCollection.countDocuments({
+        return PostModel.countDocuments({
             blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         })
     },
@@ -58,12 +58,12 @@ export const blogsRepositories = {
     async getPostByBlogId(query: getPostsQueryType, blogId: string) {
         const _blogId = new ObjectId(blogId).toString()
 
-        const posts = await postsCollection.find({
+        const posts = await PostModel.find({
             blogId: {$regex: _blogId ? _blogId : '', $options: 'i'}
         }).sort({[query.sortBy]: query.sortDirection })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(+query.pageSize)
-            .toArray()
+            .lean()
 
         return posts.map((p) => ({
             id: p._id.toString(),
@@ -99,7 +99,7 @@ export const blogsRepositories = {
             return false
         }
 
-        await postsCollection.insertOne(newPost)
+        await PostModel.insertMany(newPost)
         return  {
             id: newPost._id.toString(),
             title: newPost.title,
@@ -109,7 +109,6 @@ export const blogsRepositories = {
             blogName: newPost.blogName,
             createdAt: newPost.createdAt
         }
-
     },
 
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {
