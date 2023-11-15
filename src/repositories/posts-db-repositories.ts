@@ -45,9 +45,9 @@ export const postsRepositories = {
             content: p.content,
             commentatorInfo: p.commentatorInfo,
             createdAt: p.createdAt,
-            likeInfo: {
-                likesCount: p.likeInfo.countLike,
-                dislikesCount: p.likeInfo.countDislike,
+            likesInfo: {
+                likesCount: p.likesInfo.countLike,
+                dislikesCount: p.likesInfo.countDislike,
                 myStatus: await getMyStatus(p._id.toString(), p.commentatorInfo.userId)
             }
         })))
@@ -100,9 +100,9 @@ export const postsRepositories = {
             content: newPostComment.content,
             commentatorInfo: newPostComment.commentatorInfo,
             createdAt: newPostComment.createdAt,
-            likeInfo: {
-                likesCount: newPostComment.likeInfo.countLike,
-                dislikesCount: newPostComment.likeInfo.countDislike,
+            likesInfo: {
+                likesCount: newPostComment.likesInfo.countLike,
+                dislikesCount: newPostComment.likesInfo.countDislike,
                 myStatus: 'None'
             }
         }

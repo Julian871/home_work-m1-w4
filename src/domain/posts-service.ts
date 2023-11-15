@@ -65,7 +65,7 @@ export const postsService = {
             },
             createdAt: new Date().toISOString(),
             idPost,
-            likeInfo: {
+            likesInfo: {
                 countLike: 0,
                 countDislike: 0,
                 likeList: [],

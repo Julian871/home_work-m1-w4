@@ -17,9 +17,9 @@ export const commentsService = {
                 content: commentInfo.content,
                 commentatorInfo: commentInfo.commentatorInfo,
                 createdAt: commentInfo.createdAt,
-                likeInfo: {
-                    likesCount: commentInfo.likeInfo.countLike,
-                    dislikesCount: commentInfo.likeInfo.countDislike,
+                likesInfo: {
+                    likesCount: commentInfo.likesInfo.countLike,
+                    dislikesCount: commentInfo.likesInfo.countDislike,
                     myStatus: await getMyStatus(id, commentInfo.commentatorInfo.userId)
                 }
             }

@@ -8,7 +8,7 @@ export type postCommentOutput = {
         userLogin: string
     },
     createdAt: string,
-    likeInfo: {
+    likesInfo: {
         likesCount: number,
         dislikesCount: number,
         myStatus: string
@@ -24,7 +24,7 @@ export type postCommentInput = {
     },
     createdAt: string
     idPost: string
-    likeInfo: {
+    likesInfo: {
         countLike: number,
         countDislike: number,
         likeList:[],
