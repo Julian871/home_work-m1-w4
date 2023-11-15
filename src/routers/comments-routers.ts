@@ -25,9 +25,7 @@ postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy:
     if(!req.headers.authorization) {
         userId = '0'
     } else {
-        console.log('headers to all: ', req.headers.authorization)
-        const getUserId = await jwtService.getUserIdExpireToken(req.headers.authorization)
-        console.log('userId from get all comments for one posts: ', getUserId)
+        const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
         if(!getUserId) {
             userId = '0'
         } else {
@@ -65,8 +63,7 @@ comRouter.put('/:id',
         if(!req.headers.authorization) {
             userId = '0'
         } else {
-            const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
-            console.log('userId from headers: ', getUserId)
+            const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
             if(!getUserId) {
                 userId = '0'
             } else {
@@ -105,9 +102,7 @@ comRouter.get('/:id',
         if(!req.headers.authorization) {
             userId = '0'
         } else {
-            console.log('headers to by id: ', req.headers.authorization)
-            const getUserId = await jwtService.getUserIdExpireToken(req.headers.authorization)
-            console.log('userId from get comment by id: ', getUserId)
+            const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
             if(!getUserId) {
                 userId = '0'
             } else {
@@ -153,7 +148,7 @@ comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => 
     if(!req.headers.authorization) {
         userId = '0'
     } else {
-        const getUserId = await jwtService.getUserIdToken(req.headers.authorization)
+        const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
         if(!getUserId) {
             userId = '0'
         } else {

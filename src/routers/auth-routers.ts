@@ -21,7 +21,7 @@ authRouter
         async (req: Request, res: Response) => {
             const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
-                const token= await jwtService.createJWT(user)
+                const token = await jwtService.createJWT(user)
                 const refreshToken = await jwtService.createJWTRefresh(user, req.deviceId)
                 await connectRepositories.updateUserId(user._id, req.deviceId)
                 await usersRepositories.updateToken(token, user._id)
