@@ -31,7 +31,7 @@ export const postsRepositories = {
         }))
     },
 
-    async getAllPostsComments(query: getPostsQueryType, id: string, userId: string): Promise<postCommentOutput[]>{
+    async getAllPostsComments(query: getPostsQueryType, id: string): Promise<postCommentOutput[]>{
         const posts = await CommentModel.find({
             idPost: {$regex: id ? id : '', $options: 'i'}
         })
@@ -48,7 +48,7 @@ export const postsRepositories = {
             likesInfo: {
                 likesCount: p.likesInfo.countLike,
                 dislikesCount: p.likesInfo.countDislike,
-                myStatus: await getMyStatus(p._id.toString(), userId)
+                myStatus: await getMyStatus(p._id.toString(), p.commentatorInfo.userId)
             }
         })))
     },
