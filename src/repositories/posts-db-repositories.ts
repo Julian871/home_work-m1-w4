@@ -7,7 +7,7 @@ import {
 import {PostModel, CommentModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {postCommentInput, postCommentOutput} from "../db/types/comments-types";
-import {getMyStatus} from "../utils/getLikeStatus.utility";
+import {getLikeList, getMyStatus} from "../utils/likeStatus.utility";
 
 
 export const postsRepositories = {
@@ -45,10 +45,11 @@ export const postsRepositories = {
             content: p.content,
             commentatorInfo: p.commentatorInfo,
             createdAt: p.createdAt,
-            likesInfo: {
+            extendedLikesInfo: {
                 likesCount: p.likesInfo.countLike,
                 dislikesCount: p.likesInfo.countDislike,
-                myStatus: await getMyStatus(p._id.toString(), userId)
+                myStatus: await getMyStatus(p._id.toString(), userId),
+                newestLikes: await getLikeList(id)
             }
         })))
     },
@@ -100,10 +101,11 @@ export const postsRepositories = {
             content: newPostComment.content,
             commentatorInfo: newPostComment.commentatorInfo,
             createdAt: newPostComment.createdAt,
-            likesInfo: {
+            extendedLikesInfo: {
                 likesCount: newPostComment.likesInfo.countLike,
                 dislikesCount: newPostComment.likesInfo.countDislike,
-                myStatus: 'None'
+                myStatus: 'None',
+                newestLikes: []
             }
         }
     },

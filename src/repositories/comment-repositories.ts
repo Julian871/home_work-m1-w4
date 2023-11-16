@@ -26,7 +26,7 @@ export const commentsRepositories = {
 
     async getLikeStatus(id: string, userId: string) {
         const _id = new ObjectId(id)
-        return CommentModel.findOne({_id: _id, 'likesInfo.likeList': userId})
+        return CommentModel.findOne({_id: _id, 'likesInfo.likeList.userId': userId})
     },
 
     async getDislikeStatus(id: string, userId: string) {
@@ -34,11 +34,11 @@ export const commentsRepositories = {
         return CommentModel.findOne({_id: _id, 'likesInfo.dislikeList': userId})
     },
 
-    async updateLikeStatus(id: string, userId: string) {
+    async updateLikeStatus(id: string, newLike: any) {
         const _id = new ObjectId(id)
         await CommentModel.updateOne(
             {_id: _id},
-            {$inc: {'likesInfo.countLike': 1}, $push: {'likesInfo.likeList': userId}}
+            {$inc: {'likesInfo.countLike': 1}, $push: {'likesInfo.likeList': newLike}}
         )
     },
 
@@ -54,7 +54,7 @@ export const commentsRepositories = {
         const _id = new ObjectId(id)
         await CommentModel.updateOne(
             {_id: _id},
-            {$pull: {'likesInfo.likeList': userId}, $inc: {'likesInfo.countLike': -1}}
+            {$pull: {'likesInfo.likeList': {userId: userId}}, $inc: {'likesInfo.countLike': -1}}
         )
     },
 
@@ -71,20 +71,26 @@ export const commentsRepositories = {
         await CommentModel.updateOne(
             {_id: _id},
             {
-                $pull: {'likesInfo.likeList': userId},
+                $pull: {'likesInfo.likeList': {userId: userId}},
                 $inc: {'likesInfo.countLike': -1, 'likesInfo.countDislike': 1},
                 $push: {'likesInfo.dislikeList': userId}
             })
     },
 
-    async updateDislikeToLike(id: string, userId: string) {
+    async updateDislikeToLike(id: string, newLike: any, userId: string) {
         const _id = new ObjectId(id)
         await CommentModel.updateOne(
             {_id: _id},
             {
                 $pull: {'likesInfo.dislikeList': userId},
                 $inc: {'likesInfo.countDislike': -1, 'likesInfo.countLike': 1},
-                $push: {'likesInfo.likeList': userId}
+                $push: {'likesInfo.likeList': newLike}
             })
     },
+
+    async getListLikeStatus(id: string) {
+        const _id = new ObjectId(id)
+        return CommentModel.findOne({_id: _id}, {'likesInfo.likeList': {$slice: -3}});
+    },
+
 }

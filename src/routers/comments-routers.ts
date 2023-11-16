@@ -185,6 +185,6 @@ comRouter.put('/:id/like-status',
         if(!checkId) return res.sendStatus(404)
         if(!req.user) return res.status(404).send('no user')
 
-        await commentsService.updateLikeStatus(req.params.id, req.body.likeStatus, req.user.id)
+        await commentsService.updateLikeStatus(req.params.id, req.body.likeStatus, req.user.id, req.user.login)
         return res.sendStatus(204)
 })

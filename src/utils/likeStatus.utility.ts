@@ -9,3 +9,9 @@ export async function getMyStatus(commentId: string, userId: string) {
     if(checkDislikeStatus) return 'Dislike'
     return 'None'
 }
+
+export async function getLikeList(id: string) {
+    const post = await commentsRepositories.getListLikeStatus(id)
+    if(!post) {return}
+    return post.likesInfo.likeList
+}

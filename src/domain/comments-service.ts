@@ -1,7 +1,7 @@
 import {postCommentOutput, postCommentPut} from "../db/types/comments-types";
 import {commentsRepositories} from "../repositories/comment-repositories";
 import {userTypeOutput} from "../db/types/user-types";
-import {getMyStatus} from "../utils/getLikeStatus.utility";
+import {getLikeList, getMyStatus} from "../utils/likeStatus.utility";
 
 
 export const commentsService = {
@@ -18,10 +18,11 @@ export const commentsService = {
                 content: commentInfo.content,
                 commentatorInfo: commentInfo.commentatorInfo,
                 createdAt: commentInfo.createdAt,
-                likesInfo: {
+                extendedLikesInfo: {
                     likesCount: commentInfo.likesInfo.countLike,
                     dislikesCount: commentInfo.likesInfo.countDislike,
-                    myStatus: await getMyStatus(id, userId)
+                    myStatus: await getMyStatus(id, userId),
+                    newestLikes: await getLikeList(id)
                 }
             }
     },
@@ -36,8 +37,15 @@ export const commentsService = {
         return user.id === userId;
     },
 
-    async updateLikeStatus(id: string, likeStatus: string, userId: string) {
+    async updateLikeStatus(id: string, likeStatus: string, userId: string, login: string) {
+        const newLike = {
+            date: new Date(),
+            userId: userId,
+            login: login
+        }
+
         const checkOnLike = await commentsRepositories.getLikeStatus(id, userId)
+        console.log('checkOnLike: ', checkOnLike)
         if(checkOnLike && likeStatus === 'None') {
             return await commentsRepositories.updateLikeToNoneStatus(id, userId)
         } else if(checkOnLike && likeStatus === 'Dislike') {
@@ -49,12 +57,12 @@ export const commentsService = {
         if(checkDislike && likeStatus === 'None') {
             return await commentsRepositories.updateDislikeToNoneStatus(id, userId)
         } else if(checkDislike && likeStatus === 'Like') {
-            return await commentsRepositories.updateDislikeToLike(id, userId)
+            return await commentsRepositories.updateDislikeToLike(id, newLike, userId)
         } else if(checkDislike && likeStatus === 'Dislike') return
 
 
         if(likeStatus === 'Like') {
-            return await commentsRepositories.updateLikeStatus(id, userId)
+            return await commentsRepositories.updateLikeStatus(id, newLike)
         }
 
         if(likeStatus === 'Dislike') {
