@@ -202,7 +202,7 @@ export const postsRepositories = {
         await PostModel.updateOne(
             {_id: _id},
             {
-                $pull: {'extendedLikesInfo.likeList': userId},
+                $pull: {'extendedLikesInfo.likeList': {userId: userId}},
                 $inc: {'extendedLikesInfo.countLike': -1, 'extendedLikesInfo.countDislike': 1},
                 $push: {'extendedLikesInfo.dislikeList': userId}
             })
