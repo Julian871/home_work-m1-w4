@@ -7,11 +7,11 @@ import {
 import {PostModel, CommentModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {postCommentInput, postCommentOutput} from "../db/types/comments-types";
-import {getLikeList, getMyStatus} from "../utils/likeStatus.utility";
+import {getLikeListToPost, getMyStatus, getMyStatusToPost} from "../utils/getLikeStatus.utility";
 
 
 export const postsRepositories = {
-    async getAllPosts(query: getPostsQueryType): Promise<postTypeOutput[]>{
+    async getAllPosts(query: getPostsQueryType, userId: string): Promise<postTypeOutput[]>{
         const posts = await PostModel.find({})
 
             .skip((query.pageNumber - 1) * query.pageSize)
@@ -19,16 +19,22 @@ export const postsRepositories = {
             .sort({[query.sortBy]: query.sortDirection })
             .lean()
 
-        return posts.map((p) => ({
+        return Promise.all(posts.map(async (p) => ({
             id: p._id.toString(),
             title: p.title,
             shortDescription: p.shortDescription,
             content: p.content,
             blogId: p.blogId,
             blogName: p.blogName,
-            createdAt: p.createdAt
+            createdAt: p.createdAt,
+            extendedLikesInfo: {
+                likesCount: p.extendedLikesInfo.countLike,
+                dislikesCount: p.extendedLikesInfo.countDislike,
+                myStatus: await getMyStatusToPost(p._id.toString(), userId),
+                newestLikes: await getLikeListToPost(p._id.toString())
+            }
 
-        }))
+        })))
     },
 
     async getAllPostsComments(query: getPostsQueryType, id: string, userId: string): Promise<postCommentOutput[]>{
@@ -45,11 +51,10 @@ export const postsRepositories = {
             content: p.content,
             commentatorInfo: p.commentatorInfo,
             createdAt: p.createdAt,
-            extendedLikesInfo: {
+            likesInfo: {
                 likesCount: p.likesInfo.countLike,
                 dislikesCount: p.likesInfo.countDislike,
-                myStatus: await getMyStatus(p._id.toString(), userId),
-                newestLikes: await getLikeList(id)
+                myStatus: await getMyStatus(p._id.toString(), userId)
             }
         })))
     },
@@ -64,7 +69,7 @@ export const postsRepositories = {
         })
     },
 
-    async getPostById(id: string): Promise<postTypeOutput | null>{
+    async getPostById(id: string, userId: string): Promise<postTypeOutput | null>{
         const _id = new ObjectId(id)
         const post: postTypeInput | null = await PostModel.findOne({_id: _id})
         if(!post) {
@@ -77,7 +82,13 @@ export const postsRepositories = {
             content: post.content,
             blogId: post.blogId,
             blogName: post.blogName,
-            createdAt: post.createdAt
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                likesCount: post.extendedLikesInfo.countLike,
+                dislikesCount: post.extendedLikesInfo.countDislike,
+                myStatus: await getMyStatusToPost(post._id.toString(), userId),
+                newestLikes: await getLikeListToPost(post._id.toString())
+            }
         }
     },
 
@@ -90,7 +101,13 @@ export const postsRepositories = {
             content: newPost.content,
             blogId: newPost.blogId,
             blogName: newPost.blogName,
-            createdAt: newPost.createdAt
+            createdAt: newPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: newPost.extendedLikesInfo.countLike,
+                dislikesCount: newPost.extendedLikesInfo.countDislike,
+                myStatus: 'None',
+                newestLikes: []
+            }
         }
     },
 
@@ -101,11 +118,10 @@ export const postsRepositories = {
             content: newPostComment.content,
             commentatorInfo: newPostComment.commentatorInfo,
             createdAt: newPostComment.createdAt,
-            extendedLikesInfo: {
+            likesInfo: {
                 likesCount: newPostComment.likesInfo.countLike,
                 dislikesCount: newPostComment.likesInfo.countDislike,
-                myStatus: 'None',
-                newestLikes: []
+                myStatus: 'None'
             }
         }
     },
@@ -137,5 +153,74 @@ export const postsRepositories = {
         const _id = new ObjectId(id)
         const result = await PostModel.deleteOne({_id: _id})
         return result.deletedCount === 1
+    },
+
+    async getLikeStatus(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        return PostModel.findOne({_id: _id, 'extendedLikesInfo.likeList.userId': userId})
+    },
+
+    async getDislikeStatus(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        return PostModel.findOne({_id: _id, 'extendedLikesInfo.dislikeList': userId})
+    },
+
+    async updateLikeStatus(id: string, newLike: any) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {$inc: {'extendedLikesInfo.countLike': 1}, $push: {'extendedLikesInfo.likeList': newLike}}
+        )
+    },
+
+    async updateDislikeStatus(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {$inc: {'extendedLikesInfo.countDislike': 1}, $push: {'extendedLikesInfo.dislikeList': userId}}
+        )
+    },
+
+    async updateLikeToNoneStatus(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {$pull: {'extendedLikesInfo.likeList': userId}, $inc: {'extendedLikesInfo.countLike': -1}}
+        )
+    },
+
+    async updateDislikeToNoneStatus(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {$pull: {'extendedLikesInfo.dislikeList': userId}, $inc: {'extendedLikesInfo.countDislike': -1}}
+        )
+    },
+
+    async updateLikeToDislike(id: string, userId: string) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {
+                $pull: {'extendedLikesInfo.likeList': userId},
+                $inc: {'extendedLikesInfo.countLike': -1, 'extendedLikesInfo.countDislike': 1},
+                $push: {'extendedLikesInfo.dislikeList': userId}
+            })
+    },
+
+    async updateDislikeToLike(id: string, newLike: any, userId: string) {
+        const _id = new ObjectId(id)
+        await PostModel.updateOne(
+            {_id: _id},
+            {
+                $pull: {'extendedLikesInfo.dislikeList': userId},
+                $inc: {'extendedLikesInfo.countDislike': -1, 'extendedLikesInfo.countLike': 1},
+                $push: {'extendedLikesInfo.likeList': newLike}
+            })
+    },
+
+    async getLikeListToPost(id: string) {
+        const _id = new ObjectId(id)
+        return PostModel.findOne({_id: _id}, {'extendedLikesInfo.likeList': {$slice: -3}})
     }
 }

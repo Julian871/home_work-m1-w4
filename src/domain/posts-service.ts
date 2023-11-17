@@ -12,9 +12,9 @@ import {userTypeOutput} from "../db/types/user-types";
 
 
 export const postsService = {
-    async getAllPosts(query: getPostsQueryType): Promise<headTypes>{
+    async getAllPosts(query: getPostsQueryType, userId: string): Promise<headTypes>{
         const countPosts = await postsRepositories.countPosts()
-        const filterPosts = await postsRepositories.getAllPosts(query)
+        const filterPosts = await postsRepositories.getAllPosts(query, userId)
 
         return {
 
@@ -39,8 +39,8 @@ export const postsService = {
         }
     },
 
-    async getPostById(id: string): Promise<postTypeOutput | null>{
-        return postsRepositories.getPostById(id)
+    async getPostById(id: string, userId: string): Promise<postTypeOutput | null>{
+        return postsRepositories.getPostById(id, userId)
     },
 
     async createNewPost(data: postTypePostPut): Promise<postTypeOutput> {
@@ -48,7 +48,13 @@ export const postsService = {
             _id: new ObjectId(),
             ...data,
             blogName: (Math.random() * 100).toString(),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            extendedLikesInfo: {
+                countLike: 0,
+                countDislike: 0,
+                likeList:[],
+                dislikeList:[]
+            }
         }
 
         return postsRepositories.createNewPost(newPost)
@@ -90,6 +96,39 @@ export const postsService = {
 
     async deletePostById(id: string): Promise<boolean> {
         return postsRepositories.deletePostById(id)
-    }
+    },
+
+    async updateLikeStatus(id: string, likeStatus: string, userId: string, login: string) {
+        const newLike = {
+            addedAt: new Date(),
+            userId: userId,
+            login: login
+        }
+        const checkOnLike = await postsRepositories.getLikeStatus(id, userId)
+        if(checkOnLike && likeStatus === 'None') {
+            return await postsRepositories.updateLikeToNoneStatus(id, userId)
+        } else if(checkOnLike && likeStatus === 'Dislike') {
+            return await postsRepositories.updateLikeToDislike(id, userId)
+        } else if(checkOnLike && likeStatus === 'Like') return
+
+
+        const checkDislike = await postsRepositories.getDislikeStatus(id, userId)
+        if(checkDislike && likeStatus === 'None') {
+            return await postsRepositories.updateDislikeToNoneStatus(id, userId)
+        } else if(checkDislike && likeStatus === 'Like') {
+            return await postsRepositories.updateDislikeToLike(id, newLike, userId)
+        } else if(checkDislike && likeStatus === 'Dislike') return
+
+
+        if(likeStatus === 'Like') {
+            return await postsRepositories.updateLikeStatus(id, newLike)
+        }
+
+        if(likeStatus === 'Dislike') {
+            return await postsRepositories.updateDislikeStatus(id, userId)
+        }
+
+        if(likeStatus === 'None') return
+    },
 
 }

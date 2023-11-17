@@ -7,7 +7,13 @@ export type postTypeInput = {
     content: string,
     blogId: string,
     blogName: string,
-    createdAt: string
+    createdAt: string,
+    extendedLikesInfo: {
+        countLike: number,
+        countDislike: number,
+        likeList:[],
+        dislikeList:[]
+    }
 }
 
 export type postTypeOutput = {
@@ -17,7 +23,13 @@ export type postTypeOutput = {
     content: string,
     blogId: string,
     blogName: string,
-    createdAt: string
+    createdAt: string,
+    extendedLikesInfo: {
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: string,
+        newestLikes: any
+    }
 }
 
 export type postTypePostPut = {

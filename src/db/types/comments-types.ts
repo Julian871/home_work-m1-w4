@@ -8,11 +8,10 @@ export type postCommentOutput = {
         userLogin: string
     },
     createdAt: string,
-    extendedLikesInfo: {
+    likesInfo: {
         likesCount: number,
         dislikesCount: number,
-        myStatus: string,
-        newestLikes: [] | undefined
+        myStatus: string
     }
 }
 

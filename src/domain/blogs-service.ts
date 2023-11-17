@@ -55,7 +55,13 @@ export const blogsService = {
             ...data,
             blogId,
             blogName: (Math.random()*100).toString(),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            extendedLikesInfo: {
+                countLike: 0,
+                countDislike: 0,
+                likeList:[],
+                dislikeList:[]
+            }
         }
         return await blogsRepositories.createNewPostByBlogId(blogId, newPost)
 
