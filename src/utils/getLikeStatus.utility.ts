@@ -23,5 +23,5 @@ export async function getMyStatusToPost(commentId: string, userId: string) {
 export async function getLikeListToPost(id: string) {
     const post = await postsRepositories.getLikeListToPost(id)
     if(!post) return
-    return post.extendedLikesInfo.likeList
+    return post.extendedLikesInfo.likeList.reverse()
 }
