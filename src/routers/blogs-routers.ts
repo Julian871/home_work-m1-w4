@@ -9,6 +9,7 @@ import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {blogsService} from "../domain/blogs-service";
+import {jwtService} from "../application/jwt-service";
 
 export const blogsRouter = Router({})
 
@@ -59,11 +60,22 @@ blogsRouter.post('/:blogId/posts',
 blogsRouter.get('/:blogId/posts', async (req: RequestParams<{blogId: string}, {sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
     const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
     const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
+    let userId: string
+    if(!req.headers.authorization) {
+        userId = '0'
+    } else {
+        const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
+        if(!getUserId) {
+            userId = '0'
+        } else {
+            userId = getUserId.toString()
+        }
+    }
 
     const foundPosts = await blogsService.getPostByBlogId({
         ...postsQuery,
         ...pagination
-    }, req.params.blogId)
+    }, req.params.blogId, userId)
 
     if (foundPosts.items.length > 0) {
         res.send(foundPosts)

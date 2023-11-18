@@ -3,6 +3,7 @@ import {BlogsModel, PostModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
 import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
+import {getLikeListToPost, getMyStatusToPost} from "../utils/getLikeStatus.utility";
 
 export const blogsRepositories = {
     async getAllBlogs(query: getBlogsQueryType): Promise<blogTypeOutput[]>{
@@ -55,7 +56,7 @@ export const blogsRepositories = {
         }
     },
 
-    async getPostByBlogId(query: getPostsQueryType, blogId: string) {
+    async getPostByBlogId(query: getPostsQueryType, blogId: string, userId: string) {
         const _blogId = new ObjectId(blogId).toString()
 
         const posts = await PostModel.find({
@@ -65,15 +66,21 @@ export const blogsRepositories = {
             .limit(+query.pageSize)
             .lean()
 
-        return posts.map((p) => ({
+        return Promise.all(posts.map(async (p) => ({
             id: p._id.toString(),
             title: p.title,
             shortDescription: p.shortDescription,
             content: p.content,
             blogId: p.blogId,
             blogName: p.blogName,
-            createdAt: p.createdAt
-        }))
+            createdAt: p.createdAt,
+            extendedLikesInfo: {
+                likesCount: p.extendedLikesInfo.countLike,
+                dislikesCount: p.extendedLikesInfo.countDislike,
+                myStatus: await getMyStatusToPost(p._id.toString(), userId),
+                newestLikes: await getLikeListToPost(p._id.toString())
+            }
+        })))
     },
 
 

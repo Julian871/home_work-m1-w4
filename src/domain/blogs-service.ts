@@ -23,8 +23,8 @@ export const blogsService = {
         return blogsRepositories.getBlogById(id)
     },
 
-    async getPostByBlogId(query: getPostsQueryType, blogId: string) {
-        const filterPostsByBlogId = await blogsRepositories.getPostByBlogId(query, blogId)
+    async getPostByBlogId(query: getPostsQueryType, blogId: string, userId: string) {
+        const filterPostsByBlogId = await blogsRepositories.getPostByBlogId(query, blogId, userId)
         const countPost = await blogsRepositories.countBlogsByBlogId(blogId)
 
         return {
