@@ -114,7 +114,13 @@ export const blogsRepositories = {
             content: newPost.content,
             blogId: newPost.blogId,
             blogName: newPost.blogName,
-            createdAt: newPost.createdAt
+            createdAt: newPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: newPost.extendedLikesInfo.countLike,
+                dislikesCount: newPost.extendedLikesInfo.countDislike,
+                myStatus: 'None',
+                newestLikes: await getLikeListToPost(newPost._id.toString())
+            }
         }
     },
 
