@@ -18,7 +18,7 @@ export const blogsRepositories = {
         return blogs.map((p) => ({
                     id: p._id.toString(),
                     name: p.name,
-                    description: p.description,
+                    description: 'test description',
                     websiteUrl: p.websiteUrl,
                     createdAt: p.createdAt,
                     isMembership: p.isMembership
