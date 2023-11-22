@@ -79,7 +79,7 @@ blogsRouter
         if (foundPosts.items.length > 0) {
             res.send(foundPosts)
         } else {
-            res.status(404).send('get blog/blogID/post')
+            res.sendStatus(404)
         }
     })
 
