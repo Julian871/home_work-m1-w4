@@ -29,7 +29,7 @@ export const postsService = {
     async getAllPostsComments(query: getPostsQueryType, id: string, userId: string): Promise<headTypes> {
         const countPostsComments = await postsRepositories.countPostsComments(id)
         const allPostsComments = await postsRepositories.getAllPostsComments(query, id)
-        const filterPostsComments = Promise.all(allPostsComments.map(async (p) => (
+        const filterPostsComments = await Promise.all(allPostsComments.map(async (p) => (
             new CommentInfo(id, p.content, userId, p.commentatorInfo.userLogin, p.createdAt,
                 p.likesInfo.countLike, p.likesInfo.countDislike, await getMyStatus(id, userId))
         )))

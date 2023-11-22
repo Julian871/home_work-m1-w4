@@ -134,7 +134,6 @@ export const usersService = {
 
     async sendRecoveryCode(email: string) {
         const newRecoveryCode = uuidv4()
-        console.log('newRecoveryCode: ', newRecoveryCode)
         await emailManager.sendRecoveryCode(email, newRecoveryCode)
         await usersRepositories.updateRecoveryCode(email, newRecoveryCode)
     },

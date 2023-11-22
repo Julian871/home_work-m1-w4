@@ -25,7 +25,7 @@ export const blogsService = {
     async getPostByBlogId(query: getPostsQueryType, blogId: string, userId: string) {
         const allPosts = await blogsRepositories.getPostByBlogId(query, blogId)
         const countPost = await blogsRepositories.countBlogsByBlogId(blogId)
-        const filterPostsByBlogId = Promise.all(allPosts.map(async (p) => (
+        const filterPostsByBlogId = await Promise.all(allPosts.map(async (p) => (
             new PostInfo(p._id.toString(), p.title, p.shortDescription, p.content, blogId, p.blogName, p.createdAt,
                 p.extendedLikesInfo.countLike, p.extendedLikesInfo.countDislike,
                 await getMyStatusToPost(p._id.toString(), userId),
