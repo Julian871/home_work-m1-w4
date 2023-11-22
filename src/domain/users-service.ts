@@ -81,7 +81,7 @@ export const usersService = {
             }
         }
         await usersRepositories.createNewUser(newUser)
-        return new UserInfo(newUser._id.toString(), newUser.accountData.login, newUser.accountData.email, newUser.accountData.createdAt.toString())
+        return new UserInfo(newUser._id.toString(), newUser.accountData.login, newUser.accountData.email, newUser.accountData.createdAt.toISOString())
     },
 
     async checkConfirmationCode(code: string, deviceId: string) {

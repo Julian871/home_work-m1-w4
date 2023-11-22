@@ -46,7 +46,8 @@ export const blogsService = {
 
         const newPost = new PostCreator(data.title, data.shortDescription, data.content, blogId)
         await blogsRepositories.createNewPostByBlogId(newPost)
-        return newPost
+        return new PostInfo(newPost._id.toString(), newPost.title, newPost.shortDescription, newPost.content,
+            newPost.blogId, newPost.blogName, newPost.createdAt, 0, 0, 'None', [])
     },
 
     async updateBlogById(id: string, data: blogTypePostPut): Promise<boolean> {

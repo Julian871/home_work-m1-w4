@@ -46,7 +46,7 @@ export class BlogCreator {
         this.name = name
         this.description = description
         this.websiteUrl = websiteUrl
-        this.createdAt = new Date().toString()
+        this.createdAt = new Date().toISOString()
         this.isMembership = false
     }
 }
