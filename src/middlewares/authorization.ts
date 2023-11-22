@@ -5,11 +5,11 @@ import {usersRepositories} from "../repositories/users-db-repositories";
 import {connectRepositories} from "../repositories/connect-repositories";
 
 export const authorizationMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
-    if(req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
-       return res.sendStatus(401)
+    if (req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
+        return res.sendStatus(401)
 
     } else {
-       return next();
+        return next();
     }
 }
 
@@ -21,7 +21,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     const token = req.headers.authorization.split(' ')[1]
     const userId = await jwtService.getUserIdToken(token)
-    if(userId) {
+    if (userId) {
         req.user = await usersService.getUserById(userId)
         next()
         return
@@ -37,19 +37,19 @@ export const authCookie = async (req: Request, res: Response, next: NextFunction
 
     const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
     const checkDeviceId = await connectRepositories.findDeviceId(deviceId)
-    if(!checkDeviceId) {
+    if (!checkDeviceId) {
         return res.status(401).send('no device id in db')
     }
 
 
     const userId = await jwtService.getUserIdRefreshToken(req.cookies.refreshToken)
-    if(userId === null) {
+    if (userId === null) {
         res.status(401).send('no userID')
         return
     }
     const checkResult = await usersRepositories.checkBlackList(req.cookies.refreshToken)
 
-    if(checkResult) {
+    if (checkResult) {
         res.status(401).send('in black list')
         return
     } else {

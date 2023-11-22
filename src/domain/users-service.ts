@@ -1,13 +1,12 @@
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {
     getUsersQueryType,
-    userAccountDBType,
+    userAccountDBType, UserInfo,
     userTypeOutput,
-    userTypeOutputAuthMe,
     userTypePostPut
 } from "../db/types/user-types";
 import {ObjectId, WithId} from "mongodb";
-import {headTypes} from "../db/types/head-types";
+import {headTypes, PageInfo} from "../db/types/head-types";
 import bcrypt from 'bcrypt'
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
@@ -15,33 +14,44 @@ import {emailManager} from "../manegers/email-meneger";
 import {connectRepositories} from "../repositories/connect-repositories";
 
 
-
 export const usersService = {
 
     async getAllUsers(query: getUsersQueryType): Promise<headTypes> {
         const usersCount = await usersRepositories.countUser(query)
-        const filterUsers = await usersRepositories.getAllUsers(query)
+        const allUsers = await usersRepositories.getAllUsers(query)
+        const filterUsers = allUsers.map((p) => (
+            new UserInfo(p._id.toString(), p.accountData.login, p.accountData.email, p.accountData.createdAt.toString())
+        ))
+        return new PageInfo(query.pageNumber, query.pageSize, usersCount, filterUsers)
+    },
+
+    async getUserInformation(user: userTypeOutput) {
+        const userInfo = await usersRepositories.getUserInformation(user.id)
+        if (!userInfo) {
+            return null
+        }
         return {
-            pagesCount: Math.ceil(usersCount / query.pageSize),
-            page: +query.pageNumber,
-            pageSize: +query.pageSize,
-            totalCount: usersCount,
-            items: filterUsers
+            login: userInfo.accountData.login,
+            email: userInfo.accountData.email,
+            userId: userInfo._id.toString()
         }
     },
 
-    async getUserInformation(user: userTypeOutput): Promise<userTypeOutputAuthMe | null> {
-        const userId = new ObjectId(user.id)
-        return await usersRepositories.getUserInformation(userId)
-    },
-
-    async getUserById(id: ObjectId): Promise<userTypeOutput | null> {
-        return await usersRepositories.getUserById(id)
+    async getUserById(id: ObjectId) {
+        const user = await usersRepositories.getUserById(id)
+        if (!user) {
+            return null
+        }
+        return new UserInfo(user._id.toString(), user.accountData.login, user.accountData.email, user.accountData.createdAt.toString())
     },
 
     async getUserAllInfo(user: userTypeOutput): Promise<userAccountDBType | null> {
-        const id = new ObjectId(user.id)
-        return await usersRepositories.getAllInformationUser(id)
+        const userInfo = await usersRepositories.getAllInformationUser(user.id)
+        if (!userInfo) {
+            return null
+        } else {
+            return userInfo
+        }
     },
 
     async createNewUser(data: userTypePostPut): Promise<userTypeOutput> {
@@ -70,43 +80,44 @@ export const usersService = {
                 accessToken: null
             }
         }
-        return usersRepositories.createNewUser(newUser)
+        await usersRepositories.createNewUser(newUser)
+        return new UserInfo(newUser._id.toString(), newUser.accountData.login, newUser.accountData.email, newUser.accountData.createdAt.toString())
     },
 
     async checkConfirmationCode(code: string, deviceId: string) {
         const confirmStatus = await usersRepositories.checkUserByConfirmationCode(code)
-        if(confirmStatus === undefined) {
-            return { errorsMessages: [{ message: 'Incorrect code', field: "code" }] }
-        } else if(!confirmStatus.emailConfirmation.isConfirmation) {
+        if (confirmStatus === undefined) {
+            return {errorsMessages: [{message: 'Incorrect code', field: "code"}]}
+        } else if (!confirmStatus.emailConfirmation.isConfirmation) {
             await connectRepositories.updateUserId(confirmStatus._id, deviceId)
             await emailManager.sendConfirmationLink(confirmStatus.accountData.email, confirmStatus.emailConfirmation.confirmationCode)
             await usersRepositories.updateConfirmStatus(confirmStatus._id)
             return true
         } else {
-            return { errorsMessages: [{ message: 'code confirm', field: "code" }] }
+            return {errorsMessages: [{message: 'code confirm', field: "code"}]}
         }
     },
 
     async checkEmail(email: string, deviceId: string) {
         const user = await usersRepositories.checkUserByEmail(email)
         const newConfirmationCode = uuidv4()
-        if(user === undefined) {
-            return { errorsMessages: [{ message: 'Incorrect email', field: "email" }] }
-        } else if(!user.emailConfirmation.isConfirmation) {
+        if (user === undefined) {
+            return {errorsMessages: [{message: 'Incorrect email', field: "email"}]}
+        } else if (!user.emailConfirmation.isConfirmation) {
             await connectRepositories.updateUserId(user._id, deviceId)
             await emailManager.sendConfirmationLink(user.accountData.email, newConfirmationCode)
             await usersRepositories.updateConfirmCode(user._id, newConfirmationCode)
             return true
         } else {
-            return { errorsMessages: [{ message: 'no confirm', field: "email" }] }
+            return {errorsMessages: [{message: 'no confirm', field: "email"}]}
         }
     },
 
     async checkCredentials(loginOrEmail: string, password: string): Promise<WithId<userAccountDBType> | null> {
         const user = await usersRepositories.findUserByLoginOrEmail(loginOrEmail)
-        if(!user) return null
+        if (!user) return null
         const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
-        if(user.accountData.passwordHash !== passwordHash){
+        if (user.accountData.passwordHash !== passwordHash) {
             return null
         }
         return user;
@@ -121,23 +132,24 @@ export const usersService = {
         return await usersRepositories.deleteUserById(id)
     },
 
-    async sendRecoveryCode (email: string){
+    async sendRecoveryCode(email: string) {
         const newRecoveryCode = uuidv4()
         console.log('newRecoveryCode: ', newRecoveryCode)
         await emailManager.sendRecoveryCode(email, newRecoveryCode)
         await usersRepositories.updateRecoveryCode(email, newRecoveryCode)
     },
 
-    async updatePassword (newPassword: string, recoveryCode: string){
+    async updatePassword(newPassword: string, recoveryCode: string) {
         const checkRecoveryCode = await usersRepositories.checkRecoveryCode(recoveryCode)
-        if(!checkRecoveryCode) {
+        if (!checkRecoveryCode) {
             return {
                 "errorsMessages": [
                     {
                         "message": "recovery code incorrect",
                         "field": "recoveryCode"
                     }
-                ]}
+                ]
+            }
         }
 
         const passwordSalt = await bcrypt.genSalt(10)

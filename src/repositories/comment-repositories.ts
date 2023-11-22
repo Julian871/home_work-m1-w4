@@ -9,7 +9,8 @@ export const commentsRepositories = {
         const result = await CommentModel.updateOne({_id: _id}, {
             $set: {
                 content: data.content
-            }})
+            }
+        })
         return result.matchedCount === 1
     },
 

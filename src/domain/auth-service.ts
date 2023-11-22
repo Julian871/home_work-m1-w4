@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import {userAccountDBType} from "../db/types/user-types";
 import {ObjectId} from "mongodb";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import add from 'date-fns/add'
 import {usersRepositories} from "../repositories/users-db-repositories";
 import {emailManager} from "../manegers/email-meneger";
@@ -42,7 +42,7 @@ export const authService = {
         } catch (error) {
             console.log('email send Error:', error)
         }
-return;
+        return;
     },
 
     async _generateHash(password: string, salt: string) {

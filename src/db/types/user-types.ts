@@ -27,12 +27,6 @@ export type userTypeOutput = {
     createdAt: string
 }
 
-export type userTypeOutputAuthMe = {
-    login: string,
-    email: string,
-    userId: string
-}
-
 export type userTypePostPut = {
     login: string,
     email: string,
@@ -46,4 +40,18 @@ export type getUsersQueryType = {
     sortDirection: 1 | -1;
     pageNumber: number;
     pageSize: number;
+}
+
+export class UserInfo {
+    id: string
+    login: string
+    email: string
+    createdAt: string
+
+    constructor(id: string, login: string, email: string, createdAt: string) {
+        this.id = id
+        this.login = login
+        this.email = email
+        this.createdAt = createdAt
+    }
 }

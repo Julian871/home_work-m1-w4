@@ -33,3 +33,39 @@ export type getBlogsQueryType = {
     pageSize: number;
 }
 
+export class BlogCreator {
+    _id: ObjectId
+    name: string
+    description: string
+    websiteUrl: string
+    createdAt: string
+    isMembership: boolean
+
+    constructor(name: string, description: string, websiteUrl: string) {
+        this._id = new ObjectId()
+        this.name = name
+        this.description = description
+        this.websiteUrl = websiteUrl
+        this.createdAt = new Date().toString()
+        this.isMembership = false
+    }
+}
+
+export class BlogInfo {
+    id: string
+    name: string
+    description: string
+    websiteUrl: string
+    createdAt: string
+    isMembership: boolean
+
+    constructor(id: string, name: string, description: string, websiteUrl: string, createdAt: string, isMembership: boolean) {
+        this.id = id
+        this.name = name
+        this.description = description
+        this.websiteUrl = websiteUrl
+        this.createdAt = createdAt
+        this.isMembership = isMembership
+    }
+}
+

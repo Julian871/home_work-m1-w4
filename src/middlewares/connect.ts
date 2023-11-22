@@ -12,7 +12,7 @@ export const checkConnect = async (req: Request, res: Response, next: NextFuncti
 
 
     const countConnect = await connectRepositories.countConnection(IP, URL)
-    if(countConnect >= 5) {
+    if (countConnect >= 5) {
         await connectService.createConnection(IP, URL, deviceName, deviceId)
         return res.sendStatus(429)
     } else {

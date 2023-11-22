@@ -31,7 +31,6 @@ deviceRouter
             if(!checkResult) {
                 return res.sendStatus(403)
             } else {
-
                 return res.sendStatus(204)
             }
     })

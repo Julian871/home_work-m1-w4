@@ -31,18 +31,20 @@ authRouter
             } else {
                 res.sendStatus(401)
             }
-    })
+        })
 
     .post('/registration-confirmation',
         checkConnect,
         authCode,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const user = await usersService.checkConfirmationCode(req.body.code, req.deviceId)
+            const user = await usersService.checkConfirmationCode(req.body.code, req.deviceId)
             if (user === true) {
                 res.sendStatus(204)
-            } else {res.status(400).send(user)}
-    })
+            } else {
+                res.status(400).send(user)
+            }
+        })
 
     .post('/registration',
         checkConnect,
@@ -50,8 +52,8 @@ authRouter
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
             await authService.createUser(req.body.login, req.body.email, req.body.password, req.deviceId)
-           return res.sendStatus(204)
-    })
+            return res.sendStatus(204)
+        })
 
     .post('/registration-email-resending',
         checkConnect,
@@ -61,44 +63,46 @@ authRouter
             const user = await usersService.checkEmail(req.body.email, req.deviceId)
             if (user === true) {
                 res.sendStatus(204)
-            } else {res.status(400).send(user)}
-    })
+            } else {
+                res.status(400).send(user)
+            }
+        })
 
     .post('/refresh-token',
-    authCookie,
-    async (req: Request, res: Response) => {
-        const user = await usersService.getUserAllInfo(req.user!)
-        if(user === null) {
-            res.sendStatus(401)
-        } else {
-            const token = await jwtService.createJWT(user)
-            const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
-            const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
-            await usersRepositories.updateToken(token, user._id)
-            await usersRepositories.updateBlackList(req.cookies.refreshToken)
-            await connectRepositories.updateConnectDate(deviceId)
-            res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
-            res.status(200).send({accessToken: token})
-        }
-    })
+        authCookie,
+        async (req: Request, res: Response) => {
+            const user = await usersService.getUserAllInfo(req.user!)
+            if (user === null) {
+                res.sendStatus(401)
+            } else {
+                const token = await jwtService.createJWT(user)
+                const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
+                const refreshToken = await jwtService.createJWTRefresh(user, deviceId)
+                await usersRepositories.updateToken(token, user._id)
+                await usersRepositories.updateBlackList(req.cookies.refreshToken)
+                await connectRepositories.updateConnectDate(deviceId)
+                res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+                res.status(200).send({accessToken: token})
+            }
+        })
 
     .get('/me',
         authMiddleware,
         async (req: Request, res: Response) => {
 
-        const userInformation = await usersService.getUserInformation(req.user!)
-            if(userInformation === null) {
+            const userInformation = await usersService.getUserInformation(req.user!)
+            if (userInformation === null) {
                 res.sendStatus(401)
             } else {
                 res.status(200).send(userInformation)
             }
-    })
+        })
 
     .post('/logout',
         authCookie,
         async (req: Request, res: Response) => {
             const user = await usersService.getUserAllInfo(req.user!)
-            if(user === null) {
+            if (user === null) {
                 res.sendStatus(401)
             } else {
                 const deviceId = await jwtService.getDeviceIdRefreshToken(req.cookies.refreshToken)
@@ -106,28 +110,28 @@ authRouter
                 await usersRepositories.updateBlackList(req.cookies.refreshToken)
                 res.sendStatus(204)
             }
-    })
+        })
 
     .post('/password-recovery',
         checkConnect,
         authEmail,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        await usersService.sendRecoveryCode(req.body.email)
+            await usersService.sendRecoveryCode(req.body.email)
             return res.sendStatus(204)
-    })
+        })
 
     .post('/new-password',
         checkConnect,
         authRecoveryPassword,
         inputValidationMiddleware,
         async (req: Request, res: Response) => {
-        const updatePassword = await usersService.updatePassword(req.body.newPassword, req.body.recoveryCode)
-            if(updatePassword !== true) {
+            const updatePassword = await usersService.updatePassword(req.body.newPassword, req.body.recoveryCode)
+            if (updatePassword !== true) {
                 return res.status(400).send(updatePassword)
             } else {
                 return res.sendStatus(204)
             }
-    })
+        })
 
 

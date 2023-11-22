@@ -1,7 +1,6 @@
 import {body} from "express-validator";
 
 
-
 export const blogsValidation = [
     body('name').isString().withMessage('name is not string'),
     body('name').trim().isLength({min: 1, max: 15}).withMessage('name is incorrect length'),

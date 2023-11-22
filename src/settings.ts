@@ -10,9 +10,6 @@ import bodyParser from "body-parser";
 import {deviceRouter} from "./routers/device-routers";
 
 
-
-
-
 export const app = express()
 
 const jsonBodyMiddleware = bodyParser.json()

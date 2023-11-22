@@ -15,14 +15,7 @@ export const connectRepositories = {
     },
 
     async getDeviceList(_id: ObjectId) {
-        const connectInfo = await ConnectModel.find({userId: _id}).lean()
-        console.log('connectInfo', connectInfo)
-        return connectInfo.map((p) => ({
-            ip: p.IP,
-            title: p.deviceName,
-            lastActiveDate: new Date(p.lastActiveDate),
-            deviceId: p.deviceId
-        }))
+        return ConnectModel.find({userId: _id}).lean()
     },
 
     async updateUserId(userId: ObjectId, deviceId: string) {
@@ -42,6 +35,6 @@ export const connectRepositories = {
     },
 
     async deleteUserSession(userId: ObjectId | null, deviceId: string) {
-        await ConnectModel.deleteMany({userId: userId, deviceId: {$not: {$regex: deviceId}} })
+        await ConnectModel.deleteMany({userId: userId, deviceId: {$not: {$regex: deviceId}}})
     },
 }

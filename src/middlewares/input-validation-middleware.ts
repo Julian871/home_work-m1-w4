@@ -10,7 +10,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
         }
     }
     const errors = validationResult(req).formatWith(errorFormatrer)
-    if(!errors.isEmpty()){
+    if (!errors.isEmpty()) {
         res.status(400).json({errorsMessages: errors.array({onlyFirstError: true})})
     } else {
         next()

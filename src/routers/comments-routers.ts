@@ -1,190 +1,96 @@
 import {Request, Response, Router} from "express";
 import {authMiddleware} from "../middlewares/authorization";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {ObjectId} from "mongodb";
 import {commentValidation} from "../middlewares/posts/comment-validation";
 import {commentsService} from "../domain/comments-service";
-import {postsService} from "../domain/posts-service";
-import {postsRouter} from "./post-routers";
-import {RequestParams} from "../db/types/query-types";
-import {getSortPostsQuery} from "../utils/posts-query.utility";
-import {getPaginationData} from "../utils/pagination.utility";
 import {commentsRepositories} from "../repositories/comment-repositories";
-import {authLikeStatus} from "../middlewares/auth";
-import {jwtService} from "../application/jwt-service";
+import {authLikeStatus, checkValidParams} from "../middlewares/auth";
+import {checkHeadersBeforeLike} from "../utils/getLikeStatus.utility";
 
 
 export const comRouter = Router({})
 
 
-postsRouter.get('/:id/comments', async (req: RequestParams<{id: string},{sortBy: string, sortDirection: string, pageNumber: number, pageSize: number}>, res: Response) => {
+comRouter
+    .put('/:id',
+        checkValidParams,
+        authMiddleware,
+        commentValidation,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+            const userId = await checkHeadersBeforeLike(req.headers.authorization!)
 
-    const checkPostsComments = await postsService.checkPostCommentCollection(req.params.id)
-
-    let userId: string
-    if(!req.headers.authorization) {
-        userId = '0'
-    } else {
-        const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
-        if(!getUserId) {
-            userId = '0'
-        } else {
-            userId = getUserId.toString()
-        }
-    }
-
-    if(checkPostsComments) {
-        const postsQuery = getSortPostsQuery(req.query.sortBy, req.query.sortDirection)
-        const pagination = getPaginationData(req.query.pageNumber, req.query.pageSize);
-
-        const postCommentsList = await postsService.getAllPostsComments({
-            ...postsQuery,
-            ...pagination
-        }, req.params.id, userId);
-
-        res.send(postCommentsList)
-    } else {
-        res.sendStatus(404)
-        return
-    }
-})
-
-comRouter.put('/:id',
-    authMiddleware,
-    commentValidation,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-        if(!ObjectId.isValid(req.params.id)){
-            res.sendStatus(404)
-            return
-        }
-
-        let userId: string
-        if(!req.headers.authorization) {
-            userId = '0'
-        } else {
-            const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
-            if(!getUserId) {
-                userId = '0'
-            } else {
-                userId = getUserId.toString()
+            let comment = await commentsService.getCommentById(req.params.id, userId)
+            if (!comment) {
+                res.sendStatus(404)
+                return
             }
-        }
 
-        let comment = await commentsService.getCommentById(req.params.id, userId)
-        if (!comment) {
-            res.sendStatus(404)
-            return
-        }
-
-        const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
-        if(!checkOwner) {
-            res.sendStatus(403)
-            return
-        }
-
-        const isUpdate = await commentsService.updateCommentById(req.params.id, req.body)
-        if (isUpdate) {
-            res.sendStatus(204)
-        } else {
-            res.sendStatus(404)
-        }
-    })
-
-comRouter.get('/:id',
-    async (req: Request, res: Response) => {
-        if(!ObjectId.isValid(req.params.id)){
-            res.sendStatus(404)
-            return
-        }
-
-        let userId: string
-        if(!req.headers.authorization) {
-            userId = '0'
-        } else {
-            const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
-            if(!getUserId) {
-                userId = '0'
-            } else {
-                userId = getUserId.toString()
+            const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
+            if (!checkOwner) {
+                res.sendStatus(403)
+                return
             }
-        }
 
-        let comment = await commentsService.getCommentById(req.params.id, userId)
-        if (comment) {
-            res.status(200).send(comment)
-        } else {
-            res.sendStatus(404)
-        }
+            const isUpdate = await commentsService.updateCommentById(req.params.id, req.body)
+            if (isUpdate) {
+                res.sendStatus(204)
+            } else {
+                res.sendStatus(404)
+            }
+        })
 
-    })
+    .get('/:id',
+        checkValidParams,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+            const userId = await checkHeadersBeforeLike(req.headers.authorization!)
 
-postsRouter.post('/:id/comments',
-    authMiddleware,
-    commentValidation,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-        if(!ObjectId.isValid(req.params.id)){
-            res.sendStatus(404)
-            return
-        }
+            const comment = await commentsService.getCommentById(req.params.id, userId)
+            if (comment) {
+                res.status(200).send(comment)
+            } else {
+                res.sendStatus(404)
+            }
 
-        const checkID = await postsService.checkPostCollection(req.params.id)
+        })
 
-        if(checkID) {
-            const newPostComment = await postsService.createNewPostComment(req.params.id, req.body, req.user!)
-            res.status(201).send(newPostComment)
-        } else {
-            res.sendStatus(404)
-        }
-    })
 
-comRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-    if(!ObjectId.isValid(req.params.id)){
-        res.sendStatus(404)
-        return
-    }
-    let userId: string
-    if(!req.headers.authorization) {
-        userId = '0'
-    } else {
-        const getUserId = await jwtService.getUserIdToken(req.headers.authorization.split(' ')[1])
-        if(!getUserId) {
-            userId = '0'
-        } else {
-            userId = getUserId.toString()
-        }
-    }
+    .delete('/:id',
+        checkValidParams,
+        inputValidationMiddleware,
+        authMiddleware, async (req: Request, res: Response) => {
+            const userId = await checkHeadersBeforeLike(req.headers.authorization!)
 
-    let comment = await commentsService.getCommentById(req.params.id, userId)
-    if (!comment) {
-        res.sendStatus(404)
-        return
-    }
+            let comment = await commentsService.getCommentById(req.params.id, userId)
+            if (!comment) {
+                res.sendStatus(404)
+                return
+            }
 
-    const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
-    if(!checkOwner) {
-        res.sendStatus(403)
-        return
-    }
+            const checkOwner = await commentsService.checkOwner(req.user!, req.params.id)
+            if (!checkOwner) {
+                res.sendStatus(403)
+                return
+            }
 
-    const isDelete = await commentsService.deleteCommentById(req.params.id)
-    if (isDelete) {
-        res.sendStatus(204)
-    } else {
-        res.sendStatus(404)
-    }
-})
+            const isDelete = await commentsService.deleteCommentById(req.params.id)
+            if (isDelete) {
+                res.sendStatus(204)
+            } else {
+                res.sendStatus(404)
+            }
+        })
 
-comRouter.put('/:id/like-status',
-    authLikeStatus,
-    authMiddleware,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-    const checkId = await commentsRepositories.getCommentById(req.params.id)
-        if(!checkId) return res.sendStatus(404)
-        if(!req.user) return res.status(404).send('no user')
+    .put('/:id/like-status',
+        authLikeStatus,
+        authMiddleware,
+        inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+            const checkId = await commentsRepositories.getCommentById(req.params.id)
+            if (!checkId) return res.sendStatus(404)
+            if (!req.user) return res.status(404).send('no user')
 
-        await commentsService.updateLikeStatus(req.params.id, req.body.likeStatus, req.user.id)
-        return res.sendStatus(204)
-})
+            await commentsService.updateLikeStatus(req.params.id, req.body.likeStatus, req.user.id)
+            return res.sendStatus(204)
+        })

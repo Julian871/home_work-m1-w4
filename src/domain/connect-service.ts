@@ -4,7 +4,6 @@ import {jwtService} from "../application/jwt-service";
 
 
 export const connectService = {
-
     async createConnection(IP: string, URL: string, deviceName: string, deviceId: string) {
         const connectInformation = {
             IP: IP,
@@ -18,12 +17,18 @@ export const connectService = {
     },
 
     async getDeviceList(userId: ObjectId) {
-        return await connectRepositories.getDeviceList(userId)
+        const connectInfo = await connectRepositories.getDeviceList(userId)
+        return connectInfo.map((p) => ({
+            ip: p.IP,
+            title: p.deviceName,
+            lastActiveDate: new Date(p.lastActiveDate),
+            deviceId: p.deviceId
+        }))
     },
 
     async checkDeviceId(deviceId: string, token: string) {
         const findDeviceId = await connectRepositories.findDeviceId(deviceId)
-        if(!findDeviceId) {
+        if (!findDeviceId) {
             return null
         }
 
@@ -31,12 +36,12 @@ export const connectService = {
         let userId;
         let tokenUser;
 
-        if(findDeviceId.userId && tokenUserId) {
+        if (findDeviceId.userId && tokenUserId) {
             userId = findDeviceId.userId.toString()
             tokenUser = tokenUserId.toString()
         }
 
-        if(userId === tokenUser) {
+        if (userId === tokenUser) {
             await connectRepositories.deleteByDeviceId(deviceId)
             return true
         } else {
