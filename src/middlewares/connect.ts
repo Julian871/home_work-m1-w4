@@ -1,6 +1,5 @@
 import {NextFunction, Request, Response} from "express";
 import {connectService} from "../domain/connect-service";
-import {connectRepositories} from "../repositories/connect-repositories";
 import {v4 as uuidv4} from "uuid";
 
 
@@ -11,7 +10,7 @@ export const checkConnect = async (req: Request, res: Response, next: NextFuncti
     const deviceId = uuidv4()
 
 
-    const countConnect = await connectRepositories.countConnection(IP, URL)
+    const countConnect = await connectService.countConnection(IP, URL)
     if (countConnect >= 5) {
         await connectService.createConnection(IP, URL, deviceName, deviceId)
         return res.sendStatus(429)

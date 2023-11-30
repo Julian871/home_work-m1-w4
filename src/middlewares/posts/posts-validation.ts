@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {blogsRepositories} from "../../repositories/blogs-db-repositories";
+import {blogsService} from "../../composition-root";
 
 
 export const postsValidation = [
@@ -12,12 +12,12 @@ export const postsValidation = [
     body('blogId').isString().withMessage('blogId is not string'),
     body('blogId')
         .custom(async (value) => {
-            const blog = await blogsRepositories.getBlogById(value)
+            const blog = await blogsService.getBlogById(value)
             if (!blog) {
                 throw new Error('incorrect blogID')
             }
         }).custom(async (value) => {
-        const blog = await blogsRepositories.getBlogById(value)
+        const blog = await blogsService.getBlogById(value)
         if (!blog) {
             throw new Error('incorrect blogID')
         }

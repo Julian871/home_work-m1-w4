@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {usersRepositories} from "../../repositories/users-db-repositories";
+import {usersService} from "../../composition-root";
 
 
 export const usersValidation = [
@@ -8,7 +8,7 @@ export const usersValidation = [
     body('login').matches(/^[a-zA-Z0-9_-]*$/).withMessage('incorrect login'),
     body('login')
         .custom(async (value) => {
-            const email = await usersRepositories.getUserByLogin(value)
+            const email = await usersService.getUserByLogin(value)
             if (email !== null) {
                 throw new Error('login already exist')
             }
@@ -19,7 +19,7 @@ export const usersValidation = [
     body('email').matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('incorrect email'),
     body('email')
         .custom(async (value) => {
-            const email = await usersRepositories.getUserByEmail(value)
+            const email = await usersService.getUserByEmail(value)
             if (email !== null) {
                 throw new Error('email already exist')
             }
