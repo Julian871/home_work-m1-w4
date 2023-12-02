@@ -3,7 +3,10 @@ import {BlogsModel, PostModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {getBlogsQueryType} from "../db/types/blog-types";
 import {getPostsQueryType, postTypeInput} from "../db/types/post-types";
+import {injectable} from "inversify";
 
+
+@injectable()
 export class BlogsRepository {
     async getAllBlogs(query: getBlogsQueryType) {
 

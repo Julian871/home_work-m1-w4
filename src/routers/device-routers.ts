@@ -1,7 +1,10 @@
 import {Router} from "express";
 import {authCookie} from "../middlewares/authorization";
-import {deviceController} from "../composition-root";
+import {container} from "../composition-root";
+import {DeviceController} from "../controllers/device-controller";
 
+
+const deviceController = container.resolve(DeviceController)
 
 export const deviceRouter = Router({})
 

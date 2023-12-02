@@ -1,10 +1,12 @@
-import {UsersService} from "../domain/users-service";
+import {UsersService} from "../application/users-service";
 import {RequestQueryParams} from "../db/types/query-types";
 import {Request, Response} from "express";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortUsersQuery} from "../utils/users-query.utility";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class UsersController {
     constructor(protected usersService: UsersService) {
     }

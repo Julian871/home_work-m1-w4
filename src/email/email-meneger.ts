@@ -1,4 +1,4 @@
-import {emailAdapters} from "../adapters/email-adapters";
+import {emailAdapters} from "./email-adapters";
 
 
 export const emailManager = {

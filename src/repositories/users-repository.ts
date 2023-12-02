@@ -1,7 +1,10 @@
 import {ObjectId} from "mongodb";
 import {BlackListModel, UserModel} from "../db/db";
 import {getUsersQueryType, userAccountDBType} from "../db/types/user-types";
+import {injectable} from "inversify";
 
+
+@injectable()
 export class UsersRepository {
 
     async getAllUsers(query: getUsersQueryType) {

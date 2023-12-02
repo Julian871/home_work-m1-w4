@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {blogsService} from "../../composition-root";
+import {blogsService} from "../composition-root";
 
 
 export const postsValidation = [

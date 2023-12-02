@@ -6,8 +6,10 @@ import {
 import {PostModel, CommentModel} from "../db/db";
 import {ObjectId} from "mongodb";
 import {postCommentInput} from "../db/types/comments-types";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class PostsRepository {
     async getAllPosts(query: getPostsQueryType) {
         return PostModel.find({})

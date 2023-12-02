@@ -2,8 +2,10 @@ import {postCommentOutput, postCommentPut} from "../db/types/comments-types";
 import {userTypeOutput} from "../db/types/user-types";
 import {getMyStatus} from "../utils/getLikeStatus.utility";
 import {CommentsRepository} from "../repositories/comments-repository";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class CommentsService {
     constructor(protected commentsRepositories: CommentsRepository) {}
 

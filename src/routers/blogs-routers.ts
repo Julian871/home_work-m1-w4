@@ -1,11 +1,14 @@
 import {Router} from "express";
-import {blogsValidation} from "../middlewares/blogs/blogs-validation";
+import {blogsValidation} from "../middlewares/blogs-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authorizationMiddleware} from "../middlewares/authorization";
-import {postsBlogIdValidation} from "../middlewares/posts/postBlogId-validation";
+import {postsBlogIdValidation} from "../middlewares/postBlogId-validation";
 import {checkValidParams} from "../middlewares/auth";
-import {blogsController} from "../composition-root";
+import {BlogsController} from "../controllers/blogs-controller";
+import {container} from "../composition-root";
 
+
+const blogsController = container.resolve(BlogsController)
 
 export const blogsRouter = Router({})
 

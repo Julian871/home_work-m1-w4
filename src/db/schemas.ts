@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import {ObjectId} from "mongodb";
-import {blogTypeInput} from "../types/blog-types";
-import {blackList} from "../types/blackList-types";
-import {connectType} from "../types/sessions-type";
-import {userAccountDBType} from "../types/user-types";
-import {postTypeInput} from "../types/post-types";
-import {postCommentInput} from "../types/comments-types";
+import {blogTypeInput} from "./types/blog-types";
+import {blackList} from "./types/blackList-types";
+import {connectType} from "./types/sessions-type";
+import {userAccountDBType} from "./types/user-types";
+import {postTypeInput} from "./types/post-types";
+import {postCommentInput} from "./types/comments-types";
 
 
 export const blogSchema = new mongoose.Schema<blogTypeInput>({

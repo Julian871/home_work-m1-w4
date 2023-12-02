@@ -1,8 +1,10 @@
 import {ObjectId} from "mongodb";
 import {CommentModel} from "../db/db";
 import {postCommentPut} from "../db/types/comments-types";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class CommentsRepository {
     async updateCommentById(id: string, data: postCommentPut): Promise<boolean> {
         const _id = new ObjectId(id)

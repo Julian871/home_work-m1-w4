@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
-import {connectService} from "../domain/connect-service";
+import {connectService} from "../application/connect-service";
 import {usersService} from "../composition-root";
 
 export const authorizationMiddleware = (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {

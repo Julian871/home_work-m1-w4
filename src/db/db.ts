@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import {blackListSchema, blogSchema, commentSchema, connectSchema, postSchema, userSchema} from "./schemas/schemas";
+import {blackListSchema, blogSchema, commentSchema, connectSchema, postSchema, userSchema} from "./schemas";
 
 const mongoURI = process.env.mongoURI || 'mongodb+srv://Julian871:datajulianbase2023@julian871.cehbrfy.mongodb.net/hw3?retryWrites=true&w=majority'
 

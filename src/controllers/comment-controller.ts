@@ -1,8 +1,10 @@
-import {CommentsService} from "../domain/comments-service";
+import {CommentsService} from "../application/comments-service";
 import {Request, Response} from "express";
 import {checkHeadersBeforeLike} from "../utils/getLikeStatus.utility";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class CommentController {
     constructor(protected commentsService: CommentsService) {}
 

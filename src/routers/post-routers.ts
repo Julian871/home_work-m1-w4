@@ -1,11 +1,14 @@
 import {Router} from "express";
-import {postsValidation} from "../middlewares/posts/posts-validation";
+import {postsValidation} from "../middlewares/posts-validation";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authMiddleware, authorizationMiddleware} from "../middlewares/authorization";
 import {authLikeStatus, checkValidParams} from "../middlewares/auth";
-import {commentValidation} from "../middlewares/posts/comment-validation";
-import {postsController} from "../composition-root";
+import {commentValidation} from "../middlewares/comment-validation";
+import {container} from "../composition-root";
+import {PostsController} from "../controllers/posts-controller";
 
+
+const postsController = container.resolve(PostsController)
 
 export const postsRouter = Router({})
 

@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {connectService} from "../domain/connect-service";
+import {connectService} from "../application/connect-service";
 import {v4 as uuidv4} from "uuid";
 
 

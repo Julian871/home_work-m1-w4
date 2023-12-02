@@ -1,10 +1,12 @@
-import {AuthService} from "../domain/auth-service";
-import {UsersService} from "../domain/users-service";
-import {ConnectService} from "../domain/connect-service";
+import {AuthService} from "../application/auth-service";
+import {UsersService} from "../application/users-service";
+import {ConnectService} from "../application/connect-service";
 import {Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class AuthController {
     constructor(protected authService: AuthService,
                 protected usersService: UsersService,

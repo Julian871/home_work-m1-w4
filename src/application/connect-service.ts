@@ -1,8 +1,10 @@
 import {ObjectId} from "mongodb";
-import {jwtService} from "../application/jwt-service";
+import {jwtService} from "./jwt-service";
 import {ConnectRepository} from "../repositories/connect-repository";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class ConnectService {
     connectRepositories: ConnectRepository
     constructor() {

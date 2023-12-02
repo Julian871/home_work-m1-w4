@@ -3,8 +3,10 @@ import {BlogCreator, BlogInfo, blogTypeOutput, blogTypePostPut, getBlogsQueryTyp
 import {getPostsQueryType, PostCreator, PostInfo, postTypePostPut} from "../db/types/post-types";
 import {headTypes, PageInfo} from "../db/types/head-types";
 import {getLikeListToPost, getMyStatusToPost} from "../utils/getLikeStatus.utility";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class BlogsService {
     constructor(protected blogsRepositories: BlogsRepository) {}
 

@@ -1,11 +1,14 @@
 import {Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {usersValidation} from "../middlewares/users/users-validation";
+import {usersValidation} from "../middlewares/users-validation";
 import {authCode, authEmail, authRecoveryPassword, authValidation} from "../middlewares/auth";
 import {authCookie, authMiddleware} from "../middlewares/authorization";
 import {checkConnect} from "../middlewares/connect";
-import {authController} from "../composition-root";
+import {AuthController} from "../controllers/auth-controllers";
+import {container} from "../composition-root";
 
+
+const authController = container.resolve(AuthController)
 
 export const authRouter = Router({})
 

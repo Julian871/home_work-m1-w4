@@ -1,8 +1,11 @@
 import {ConnectModel} from "../db/db";
 import {connectType} from "../db/types/sessions-type";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
+import 'reflect-metadata'
 
 
+@injectable()
 export class ConnectRepository {
 
     async countConnection(IP: string, URL: string) {

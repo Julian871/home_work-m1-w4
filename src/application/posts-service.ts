@@ -11,8 +11,10 @@ import {
 import {userTypeOutput} from "../db/types/user-types";
 import {getLikeListToPost, getMyStatus, getMyStatusToPost} from "../utils/getLikeStatus.utility";
 import {PostsRepository} from "../repositories/posts-repository";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class PostsService {
 
     constructor(protected postsRepositories: PostsRepository) {}

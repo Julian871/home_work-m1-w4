@@ -1,11 +1,13 @@
-import {PostsService} from "../domain/posts-service";
+import {PostsService} from "../application/posts-service";
 import {RequestParams, RequestQueryParams} from "../db/types/query-types";
 import {Request, Response} from "express";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {getPaginationData} from "../utils/pagination.utility";
 import {checkHeadersBeforeLike} from "../utils/getLikeStatus.utility";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class PostsController {
     constructor(protected postsService: PostsService) {}
 

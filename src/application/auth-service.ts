@@ -4,10 +4,12 @@ import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from 'uuid';
 import add from 'date-fns/add'
 import {UsersRepository} from "../repositories/users-repository";
-import {emailManager} from "../manegers/email-meneger";
+import {emailManager} from "../email/email-meneger";
 import {ConnectRepository} from "../repositories/connect-repository";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class AuthService {
 
     constructor(protected usersRepositories: UsersRepository,

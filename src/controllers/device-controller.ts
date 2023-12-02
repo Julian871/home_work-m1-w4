@@ -1,8 +1,10 @@
-import {ConnectService} from "../domain/connect-service";
+import {ConnectService} from "../application/connect-service";
 import {Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class DeviceController {
     constructor(protected connectService: ConnectService) {}
 

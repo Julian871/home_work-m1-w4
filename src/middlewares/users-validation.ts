@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {usersService} from "../../composition-root";
+import {usersService} from "../composition-root";
 
 
 export const usersValidation = [

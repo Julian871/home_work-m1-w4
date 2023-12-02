@@ -1,12 +1,14 @@
-import {BlogsService} from "../domain/blogs-service";
+import {BlogsService} from "../application/blogs-service";
 import {RequestParams, RequestQueryParams} from "../db/types/query-types";
 import {Request, Response} from "express";
 import {getSortBlogsQuery} from "../utils/blogs-query.utility";
 import {getPaginationData} from "../utils/pagination.utility";
 import {getSortPostsQuery} from "../utils/posts-query.utility";
 import {checkHeadersBeforeLike} from "../utils/getLikeStatus.utility";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class BlogsController {
     constructor(protected blogsService: BlogsService) {}
 
